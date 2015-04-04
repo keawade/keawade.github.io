@@ -1,9 +1,18 @@
-name: Key of Wade
-description: Provided by keawade
-avatar: https://avatars3.githubusercontent.com/u/7308850?v=3&s=460
+# Permalinks
+permalink:        pretty
+relative_permalinks: true
 
-footer-links:
-  email: keawade@gmail.com
-  github: keawade
-  twitter: TheKeithWade
+# Setup
+title:            ~/Wade
+description:          A tech blog written by Keith Wade
+url:              http://keawade.github.io
+paginate:         3
+baseurl:          /
+author:
+  name:           Keith Wade
+  twitter:        https://twitter.com/TheKeithWade
 
+# Custom Vars
+email:          mailto:keawade@gmail.com
+github:         https://github.com/keawade
+twitter:        https://www.twitter.com/TheKeithWade
