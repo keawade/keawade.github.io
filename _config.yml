@@ -1,19 +1,31 @@
-# Permalinks
-permalink:        pretty
-relative_permalinks: true
+title: "~/Wade"
+author: "Keith Wade"
+description: "Technology blogging and tutorials"
+#subheading: "Really cool blog about ... something"
+more: "read more"
+url: "http://keawade.github.io"
+#baseurl: "/contrast" # comment out if in root directory
 
-# Setup
-title:            ~/Wade
-description:      A tech blog written by Keith Wade
-tagline:          A tech blog written by Keith Wade
-url:              http://keawade.github.io
-paginate:         3
-baseurl:          /
-author:
-  name:           Keith Wade
-  twitter:        https://twitter.com/TheKeithWade
+comments:
+    disqus: "keawade"
+#    isso: "comments.mysite.org"
 
-# Custom Vars
-email:          mailto:keawade@gmail.com
-github:         https://github.com/keawade
-twitter:        https://www.twitter.com/TheKeithWade
+style:
+#    body: "whitesmoke"
+    padding: 33%
+    anchor: "#46f"
+    serif-heading: true
+    nav: "#181818"
+#    headline: "#06f"
+    description: "white"
+    article:
+        odd: "#ffffff"
+        even: "#222222"
+
+links:
+  - github: "https://github.com/keawade/"
+  - twitter: "https://twitter.com/TheKeithWade/"
+  - reddit: "https://www.reddit.com/user/keawade/"
+
+excerpt_separator: <!--more-->
+defaults: [{scope: {path: ""}, values: {layout: "default"}}, {scope: {path: "", type: "posts"}, values: {comments: true}}]

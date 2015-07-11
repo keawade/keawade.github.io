@@ -1,6 +1,8 @@
 ---
-layout: post
 title: Configuring a Hyper-V Cluster
+date: 2015-07-04 05:00:00
+tags: [Windows, Server 2012, Configuration, Hyper-V, Clustering]
+comments: true
 ---
 
 ## Install OS
@@ -17,6 +19,8 @@ you will need to use Server 2012 Datacenter for your cluster nodes.
 
 We don't need anything fancy here. Just install the OS normally and apply all
 updates.
+
+<!--more-->
 
 ## Network Overview
 
