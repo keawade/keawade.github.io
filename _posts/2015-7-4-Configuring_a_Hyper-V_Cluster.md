@@ -6,11 +6,9 @@ comments: true
 ---
 
 Hyper-V can be a particularly useful tool for consolidating computing resources.
-However, individual Hyper-V servers can still be an inefficient use of memory
-and processing power. An even more pressing concern is that while consolidating
-machines into VMs can lower your hardware overhead costs, this introduces a
-single failure point for all your machines. If the Hyper-V server goes down for
-any reason, all your VMs will go down as well.
+However, while consolidating machines into VMs can lower your hardware overhead
+costs, this introduces a single failure point for all your machines. If the Hyper-V
+server goes down, all your VMs will go down as well.
 
 To overcome this issue, we can use Hyper-V's Failover and Load-balancing tools
 to build a Hyper-V cluster. These tools will provide failover for our machines so
