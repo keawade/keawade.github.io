@@ -5,6 +5,18 @@ tags: [Windows, Server 2012, Configuration, Hyper-V, Clustering]
 comments: true
 ---
 
+Hyper-V can be a particularly useful tool for consolidating computing resources.
+However, while consolidating machines into VMs can lower your hardware overhead
+costs, this introduces a single failure point for all your machines. If the Hyper-V
+server goes down, all your VMs will go down as well.
+
+To overcome this issue, we can use Hyper-V's Failover and Load-balancing tools
+to build a Hyper-V cluster. These tools will provide failover for our machines so
+that, in the event of a critical failure on one of our Hyper-V nodes, the VMs
+running on that node will come back up on another node within seconds.
+
+<!--more-->
+
 ## Install OS
 
 Begin by installing Windows Server 2012 R2 Datacenter on each of your nodes.
@@ -14,13 +26,11 @@ machines, you can use Server 2012 Standard edition. However, if you need more
 Server 2012 Standard instances or if you need Server 2012 Datacenter instances,
 you will need to use Server 2012 Datacenter for your cluster nodes.
 
-> This is because of the way Microsoft handles their server licenses.
-[More details.](http://www.altaro.com/hyper-v/virtual-machine-licensing-hyper-v/)
+> This is because of the way Microsoft handles their server licenses
+[(More details)](http://www.altaro.com/hyper-v/virtual-machine-licensing-hyper-v/).
 
 We don't need anything fancy here. Just install the OS normally and apply all
 updates.
-
-<!--more-->
 
 ## Network Overview
 
