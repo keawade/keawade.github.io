@@ -1,5 +1,5 @@
 ---
-title: Resume
+title: Résumé
 ---
 
 References are available upon request.
