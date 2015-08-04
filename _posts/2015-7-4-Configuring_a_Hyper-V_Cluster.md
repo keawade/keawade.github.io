@@ -89,7 +89,7 @@ storage solution uses Multipath I/O, install that now using this [PowerShell com
 utility now. Be sure to select the deselected option when prompted for components
 to install.
 
->I don't think the nodes _must_ be memebers of a domain but it does make several 
+>I don't think the nodes _must_ be members of a domain but it does make several 
 steps in the install simpler.
 
 ## Install Hyper-V
