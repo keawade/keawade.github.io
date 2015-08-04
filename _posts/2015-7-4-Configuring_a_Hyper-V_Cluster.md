@@ -126,7 +126,7 @@ management tools:
 Before we actually cluster our nodes, let's test our configuration. Run the
 following [PowerShell command](https://technet.microsoft.com/en-us/library/ee461026.aspx) and check the report for any failures.
 
-`Test-Cluster –Node UCC1,UCC2,UCC3 -ReportName "C:\TestClusterReport"`
+`Test-Cluster –Node Node1,Node2,Node3 -ReportName "C:\TestClusterReport"`
 
 >You are likely to get warnings concerning your cluster's storage. This is fine.
 We will configure the cluster's shared storage soon.
