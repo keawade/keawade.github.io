@@ -89,6 +89,9 @@ storage solution uses Multipath I/O, install that now using this [PowerShell com
 utility now. Be sure to select the deselected option when prompted for components
 to install.
 
+>I don't think the nodes _must_ be memebers of a domain but it does make several 
+steps in the install simpler.
+
 ## Install Hyper-V
 To install the Hyper-V service, run the following [PowerShell command](https://technet.microsoft.com/en-us/library/jj205467%28v=wps.630%29.aspx) on each
 node:
