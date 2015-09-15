@@ -26,6 +26,7 @@ links:
   - github: "https://github.com/keawade/"
   - twitter: "https://twitter.com/TheKeithWade/"
   - reddit: "https://www.reddit.com/user/keawade/"
+  - linkedin: "https://www.linkedin.com/pub/keith-wade/105/566/8b4"
 
 excerpt_separator: <!--more-->
 defaults: [{scope: {path: ""}, values: {layout: "default"}}, {scope: {path: "", type: "posts"}, values: {comments: true}}]
