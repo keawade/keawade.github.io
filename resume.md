@@ -20,6 +20,17 @@ References are available upon request.
 
 **Physics Teaching Assistant**
 
+**Computer Science Tutor**
+
+#Union College 2015 Extracurricular
+
+**Tech & Tabletop Club Officer**
+
+* Organized monthly technology lectures for students
+* Designed and maintained the club website
+  * [uctechtabletop.org](http://www.uctechtabletop.org)
+
+
 #Walla Walla University 2010-2011
 **Information Systems Technician**
 
