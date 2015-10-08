@@ -10,13 +10,16 @@ References are available upon request.
 * Installed and configured a Hyper-V Cluster with SAN storage
 * Set up over a dozen servers from scratch using both Windows and Linux environments running services such as LDAP, DHCP, DNS, NTP, Apache, Node, and Django.
 * Managed migrations from Hyper-V 2008 to 2012 R2 and Vmware to Hyper-V 2012 R2
-* Built and implemented an editable network documentation site for use by Information Systems
+* Create automated scripts for Powershell, Bash, and batch
+* Worked on development for an in-house documentation web application running on Node.js
 * Implemented and managed osTicket for use by the college Information Systems deparment
 
 **Information Systems Desktop Technician**
 
 * Was part of a team that provided support for over 700 users
 * Set up over 140 machines from box to user
+
+**Computer Lab Assistant**
 
 **Physics Teaching Assistant**
 
