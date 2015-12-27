@@ -1,14 +1,21 @@
-# Site settings
-title: Your awesome title
-email: your-email@domain.com
-description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://yourdomain.com" # the base hostname & protocol for your site
-twitter_username: jekyllrb
-github_username:  jekyll
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+relative_permalinks: true
 
-# Build settings
-markdown: kramdown
+# Setup
+title:               ~/Wade
+tagline:             'A tech blog by keawade'
+description:         'A tech blog to share my knowledge with others.'
+url:                 http://www.keithwade.com
+baseurl:             ''
+paginate:            5
+
+# About/contact
+author:
+  name:              Keith Wade
+  twitter:           https://twitter.com/TheKeithWade
+  github:            https://github.com/keawade
+  linkedin:          https://www.linkedin.com/pub/keith-wade/105/566/8b4
+  email:             keawade@gmail.com
