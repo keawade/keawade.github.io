@@ -1,32 +1,14 @@
-title: "~/Wade"
-author: "Keith Wade"
-description: "Technology blogging and tutorials"
-#subheading: "Really cool blog about ... something"
-more: "read more"
-url: "http://keawade.github.io"
-#baseurl: "/contrast" # comment out if in root directory
+# Site settings
+title: Your awesome title
+email: your-email@domain.com
+description: > # this means to ignore newlines until "baseurl:"
+  Write an awesome description for your new site here. You can edit this
+  line in _config.yml. It will appear in your document head meta (for
+  Google search results) and in your feed.xml site description.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://yourdomain.com" # the base hostname & protocol for your site
+twitter_username: jekyllrb
+github_username:  jekyll
 
-comments:
-    disqus: "keawade"
-#    isso: "comments.mysite.org"
-
-style:
-#    body: "whitesmoke"
-    padding: 33%
-    anchor: "#46f"
-    serif-heading: true
-    nav: "#181818"
-#    headline: "#06f"
-    description: "white"
-    article:
-        odd: "#ffffff"
-        even: "#222222"
-
-links:
-  - github: "https://github.com/keawade/"
-  - twitter: "https://twitter.com/TheKeithWade/"
-  - reddit: "https://www.reddit.com/user/keawade/"
-  - linkedin: "https://www.linkedin.com/pub/keith-wade/105/566/8b4"
-
-excerpt_separator: <!--more-->
-defaults: [{scope: {path: ""}, values: {layout: "default"}}, {scope: {path: "", type: "posts"}, values: {comments: true}}]
+# Build settings
+markdown: kramdown
