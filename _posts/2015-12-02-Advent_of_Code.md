@@ -14,9 +14,20 @@ This first set of puzzles involves Santa navigating an infinite high-rise buildi
 
 # Part 1
 
-The first part of the puzzle asks what floor Santa ends up on after following the given instructions. Both of these solutions follow the same basic formula. First, I read in the input that I've saved in `source/day1source.txt` and assign it to a variable. Next, I create a variable to hold the value of the current floor. I then use a loop to loop through each character in the string. For each character I check if the instruction is to go up one floor and if it is, I increment the `floor` variable by 1, otherwise I decrement the `floor` variable by 1. When the loop completes going through all the characters, I print out the final `floor` variable value.
+## Problem
 
-## Node.js
+>Santa is trying to deliver presents in a large apartment building, but he can't find the right floor - the directions he got are a little confusing. He starts on the ground floor (floor `0`) and then follows the instructions one character at a time.
+>
+>An opening parenthesis, `(`, means he should go up one floor, and a closing parenthesis, `)`, means he should go down one floor.
+>
+>The apartment building is very tall, and the basement is very deep; he will never find the top or bottom floors.
+
+## Methodology
+Both of these solutions follow the same basic formula. First, I read in the input that I've saved in `source/day1source.txt` and assign it to a variable. Next, I create a variable to hold the value of the current floor. I then use a loop to loop through each character in the string. For each character I check if the instruction is to go up one floor and if it is, I increment the `floor` variable by 1, otherwise I decrement the `floor` variable by 1. When the loop completes going through all the characters, I print out the final `floor` variable value.
+
+## Solutions
+
+### Node.js
 {% highlight js linenos %}
 var fs = require('fs')
 
@@ -33,7 +44,7 @@ for (var i = 0; i < end; i++) {
 console.log('Santa ends up on floor ' + floor)
 {% endhighlight %}
 
-## Python
+### Python
 {% highlight python linenos %}
 filename = '../source/day1source.txt'
 
@@ -54,9 +65,15 @@ print "Santa ends up on floor", floor
 
 # Part 2
 
-The second problem in the set asks on which instruction does Santa enter the basement of the infinite complex. To solve this I modified my code to let me know when the `floor` variable equals `0`.
+## Problem
+>Now, given the same instructions, find the position of the first character that causes him to enter the basement (floor `-1`). The first character in the instructions has position `1`, the second character has position `2`, and so on.
 
-## Node.js
+## Methodology
+To solve this, I modified my code to detect when the `floor` variable equals `-1` and prints out the current position in the string.
+
+## Solutions
+
+### Node.js
 {% highlight js linenos %}
 var fs = require('fs')
 
@@ -75,7 +92,7 @@ for (var i = 0; i < end; i++) {
 }
 {% endhighlight %}
 
-## Python
+### Python
 {% highlight python linenos %}
 filename = '../source/day1source.txt'
 
