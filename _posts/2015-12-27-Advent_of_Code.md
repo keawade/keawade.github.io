@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Advent of Code - Day 2: I Was Told There Would Be No Math'
-date: 2015-12-03 05:00:00
+date: 2015-12-27 23:46:00
 tags: [Node.js, Python, programming, Advent of Code]
 comments: true
 ---
