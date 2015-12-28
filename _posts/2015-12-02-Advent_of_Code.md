@@ -1,0 +1,98 @@
+---
+layout: post
+title: 'Advent of Code - Day 1: Not Quite Lisp'
+date: 2015-12-02 05:00:00
+tags: [Node.js, Python, programming, Advent of Code]
+comments: true
+---
+
+This December, [Eric Wastl](http://was.tl/) created a series of holiday themed programming exercises, [Advent of Code](http://adventofcode.com/). This post will detail my solutions to some of these exercises. I didn't get around to solving all of the puzzles, but I will be adding more when I have time to work on them.
+
+This first set of puzzles involved Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
+
+<!--more-->
+
+# Part 1
+
+The first part of the puzzle asks what floor Santa ends up on after following the given instructions. Both of these solutions follow the same basic formula. First, I read in the input that I've saved in `source/day1source.txt` and assign it to a variable. Next, I create a variable to hold the value of the current floor. I then use a loop to loop through each character in the string. For each character I check if the instruction is to go up one floor and if it is, I increment the `floor` variable by 1, otherwise I decrement the `floor` variable by 1. When the loop completes going through all the characters, I print out the final `floor` variable value.
+
+## Node.js
+{% highlight js linenos %}
+var fs = require('fs')
+
+var source = fs.readFileSync('../source/day1source.txt').toString()
+var end = source.length
+var floor = 1
+for (var i = 0; i < end; i++) {
+  if (source.charAt(i) === '(') {
+    floor++
+  } else {
+    floor--
+  }
+}
+console.log('Santa ends up on floor ' + floor)
+{% endhighlight %}
+
+## Python
+{% highlight python linenos %}
+filename = '../source/day1source.txt'
+
+with open(filename) as f:
+    source = [line.rstrip('\n') for line in open(filename)]
+
+floor = 0
+
+for line in source:
+    for char in line:
+        if char == '(':
+            floor = floor + 1
+        else:
+            floor = floor - 1
+
+print "Santa ends up on floor", floor
+{% endhighlight %}
+
+# Part 2
+
+The second problem in the set asks on which instruction does Santa enter the basement of the infinite complex. To solve this I modified my code to let me know when the `floor` variable equals `0`.
+
+## Node.js
+{% highlight js linenos %}
+var fs = require('fs')
+
+var source = fs.readFileSync('../source/day1source.txt').toString()
+var end = source.length
+var floor = 1
+for (var i = 0; i < end; i++) {
+  if (source.charAt(i) === '(') {
+    floor++
+  } else {
+    floor--
+  }
+  if (floor === -1) {
+    console.log('The character ' + source.charAt(i) + ' at position ' + i + ' sent santa to the basement.')
+  }
+}
+{% endhighlight %}
+
+## Python
+{% highlight python linenos %}
+filename = '../source/day1source.txt'
+
+with open(filename) as f:
+    source = [line.rstrip('\n') for line in open(filename)]
+
+floor = 0
+count = 0
+
+for line in source:
+    for char in line:
+        if char == '(':
+            floor = floor + 1
+        else:
+            floor = floor - 1
+        count = count + 1
+        if floor == -1:
+            print "Santa enters the basement on instruction", count
+            break
+{% endhighlight %}
