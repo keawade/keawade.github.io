@@ -4,6 +4,7 @@ title: NTP Server Configuration
 date: 2014-08-04 05:00:00
 tags: [Linux, CentOS, Network, Configuration, NTP, Network Time Protocol]
 comments: true
+disqus_identifier: 0001
 ---
 
 [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used to synchronize computers around the world to allow for better communications on networks with changing latency such as the internet. This is done with a tiered infrastructure of timing devices.

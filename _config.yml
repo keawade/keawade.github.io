@@ -29,4 +29,5 @@ kramdown:
   input:              GFM
 highlighter:          pygments
 comments:
-    disqus: "keawade"
+    disqus:           "keawade"
+permalink:            date

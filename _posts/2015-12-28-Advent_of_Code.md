@@ -4,6 +4,7 @@ title: 'Advent of Code - Day 2: I Was Told There Would Be No Math'
 date: 2015-12-28 00:30:00
 tags: [Node.js, Python, programming, Advent of Code]
 comments: true
+disqus_identifier: 0004
 ---
 
 The elves have run out of wrapping paper and ribbon! For this puzzle we are given the dimensions of a bunch of presents as a list of strings and are asked to compute how much wrapping paper and ribbon should be ordered to wrap the remaining presents.

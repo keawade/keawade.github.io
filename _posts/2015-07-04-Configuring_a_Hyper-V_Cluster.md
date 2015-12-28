@@ -4,6 +4,7 @@ title: Configuring a Hyper-V Cluster
 date: 2015-07-04 05:00:00
 tags: [Windows, Server 2012, Configuration, Hyper-V, Clustering]
 comments: true
+disqus_identifier: 0002
 ---
 
 Hyper-V can be a particularly useful tool for consolidating computing resources.

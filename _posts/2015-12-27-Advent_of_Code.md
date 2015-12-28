@@ -4,6 +4,7 @@ title: 'Advent of Code - Day 1: Not Quite Lisp'
 date: 2015-12-27 23:46:00
 tags: [Node.js, Python, programming, Advent of Code]
 comments: true
+disqus_identifier: 0003
 ---
 
 [Eric Wastl](http://was.tl/) has created a series of holiday themed programming exercises over at [Advent of Code](http://adventofcode.com/) and I thought it would be fun to post my solutions to these exercises now that they have all been released. I'll be posting more of my solutions as I have time to write up my methodologies (and complete some of them).
