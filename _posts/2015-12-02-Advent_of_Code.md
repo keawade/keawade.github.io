@@ -8,7 +8,7 @@ comments: true
 
 This December, [Eric Wastl](http://was.tl/) created a series of holiday themed programming exercises, [Advent of Code](http://adventofcode.com/). This post will detail my solutions to some of these exercises. I didn't get around to solving all of the puzzles, but I will be adding more when I have time to work on them.
 
-This first set of puzzles involved Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
+This first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
 
 <!--more-->
 

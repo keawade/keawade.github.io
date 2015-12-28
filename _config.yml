@@ -1,26 +1,29 @@
 # Permalinks
 #
 # Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:           pretty
-relative_permalinks: true
+permalink:            pretty
+relative_permalinks:  true
 
 # Setup
-title:               ~/Wade
-tagline:             ''
-description:         'A tech blog to share my knowledge with others.'
-url:                 http://www.keithwade.com
-baseurl:             ''
-paginate:            5
+title:                ~/Wade
+tagline:              ''
+description:          'A tech blog to share my knowledge with others.'
+url:                  http://www.keithwade.com
+baseurl:              ''
+paginate:             5
 
 # About/contact
 author:
-  name:              Keith Wade
-  email:             keawade@gmail.com
+  name:               Keith Wade
+  email:              keawade@gmail.com
 
 links:
-  github: "https://github.com/keawade/"
-  twitter: "https://twitter.com/TheKeithWade/"
-  reddit: "https://www.reddit.com/user/keawade/"
-  linkedin: "https://www.linkedin.com/in/keawade"
+  github:             "https://github.com/keawade/"
+  twitter:            "https://twitter.com/TheKeithWade/"
+  reddit:             "https://www.reddit.com/user/keawade/"
+  linkedin:           "https://www.linkedin.com/in/keawade"
 
-excerpt_separator: <!--more-->
+excerpt_separator:    <!--more-->
+kramdown:
+  input:              GFM
+highlighter:          pygments
