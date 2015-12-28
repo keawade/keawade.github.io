@@ -8,6 +8,7 @@ comments: true
 
 The elves have run out of wrapping paper and ribbon! For this puzzle we are given the dimensions of a bunch of presents as a list of strings and are asked to compute how much wrapping paper and ribbon should be ordered to wrap the remaining presents.
 
+Get your own puzzle input and record your progress over at [Advent of Code](http://adventofcode.com/)!
 <!--more-->
 
 # Part 1
@@ -21,7 +22,15 @@ The elves have run out of wrapping paper and ribbon! For this puzzle we are give
 >All numbers in the elves' list are in feet. How many total **square feet of wrapping paper** should they order?
 
 ## Methodology
+I handled the solutions for Node and Python slightly differently because of syntatic differences. Despite these slight changes, the general approach is still the same. I will describe my methodology in terms of the Node.js code.
 
+First, I read in the source from `source/day2source.txt` and `split()` the string on the new line character, `\n`. I assign this output to the variable `source`. This variable is an array with each element of that array containing the string from each line of the original file.
+
+Next, I create the variable `total` to store the running total of how much wrapping paper we need.
+
+Now that I have my `source` variable and `total` counter, I loop through the array elements of `source`. On each iteration I split the substring in the array element on the character `x`, find the three side sizes, assign them to temporary variables (`s1`, `s2`, `s3`), and then find the smallest of the six sides and store it in the temporary variable `smallest`.
+
+Finally, I add up the dimensions using the given formula and add `smallest` as asked. I then add this value to the current value of `total`. After iterating through all the array elements, I print out the final value of `total`.
 
 ## Solutions
 
@@ -30,9 +39,8 @@ The elves have run out of wrapping paper and ribbon! For this puzzle we are give
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
-var end = source.length
 var total = 0
-for (var i = 0; i < end - 1; i++) {
+for (var i = 0; i < source.length - 1; i++) {
   var tempDim = source[i].split('x')
   var s1 = Number(tempDim[0]) * Number(tempDim[1])
   var s2 = Number(tempDim[2]) * Number(tempDim[1])
@@ -100,7 +108,7 @@ print "The elves need to order", total, "square feet of wrapping paper"
 >How many total **feet of ribbon** should they order?
 
 ## Methodology
-
+This time I need to compare the widths of the packages instead of their face areas. I also need to find the two smallest widths rather than just the smallest. Finally, instead of finding surface area, I need to find a length of ribbon using the given formula.
 
 ## Solutions
 
@@ -109,9 +117,8 @@ print "The elves need to order", total, "square feet of wrapping paper"
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
-var end = source.length
 var total = 0
-for (var i = 0; i < end - 1; i++) {
+for (var i = 0; i < source.length - 1; i++) {
   var tempDim = source[i].split('x')
   var s1 = Number(tempDim[0])
   var s2 = Number(tempDim[1])
