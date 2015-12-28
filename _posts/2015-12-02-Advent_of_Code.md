@@ -6,9 +6,9 @@ tags: [Node.js, Python, programming, Advent of Code]
 comments: true
 ---
 
-This December, [Eric Wastl](http://was.tl/) created a series of holiday themed programming exercises, [Advent of Code](http://adventofcode.com/). This post will detail my solutions to some of these exercises. I didn't get around to solving all of the puzzles, but I will be adding more when I have time to work on them.
+[Eric Wastl](http://was.tl/) has created a series of holiday themed programming exercises over at [Advent of Code](http://adventofcode.com/) and I thought it would be fun to post my solutions to these exercises now that they have all been released. I'll be posting more of my solutions as I have time to write up my methodologies (and complete some of them).
 
-This first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
+The first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
 
 <!--more-->
 
