@@ -6,8 +6,7 @@ tags: [Node.js, Python, programming, Advent of Code]
 comments: true
 ---
 
-SECOND PUZZLE
-This first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
+The elves have run out of wrapping paper and ribbon! For this puzzle we are given the dimensions of a bunch of presents as a list of strings and are asked to compute how much wrapping paper and ribbon should be ordered to wrap the remaining presents.
 
 <!--more-->
 
