@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      ~/Wade &middot; 
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel='stylesheet' href="/public/css/custom.css">
+
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item">
+    <p>A tech blog to share my knowledge with others.</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/">Home</a>
+
+    
+
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+          <a class="sidebar-nav-item" href="/about/">About Me</a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+          <a class="sidebar-nav-item" href="/posts/">Posts</a>
+        
+      
+    
+      
+        
+          <a class="sidebar-nav-item" href="/resume/">Résumé</a>
+        
+      
+    
+  </nav>
+
+  <div class="sidebar-item">
+    <p>
+      &copy; 2015. All rights reserved.
+    </p>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">~/Wade</a>
+            <small></small>
+            <div class='wade-social'>
+              <a href='https://github.com/keawade/'><i class="wade-icon fa fa-github-square"></i></a>
+              <a href='https://twitter.com/TheKeithWade/'><i class="wade-icon fa fa-twitter-square"></i></a>
+              <a href='https://www.linkedin.com/in/keawade'><i class="wade-icon fa fa-linkedin-square"></i></a>
+            </div>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        
+  <article>
+    <header>
+      <h2><a href="/2015/07/03/Configuring_a_Hyper-V_Cluster/">Configuring a Hyper-V Cluster</a></h2>
+      <p><time datetime="2015-07-03T22:00:00-07:00">Jul 3, 2015</time> • </p>
+    </header>
+    <div>
+      <p>Hyper-V can be a particularly useful tool for consolidating computing resources.
+However, while consolidating machines into VMs can lower your hardware overhead
+costs, this introduces a single failure point for all your machines. If the Hyper-V
+server goes down, all your VMs will go down as well.</p>
+
+<p>To overcome this issue, we can use Hyper-V’s Failover and Load-balancing tools
+to build a Hyper-V cluster. These tools will provide failover for our machines so
+that, in the event of a critical failure on one of our Hyper-V nodes, the VMs
+running on that node will come back up on another node within seconds.</p>
+
+
+    </div>
+    <footer>
+      <p><a href="/2015/07/03/Configuring_a_Hyper-V_Cluster/"> &raquo;</a></p>
+    </footer>
+  </article>
+
+  <article>
+    <header>
+      <h2><a href="/2014/08/03/NTP_Configuration/">NTP Server Configuration</a></h2>
+      <p><time datetime="2014-08-03T22:00:00-07:00">Aug 3, 2014</time> • </p>
+    </header>
+    <div>
+      <p><a href="https://en.wikipedia.org/wiki/Network_Time_Protocol">Network Time Protocol</a> (NTP) is used to synchronize computers around the world to allow for better communications on networks with changing latency such as the internet. This is done with a tiered infrastructure of timing devices.</p>
+
+<p>The top tier, stratum zero, consists of high precision time devices like <a href="https://en.wikipedia.org/wiki/Atomic_clock">atomic clocks</a> or <a href="https://en.wikipedia.org/wiki/GPS_clock#GPS_clocks">global positioning system clocks</a> that keep extremely precise time. Below this tier is stratum one which consists of servers with their system clocks closely synchronized with an attached stratum zero device. Next are the stratum two servers with synchronization to stratum one servers and so on.</p>
+
+<p>To avoid overloading stratum one servers with time requests from clients most stratum one servers are not available for public time requests. Instead, many stratum two servers are maintained specifically for the purpose of providing time synchronization to any client machine. These servers are often managed by businesses for their internal networks but many are managed by organizations like universities or the National Institute of Standards and Technology (NIST) for general use.</p>
+
+<p>The rest of this article will explain how to implement your own time server and configure it.</p>
+
+
+    </div>
+    <footer>
+      <p><a href="/2014/08/03/NTP_Configuration/"> &raquo;</a></p>
+    </footer>
+  </article>
+
+
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+  </body>
+</html>
