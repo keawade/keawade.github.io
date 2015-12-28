@@ -28,3 +28,5 @@ more:                 'Read more '
 kramdown:
   input:              GFM
 highlighter:          pygments
+comments:
+    disqus: "keawade"
