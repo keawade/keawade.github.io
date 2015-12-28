@@ -6,7 +6,7 @@ relative_permalinks: true
 
 # Setup
 title:               ~/Wade
-tagline:             'A tech blog by keawade'
+tagline:             ''
 description:         'A tech blog to share my knowledge with others.'
 url:                 http://www.keithwade.com
 baseurl:             ''
@@ -15,7 +15,13 @@ paginate:            5
 # About/contact
 author:
   name:              Keith Wade
-  twitter:           https://twitter.com/TheKeithWade
-  github:            https://github.com/keawade
-  linkedin:          https://www.linkedin.com/pub/keith-wade/105/566/8b4
   email:             keawade@gmail.com
+
+links:
+  github: "https://github.com/keawade/"
+  twitter: "https://twitter.com/TheKeithWade/"
+  reddit: "https://www.reddit.com/user/keawade/"
+  linkedin: "https://www.linkedin.com/in/keawade"
+
+excerpt_separator: <!--more-->
+defaults: [{scope: {path: ""}, values: {layout: "default"}}, {scope: {path: "", type: "posts"}, values: {comments: true}}]
