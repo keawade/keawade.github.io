@@ -1,32 +1,27 @@
-title: "~/Wade"
-author: "Keith Wade"
-description: "Technology blogging and tutorials"
-#subheading: "Really cool blog about ... something"
-more: "read more"
-url: "http://keawade.github.io"
-#baseurl: "/contrast" # comment out if in root directory
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+relative_permalinks: true
 
-comments:
-    disqus: "keawade"
-#    isso: "comments.mysite.org"
+# Setup
+title:               ~/Wade
+tagline:             ''
+description:         'A tech blog to share my knowledge with others.'
+url:                 http://www.keithwade.com
+baseurl:             ''
+paginate:            5
 
-style:
-#    body: "whitesmoke"
-    padding: 33%
-    anchor: "#46f"
-    serif-heading: true
-    nav: "#181818"
-#    headline: "#06f"
-    description: "white"
-    article:
-        odd: "#ffffff"
-        even: "#222222"
+# About/contact
+author:
+  name:              Keith Wade
+  email:             keawade@gmail.com
 
 links:
-  - github: "https://github.com/keawade/"
-  - twitter: "https://twitter.com/TheKeithWade/"
-  - reddit: "https://www.reddit.com/user/keawade/"
-  - linkedin: "https://www.linkedin.com/pub/keith-wade/105/566/8b4"
+  github: "https://github.com/keawade/"
+  twitter: "https://twitter.com/TheKeithWade/"
+  reddit: "https://www.reddit.com/user/keawade/"
+  linkedin: "https://www.linkedin.com/in/keawade"
 
 excerpt_separator: <!--more-->
 defaults: [{scope: {path: ""}, values: {layout: "default"}}, {scope: {path: "", type: "posts"}, values: {comments: true}}]

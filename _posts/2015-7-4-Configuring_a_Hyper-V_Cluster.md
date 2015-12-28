@@ -1,4 +1,5 @@
 ---
+layout: post
 title: Configuring a Hyper-V Cluster
 date: 2015-07-04 05:00:00
 tags: [Windows, Server 2012, Configuration, Hyper-V, Clustering]
@@ -89,7 +90,7 @@ storage solution uses Multipath I/O, install that now using this [PowerShell com
 utility now. Be sure to select the deselected option when prompted for components
 to install.
 
->I don't think the nodes _must_ be members of a domain but it does make several 
+>I don't think the nodes _must_ be members of a domain but it does make several
 steps in the install simpler.
 
 ## Install Hyper-V
