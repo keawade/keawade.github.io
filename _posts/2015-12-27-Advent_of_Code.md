@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Advent of Code - Day 1: Not Quite Lisp'
-date: 2015-12-28 23:46:00
+date: 2015-12-27 23:46:00
 tags: [Node.js, Python, programming, Advent of Code]
 comments: true
 ---

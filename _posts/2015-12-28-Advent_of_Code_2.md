@@ -1,13 +1,12 @@
 ---
 layout: post
 title: 'Advent of Code - Day 2: I Was Told There Would Be No Math'
-date: 2015-12-27 23:46:00
+date: 2015-12-28 00:30:00
 tags: [Node.js, Python, programming, Advent of Code]
 comments: true
 ---
 
-This December, [Eric Wastl](http://was.tl/) created a series of holiday themed programming exercises, [Advent of Code](http://adventofcode.com/). This post will detail my solutions to some of these exercises. I didn't get around to solving all of the puzzles, but I will be adding more when I have time to work on them.
-
+SECOND PUZZLE
 This first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
 
 <!--more-->
