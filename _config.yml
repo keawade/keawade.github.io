@@ -24,6 +24,7 @@ links:
   linkedin:           "https://www.linkedin.com/in/keawade"
 
 excerpt_separator:    <!--more-->
+more:                 'Read more '
 kramdown:
   input:              GFM
 highlighter:          pygments
