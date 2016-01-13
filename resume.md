@@ -5,7 +5,7 @@ title: Résumé
 
 References are available upon request.
 
-#Union College 2012-{{ site.time | date: '%Y' }}
+# Union College 2012-{{ site.time | date: '%Y' }}
 **Information Systems Server Technician**
 
 * Installed and configured a Hyper-V Cluster with SAN storage
@@ -26,7 +26,7 @@ References are available upon request.
 
 **Computer Science Tutor**
 
-#Union College 2015 Extracurricular
+# Union College 2015 Extracurricular
 
 **Tech & Tabletop Club Officer**
 
@@ -35,21 +35,21 @@ References are available upon request.
   * [uctechtabletop.org](http://www.uctechtabletop.org)
 
 
-#Walla Walla University 2010-2011
+# Walla Walla University 2010-2011
 **Information Systems Technician**
 
 * Was part of a team that provided support for over 2000 users
 * Provided on site desktop support for faculty and students
 * Performed hardware maintenance and repairs
 
-#Camp MiVoden Summer 2010
+# Camp MiVoden Summer 2010
 **Information Systems Coordinator**
 
 * Managed on-site network
 * Provided technical support for the computing and A/V systems
 * Provided A/V services for daily meetings
 
-#Upper Columbia Academy 2006-2010
+# Upper Columbia Academy 2006-2010
 **Information Systems Technician**
 
 * Was part of a team that provided support for a network with over 300 users
