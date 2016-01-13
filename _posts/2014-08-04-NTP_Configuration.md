@@ -17,7 +17,7 @@ The rest of this article will explain how to implement your own time server and 
 
 <!--more-->
 
-##Planning
+## Planning
 
 We need to choose public servers to synchronize with. There are several lists we can choose upstream servers from.
 
