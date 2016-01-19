@@ -26,11 +26,12 @@ We need to choose public servers to synchronize with. There are several lists we
 * [NIST Internet Time Servers](http://tf.nist.gov/tf-cgi/servers.cgi)
 
 There are [a few things](http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.1.) to keep in mind when selecting your upstream servers.
+
 1. Do not use any time servers which you do not have permission to use! The severs you select should be:
-   * Public time servers made available by your service provider or OS vendor to their customers
-   * And/or, other private time servers for which you have been given explicit permission and instructions on proper use
-   * And/or, the time servers designated by the pool.ntp.org project
-   * And/or, on one of the public lists of time servers
+  * Public time servers made available by your service provider or OS vendor to their customers
+  * And/or, other private time servers for which you have been given explicit permission and instructions on proper use
+  * And/or, the time servers designated by the pool.ntp.org project
+  * And/or, on one of the public lists of time servers
 2. Make sure your selected servers are diverse and not maintained by or synchronized with the same organizations.
 3. Make sure your selected servers are moderately close to your network location. This is not super critical, but try to avoid servers half way around the world.
 
@@ -48,7 +49,7 @@ For this guide, I've selected seven stratum one servers from around the United S
 * [nist1.columbiacountyga.gov](http://support.ntp.org/bin/view/Servers/PublicTimeServer000378)
 * [gclock02.dupa01.burst.net](http://support.ntp.org/bin/view/Servers/PublicTimeServer000974)
 
-##Installation
+## Installation
 
 This guide will work with NTP on CentOS. Other Linux distributions will have slight differences but should not be to difficult to configure using this guide.
 First, install the Network Time Protocol.
@@ -65,7 +66,7 @@ If you are running an older version of CentOS you will need to use chkconfig to 
 
 Now our NTP service will run every time the server boots. At this point we're ready to start configuring the server. We won't start the service yet, we'll wait until we have a basic configuration to test first.
 
-##Server Configuration
+## Server Configuration
 
 Now that you have selected your upstream servers and have installed NTP on your own server, you are ready to start configuring NTP to synchronize. We will first make a backup of your original NTP configuration file so we can look through it later. For now though we will delete the original (But not the backup!), and then create our own config file to work with.
 
@@ -100,6 +101,7 @@ Now lets break down each of these pieces and figure out what they do.
 First, the **drift file**. The drift file stores information about your system clock's drift tendency. Most system clocks keep time reasonably well but still require synchronization in order to remain accurate. The drift file keeps track of how much your system clock tends to drift from actual time. Then, if you lose your connection to your synchronization servers, it can correct itself based on the drift data it has collected. This give you a bit of slack to work with if your connections ever go down.
 
 The **restrict** lines restricts what external machines can do to our server. The **server **lines define the addresses we will attempt to synchronize with. First we declare the server name and then add the **iburst** parameter. The [iburst parameter](http://doc.ntp.org/4.1.1/confopt.htm) has the service send a burst of eight packets instead of only one when the server is unreachable to help speed up the time to acquire a connection.
+
 The **disable monitor** line [fixes a vulnerability](http://support.ntp.org/bin/view/Main/SecurityNotice#DRDoS_Amplification_Attack_using) from January 2014 on older versions of NTP.
 
 We can now save our config file and start the service!
@@ -126,7 +128,7 @@ or
 
 Once the server is running we can use the command `ntpq -p` to list our servers and view details about our connections to them. We can also use `ntpstat` to see our current synchronization status. For details on what this data means, check the [NTP documentation page for the ntpq command](http://doc.ntp.org/4.2.4/ntpq.html).
 
-##Client Configuration
+## Client Configuration
 
 The client configuration is much simpler than the server configuration was. First, repeat the installation steps for the NTP service. Next, repeat the configuration steps but when you create your new ntp.conf file we will do some things differently.
 
