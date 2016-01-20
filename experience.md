@@ -3,7 +3,7 @@ layout: page
 title: Experience
 ---
 
-# Union College 2012-{{ site.time | date: '%Y' }}
+# Union College 2012-2016
 **Information Systems Server Technician**
 
 * Installed and configured a Hyper-V Cluster with SAN storage
