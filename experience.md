@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Résumé
+title: Experience
 ---
 
 # Union College 2012-{{ site.time | date: '%Y' }}
