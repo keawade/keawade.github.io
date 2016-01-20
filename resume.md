@@ -3,8 +3,6 @@ layout: page
 title: Résumé
 ---
 
-References are available upon request.
-
 # Union College 2012-{{ site.time | date: '%Y' }}
 **Information Systems Server Technician**
 
