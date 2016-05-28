@@ -1,33 +1,23 @@
-# Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:            pretty
-relative_permalinks:  true
+# My variables
+name: Keith Wade
+description: Futuristic web design
+google_verification: null
 
-# Setup
-title:                ~/Wade
-tagline:              ''
-description:          'A tech blog to share my knowledge with others.'
-url:                  http://www.keithwade.com
-baseurl:              ''
-paginate:             5
 
-# About/contact
-author:
-  name:               Keith Wade
-  email:              keawade@gmail.com
+# File management
+include: [".htaccess"]
+exclude: ["README.md", "LICENSE"]
 
-links:
-  github:             "https://github.com/keawade/"
-  twitter:            "https://twitter.com/TheKeithWade/"
-  reddit:             "https://www.reddit.com/user/keawade/"
-  linkedin:           "https://www.linkedin.com/in/keawade"
 
-excerpt_separator:    <!--more-->
-more:                 'Read more '
+# Sass
+sass:
+  style: :compressed
+  sass_dir: _sass
+
+
+# Markdown
+markdown: kramdown
 kramdown:
-  input:              GFM
-highlighter:          pygments
-comments:
-    disqus:           "keawade"
-permalink:            date
+  input: GFM
+  hard_wrap: false
+highlighter: rouge
