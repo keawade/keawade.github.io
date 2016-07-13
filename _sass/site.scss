@@ -19,6 +19,7 @@ body {
 	background-color: $bodycolor;
 	background-position: center center;
 	background-attachment: fixed;
+	background: src('#particles-js');
 	@media #{$small} {
 	    background-image: none !important;
 		background: $white;
@@ -33,7 +34,11 @@ body {
 *::before {
 	box-sizing: border-box;
 }
-
+#particles-js {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
 .header {
 	height: 100%;
 	position: relative;
