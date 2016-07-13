@@ -29,7 +29,7 @@ Both of these solutions follow the same basic formula. First, I read in the inpu
 ## Solutions
 
 ### Node.js
-{% highlight js linenos %}
+{% highlight js %}
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -46,7 +46,7 @@ console.log('Santa ends up on floor ' + floor)
 {% endhighlight %}
 
 ### Python
-{% highlight python linenos %}
+{% highlight python %}
 filename = '../source/day1source.txt'
 
 with open(filename) as f:
@@ -75,7 +75,7 @@ To solve this, I modified my code to detect when the `floor` variable equals `-1
 ## Solutions
 
 ### Node.js
-{% highlight js linenos %}
+{% highlight js %}
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -94,7 +94,7 @@ for (var i = 0; i < end; i++) {
 {% endhighlight %}
 
 ### Python
-{% highlight python linenos %}
+{% highlight python %}
 filename = '../source/day1source.txt'
 
 with open(filename) as f:

@@ -1,33 +1,74 @@
-# Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:            pretty
-relative_permalinks:  true
+# Site
+title:              'Keith Wade'
+bio:                'Tech projects and ramblings'
+description:        "Keith Wade is a developer working in web development and digital signage."
+reading_time:       true
+words_per_minute:   200
+logo:               'assets/img/7308850.png'
+background:         'assets/img/placeholder-big.jpg'
+tiled_bg:           false   # Set this true if you want to tile your background image, otherwise it will be covered
+locale:             en_US
+url:                http://localhost:4000
 
-# Setup
-title:                ~/Wade
-tagline:              ''
-description:          'A tech blog to share my knowledge with others.'
-url:                  http://www.keithwade.com
-baseurl:              ''
-paginate:             5
-
-# About/contact
-author:
-  name:               Keith Wade
-  email:              keawade@gmail.com
-
-links:
-  github:             "https://github.com/keawade/"
-  twitter:            "https://twitter.com/TheKeithWade/"
-  reddit:             "https://www.reddit.com/user/keawade/"
-  linkedin:           "https://www.linkedin.com/in/keawade"
-
-excerpt_separator:    <!--more-->
-more:                 'Read more '
+# Jekyll
+permalink:          /:title/
+markdown:           kramdown
+highlighter:        rouge
 kramdown:
-  input:              GFM
-highlighter:          pygments
-comments:
-    disqus:           "keawade"
-permalink:            date
+  auto_ids:         true
+  footnote_nr:      1
+  entity_output:    as_char
+  toc_levels:       1..6
+  enable_coderay:   false
+mathjax:            true
+sass:
+  sass_dir:         _sass
+  style:            compressed
+
+# Comments
+disqus_shortname:   keawade
+
+# Social
+# if you don't have any of social below, comment the line.
+#google:
+  #plus:            #username
+  #analytics:
+  #verify:
+  #ad-client:
+  #ad-slot:
+#bing-verify:
+#email:
+twitter:            TheKeithWade
+#facebook:           username
+github:             keawade
+#stackoverflow:     123456/username   from a "http://stackoverflow.com/users/123456/username" link
+linkedin:          keawade
+#xing:              username
+#instagram:          username
+#lastfm:            username
+#tumblr:            username
+#pinterest:         username
+#foursquare:        username
+#steam:              username
+#dribbble:          username
+#youtube:           username
+#soundcloud:        username
+#weibo:             username
+#flickr:            username
+#codepen:           username
+#keybase:           username
+#xmpp:              username@server.com
+#hackernews:        username
+
+# Gems
+gems:
+  - jekyll-mentions
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-gist
+
+jekyll-mentions:
+    base_url: https://github.com
+
+# Exclude list
+exclude: [README.md, Gemfile, Gemfile.lock, node_modules, gulpfile.js, package.json, _site, src, vendor, CNAME, LICENSE, Rakefile]

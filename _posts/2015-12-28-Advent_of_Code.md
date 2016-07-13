@@ -36,7 +36,7 @@ Finally, I add up the dimensions using the given formula and add `smallest` as a
 ## Solutions
 
 ### Node.js
-{% highlight js linenos %}
+{% highlight js %}
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
@@ -70,7 +70,7 @@ console.log('The elves need to order ' + total + ' square feet of wrapping paper
 {% endhighlight %}
 
 ### Python
-{% highlight python linenos %}
+{% highlight python %}
 filename = '../source/day2source.txt'
 
 with open(filename) as f:
@@ -114,7 +114,7 @@ This time I need to compare the widths of the packages instead of their face are
 ## Solutions
 
 ### Node.js
-{% highlight js linenos %}
+{% highlight js %}
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
@@ -161,7 +161,7 @@ console.log('The elves need to order ' + total + ' feet of ribbon.')
 {% endhighlight %}
 
 ### Python
-{% highlight python linenos %}
+{% highlight python %}
 filename = '../source/day2source.txt'
 
 with open(filename) as f:
