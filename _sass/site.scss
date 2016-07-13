@@ -36,8 +36,11 @@ body {
 }
 #particles-js {
 	position: absolute;
-	height: 99%;
+	top: 0;
+	left: 0;
+	height: 99.5%;
 	width: 100%;
+	z-index: -100;
 }
 .header {
 	height: 100%;
@@ -46,6 +49,7 @@ body {
 	min-height: 300px;
 	text-align: left;
 	color: $white;
+	z-index: 100;
 	@media #{$small} {
 		display: block !important;
 	}
