@@ -11,7 +11,7 @@ locale:             en_US
 url:                http://www.keithwade.com
 
 # Jekyll
-permalink:          /:title/
+permalink:          /posts/:title/
 markdown:           kramdown
 highlighter:        rouge
 kramdown:
