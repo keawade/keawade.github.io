@@ -9,6 +9,7 @@ logo:               'assets/img/7308850.png'
 #tiled_bg:           false   # Set this true if you want to tile your background image, otherwise it will be covered
 locale:             en_US
 url:                http://keawade.io
+excerpt_separator:    <!--more-->
 
 # Jekyll
 permalink:          /posts/:title/
