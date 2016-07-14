@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Cuddly Weasel'
-excerpt: 'A Calculated Adventure in DOM Manipulation'
+excerpt: 'A calculated adventure in DOM manipulation for calculators'
 date: 2016-01-21
 project: true
 tag:
