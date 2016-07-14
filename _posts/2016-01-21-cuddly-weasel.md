@@ -1,8 +1,12 @@
 ---
 layout: post
 title: 'Cuddly Weasel: A Calculated Adventure in DOM Manipulation'
-date: 2016-01-21 05:00:00
-tags: [JavaScript, DOM, web development, browser]
+date: 2016-01-21
+tag:
+- javascript
+- dom
+- web development
+- browser
 comments: true
 disqus_identifier: 0005
 ---
