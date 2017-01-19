@@ -27,6 +27,9 @@ export default {
 </script>
 
 <style>
+  .ui.segment {
+    padding: 1rem 2rem 1rem !important;
+  }
   body {
     background-color: rgba(23,107,182, 1);
   }
