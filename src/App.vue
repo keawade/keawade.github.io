@@ -1,7 +1,9 @@
 <template>
-  <div id="app" class='ui container'>
+  <div class='ui container'>
+    <div id='particles-js'></div>
     <Header></Header>
     <div class='ui segment'>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -20,7 +22,4 @@ export default {
 </script>
 
 <style>
-  #app {
-    padding-top: 16px;
-  }
 </style>
