@@ -22,4 +22,12 @@ export default {
 </script>
 
 <style>
+  body {
+    background-color: rgba(23,107,182, 1);
+  }
+  .container {
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 16px 16px 0;
+    height: calc(100vh - 16px);
+  }
 </style>

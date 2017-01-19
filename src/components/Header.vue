@@ -21,4 +21,16 @@ export default {
 </script>
 
 <style scoped>
+#header {
+  margin-top: 0;
+}
+.ui.menu .active.item {
+  background-color: rgba(23,107,182, 0.05);
+}
+.ui.menu .item:hover {
+  background-color: rgba(23,107,182, 0.03);
+}
+.ui.menu .active.item:hover {
+  background-color: rgba(23,107,182, 0.03);
+}
 </style>
