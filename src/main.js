@@ -14,7 +14,6 @@ import About from './components/About'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-  mode: 'history',
   routes: [
     {
       path: '/',
