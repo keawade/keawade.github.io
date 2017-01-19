@@ -1,7 +1,7 @@
 <template>
-  <div class='ui container'>
+  <div id='application' class='ui container'>
     <div id='particles-js'></div>
-    <Header></Header>
+    <Navigation></Navigation>
     <div class='ui segment'>
       <router-view></router-view>
     </div>
@@ -9,14 +9,19 @@
 </template>
 
 <script>
-import Header from './components/Header'
+import Navigation from './components/Navigation'
 import './assets/container.min.css'
 import './assets/segment.min.css'
+import particles from 'exports?particlesJS=window.particlesJS,window.pJSDom!particles.js'
+
+particles.particlesJS.load('particles-js', './static/particlesjs-config.json', () => {
+  console.info('particles js loaded')
+})
 
 export default {
   name: 'app',
   components: {
-    Header
+    Navigation
   }
 }
 </script>
@@ -24,6 +29,14 @@ export default {
 <style>
   body {
     background-color: rgba(23,107,182, 1);
+  }
+  #particles-js {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+  }
+  #application {
+    z-index: 1;
   }
   .container {
     background-color: rgba(255, 255, 255, 0.3);
