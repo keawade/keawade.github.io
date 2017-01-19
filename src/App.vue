@@ -40,7 +40,7 @@ export default {
   }
   .container {
     background-color: rgba(255, 255, 255, 0.3);
-    padding: 16px 16px 0;
-    height: calc(100vh - 16px);
+    padding: 16px 16px 16px;
+    min-height: calc(100vh - 32px);
   }
 </style>

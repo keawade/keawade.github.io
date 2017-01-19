@@ -69,6 +69,10 @@ module.exports = {
         loader: 'json'
       },
       {
+        test: /\.md$/,
+        loaders: ['html', 'markdown']
+      },
+      {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url',
         query: {
@@ -85,6 +89,9 @@ module.exports = {
         }
       }
     ]
+  },
+  node: {
+    fs: 'empty'
   },
   eslint: {
     formatter: require('eslint-friendly-formatter')

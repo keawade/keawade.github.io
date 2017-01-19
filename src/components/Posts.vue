@@ -1,12 +1,20 @@
 <template>
   <div id="posts">
     Posts will go here
+    <div v-html='testPost'></div>
   </div>
 </template>
 
 <script>
+const testPost = require('../posts/2014-08-04-NTP_Configuration.md')
+
 export default {
-  name: 'posts'
+  name: 'posts',
+  data () {
+    return {
+      testPost
+    }
+  }
 }
 </script>
 
