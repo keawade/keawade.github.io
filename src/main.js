@@ -8,9 +8,7 @@ import VueRouter from 'vue-router'
 import App from './App'
 
 import Home from './components/Home'
-import Posts from './components/Posts'
 import Post from './components/Post'
-import Projects from './components/Projects'
 import About from './components/About'
 
 Vue.use(VueRouter)
@@ -21,17 +19,11 @@ const router = new VueRouter({
       path: '/',
       component: Home
     }, {
-      path: '/posts',
-      component: Posts
-    }, {
-      path: '/posts/:name',
-      component: Post
-    }, {
-      path: '/projects',
-      component: Projects
-    }, {
       path: '/about',
       component: About
+    }, {
+      path: '/:name',
+      component: Post
     }
   ]
 })

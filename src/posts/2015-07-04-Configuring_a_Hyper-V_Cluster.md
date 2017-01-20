@@ -1,17 +1,6 @@
----
-layout: post
-title: Configuring a Hyper-V Cluster
-date: 2015-07-04 05:00:00
-tags: [Windows, Server 2012, Configuration, Hyper-V, Clustering]
-comments: true
-disqus_identifier: 0002
----
-
 Hyper-V can be a particularly useful tool for consolidating computing resources. However, while consolidating machines into VMs can lower your hardware overhead costs, this introduces a single failure point for all your machines. If the Hyper-V server goes down, all your VMs will go down as well.
 
 To overcome this issue, we can use Hyper-V's Failover and Load-balancing tools to build a Hyper-V cluster. These tools will provide failover for our machines so that, in the event of a critical failure on one of our Hyper-V nodes, the VMs running on that node will come back up on another node within seconds.
-
-<!--more-->
 
 ## Install OS
 

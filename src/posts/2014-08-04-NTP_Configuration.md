@@ -1,12 +1,3 @@
----
-layout: post
-title: NTP Server Configuration
-date: 2014-08-04 05:00:00
-tags: [Linux, CentOS, Network, Configuration, NTP, Network Time Protocol]
-comments: true
-disqus_identifier: 0001
----
-
 [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used to synchronize computers around the world to allow for better communications on networks with changing latency such as the internet. This is done with a tiered infrastructure of timing devices.
 
 The top tier, stratum zero, consists of high precision time devices like [atomic clocks](https://en.wikipedia.org/wiki/Atomic_clock) or [global positioning system clocks](https://en.wikipedia.org/wiki/GPS_clock#GPS_clocks) that keep extremely precise time. Below this tier is stratum one which consists of servers with their system clocks closely synchronized with an attached stratum zero device. Next are the stratum two servers with synchronization to stratum one servers and so on.
@@ -14,8 +5,6 @@ The top tier, stratum zero, consists of high precision time devices like [atomic
 To avoid overloading stratum one servers with time requests from clients most stratum one servers are not available for public time requests. Instead, many stratum two servers are maintained specifically for the purpose of providing time synchronization to any client machine. These servers are often managed by businesses for their internal networks but many are managed by organizations like universities or the National Institute of Standards and Technology (NIST) for general use.
 
 The rest of this article will explain how to implement your own time server and configure it.
-
-<!--more-->
 
 ## Planning
 

@@ -2,7 +2,7 @@
   "posts": [
     {
       "title": "NTP Server Configuration",
-      "date": "2014-08-04 05:00:00",
+      "date": "08-04-2014",
       "excerpt": "This is only a test.",
       "project": false,
       "tags": [
@@ -19,7 +19,7 @@
     },
     {
       "title": "Configuring a Hyper-V Cluster",
-      "date": "2015-07-04 05:00:00",
+      "date": "07-04-2015",
       "excerpt": "This is only a test.",
       "project": false,
       "tags": [
@@ -35,7 +35,7 @@
     },
     {
       "title": "Advent of Code: Not Quite Lisp",
-      "date": "2015-12-27 23:46:00",
+      "date": "12-27-2015",
       "excerpt": "This is only a test.",
       "project": false,
       "tags": [
@@ -50,7 +50,7 @@
     },
     {
       "title": "Advent of Code: I Was Told There Would Be No Math",
-      "date": "2015-12-28 00:30:00",
+      "date": "12-28-2015",
       "excerpt": "This is only a test.",
       "project": false,
       "tags": [
@@ -65,7 +65,7 @@
     },
     {
       "title": "Cuddly Weasel",
-      "date": "2016-01-21",
+      "date": "01-21-2016",
       "excerpt": "A calculated adventure in DOM manipulation for calculators",
       "project": true,
       "tags": [
@@ -80,7 +80,7 @@
     },
     {
       "title": "PokéData",
-      "date": "2016-07-12",
+      "date": "07-12-2016",
       "excerpt": "Pokémon strengths and weaknesses Pokédex built with React/Redux.",
       "project": true,
       "tags": [
@@ -95,7 +95,7 @@
     },
     {
       "title": "PokéData Improved",
-      "date": "2016-09-06",
+      "date": "09-06-2016",
       "excerpt": "Pokémon strengths and weaknesses Pokédex built with React.",
       "project": true,
       "tags": [

@@ -1,35 +1,18 @@
----
-layout: post
-title: 'Cuddly Weasel'
-excerpt: 'A calculated adventure in DOM manipulation for calculators'
-date: 2016-01-21
-project: true
-tag:
-- javascript
-- dom
-- web development
-- browser
-comments: true
-disqus_identifier: 0005
----
-
-Last fall I had a bit of fun building a calculator app, [cuddly-weasel](http://www.keithwade.com/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
+Last fall I had a bit of fun building a calculator app, [cuddly-weasel](/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
 
 The [Data Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction), or DOM, is a programming interface for HTML and XML documents. The DOM provides a way to store a HTML or XML document in an object-oriented representation that can be manipulated with a scripting language like JavaScript.
 
-While [DOM manipulation](https://www.codecademy.com/skills/make-an-interactive-website/topics/jquery-dom-manipulation/jquery-dom) is useful, it generally isn't recommended to do your entire front end with DOM manipulation as it is much simpler to build the outline in HTML or a templating engine like [Jade](http://jade-lang.com/) or [Handlebars](http://handlebarsjs.com/) and then modify that existing code. However, it is possible to generate a page using very little markup and building the page with DOM manipulation and this is exactly what I did for this project.
-
-<!--more-->
+While [DOM manipulation](https://www.codecademy.com/skills/make-an-interactive-website/topics/jquery-dom-manipulation/jquery-dom) is useful, it generally isn't recommended to do your entire front end with DOM manipulation as it is much simpler to build the outline in HTML or a templating engine like ~~[Jade](http://jade-lang.com/)~~ *Edit: Jade has been renamed to [Pug](http://pugjs.org/)* or [Handlebars](http://handlebarsjs.com/) and then modify that existing code. However, it is possible to generate a page using very little markup and building the page with DOM manipulation and this is exactly what I did for this project.
 
 # Cuddly Weasel
 
-The complete [app is available here](http://www.keithwade.com/cuddly-weasel/) and the [source code is available on GitHub](https://github.com/keawade/cuddly-weasel). The rest of this article will highlight some of the more interesting implementations and manipulations in the application.
+The complete [app is available here](/cuddly-weasel/) and the [source code is available on GitHub](https://github.com/keawade/cuddly-weasel). The rest of this article will highlight some of the more interesting implementations and manipulations in the application.
 
 ## Name
 
 This project was one of the first projects that I used GitHub's built in project name generator for. I knew what I was building but didn't care for the dull name of just "Calculator" so I cycled through several names until settling upon `cuddly-weasel`. If I were building this app for anything other than my own personal use and practice, I would probably need to put in more effort. As it stands, though, I just need a unique name for my project and this one is a fun one.
 
-[![Rendered app](/assets/img/posts/cuddly-weasel-01.png)](http://www.keithwade.com/cuddly-weasel/)
+[![Rendered app](http://image.thum.io/get/width/800/crop/700/http://keawade.io/cuddly-weasel)](/cuddly-weasel/)
 
 ## Design Considerations
 
@@ -53,7 +36,7 @@ My app is an interface that uses the [mathjs](http://mathjs.org/) library to do 
 
 Each button element has an event listener listening for a click event. When that event occurs, it calls the `handleButton(event)` function.
 
-{% highlight js %}
+```
 function handleButton(event) {
   var box = document.getElementById('cal-box');
 
@@ -111,7 +94,7 @@ function handleButton(event) {
     this.blur();
   }
 }
-{% endhighlight %}
+```
 
 As you can see, my code uses a line of else-if statements combined with some simple [regular expressions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) to quickly run through the potential inputs from the button's click event.
 
@@ -123,7 +106,7 @@ At the end of the list of possible inputs, I've called `this.blur()` to remove f
 
 The keyboard input was interesting. I started by implementing an event listener to listen for keypress events and evaluate them.
 
-{% highlight js %}
+```
 document.addEventListener('keypress', function(key) {
   var keyString = String.fromCharCode(key.charCode);
   if (key.keyCode == 13) {
@@ -143,7 +126,7 @@ document.addEventListener('keypress', function(key) {
     }
   } // keyCode 46 is Delete
 }, false);
-{% endhighlight %}
+```
 
 Here, the listener waits for a keypress and then does a quick set of evaluations. First, it checks if the keypress is a 
 

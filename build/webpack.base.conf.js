@@ -70,7 +70,7 @@ module.exports = {
       },
       {
         test: /\.md$/,
-        loaders: ['html', 'markdown']
+        loader: 'raw'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
