@@ -46,5 +46,14 @@ export default {
       padding: 16px 16px 16px;
       min-height: calc(100vh - 32px);
     }
+    a {
+      color: rgba(16,77,130, 1);
+    }
+    #post {
+      img {
+        display: block;
+        margin: 0 auto;
+      }
+    }
   }
 </style>

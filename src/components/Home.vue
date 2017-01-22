@@ -1,13 +1,9 @@
 <template>
   <div id="home">
     <h1>Articles and Projects</h1>
-    <div class='ui list'>
-      <div v-for='post in posts' class='item'>
-        <div class='content'>
-          <router-link :to='post.filename' class='header' >{{post.title}}</router-link>
-          <div class='description'>{{post.excerpt}}</div>
-        </div>
-      </div>
+    <div v-for='post in posts' class='article'>
+      <h2 class='header'><router-link :to='post.filename' class=''>{{post.title}}</router-link></h2>
+      <div>{{post.excerpt}}</div>
     </div>
   </div>
 </template>
@@ -27,4 +23,14 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+#home {
+    .article {
+      padding-bottom: 1rem;
+    }
+  .header {
+    a {
+      text-decoration: none;
+    }
+  }
+}
 </style>
