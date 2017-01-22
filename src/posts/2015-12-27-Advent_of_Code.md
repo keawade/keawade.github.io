@@ -18,7 +18,7 @@ Both of these solutions follow the same basic formula. First, I read in the inpu
 ## Solutions
 
 ### Node.js
-{% highlight js %}
+```js
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -32,10 +32,10 @@ for (var i = 0; i < end; i++) {
   }
 }
 console.log('Santa ends up on floor ' + floor)
-{% endhighlight %}
+```
 
 ### Python
-{% highlight python %}
+```python
 filename = '../source/day1source.txt'
 
 with open(filename) as f:
@@ -51,7 +51,7 @@ for line in source:
             floor = floor - 1
 
 print "Santa ends up on floor", floor
-{% endhighlight %}
+```
 
 # Part 2
 
@@ -64,7 +64,7 @@ To solve this, I modified my code to detect when the `floor` variable equals `-1
 ## Solutions
 
 ### Node.js
-{% highlight js %}
+```js
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -80,10 +80,10 @@ for (var i = 0; i < end; i++) {
     console.log('The character ' + source.charAt(i) + ' at position ' + i + ' sent santa to the basement.')
   }
 }
-{% endhighlight %}
+```
 
 ### Python
-{% highlight python %}
+```python
 filename = '../source/day1source.txt'
 
 with open(filename) as f:
@@ -102,4 +102,4 @@ for line in source:
         if floor == -1:
             print "Santa enters the basement on instruction", count
             break
-{% endhighlight %}
+```
