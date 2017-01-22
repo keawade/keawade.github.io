@@ -3,7 +3,7 @@
     {
       "title": "NTP Server Configuration",
       "date": "08-04-2014",
-      "excerpt": "This is only a test.",
+      "excerpt": "A brief guide to the Network Time Protocol and its configuration.",
       "project": false,
       "tags": [
         "Linux",
@@ -20,7 +20,7 @@
     {
       "title": "Configuring a Hyper-V Cluster",
       "date": "07-04-2015",
-      "excerpt": "This is only a test.",
+      "excerpt": "A step by step guide to configuring a basic Hyper-V Cluster on Windows Server 2012.",
       "project": false,
       "tags": [
         "Windows",
@@ -36,7 +36,7 @@
     {
       "title": "Advent of Code: Not Quite Lisp",
       "date": "12-27-2015",
-      "excerpt": "This is only a test.",
+      "excerpt": "My solutions and approach to the first Advent of Code challenge for 2015.",
       "project": false,
       "tags": [
         "Node.js",
@@ -51,7 +51,7 @@
     {
       "title": "Advent of Code: I Was Told There Would Be No Math",
       "date": "12-28-2015",
-      "excerpt": "This is only a test.",
+      "excerpt": "My solutions and approach to the second Advent of Code challenge for 2015.",
       "project": false,
       "tags": [
         "Node.js",
@@ -66,7 +66,7 @@
     {
       "title": "Cuddly Weasel",
       "date": "01-21-2016",
-      "excerpt": "A calculated adventure in DOM manipulation for calculators",
+      "excerpt": "A calculated adventure in DOM manipulation for calculators.",
       "project": true,
       "tags": [
         "javascript",
@@ -106,6 +106,20 @@
       "comments": true,
       "id": "0007",
       "filename": "2016-09-06-Pokedata_Improved"
+    },
+    {
+      "title": "PokéData Vue",
+      "date": "01-22-2017",
+      "excerpt": "Pokémon strengths and weaknesses Pokédex built with Vue!",
+      "project": true,
+      "tags": [
+        "pokemon",
+        "javascript",
+        "vue"
+      ],
+      "comments": true,
+      "id": "0007",
+      "filename": "2017-01-22-Pokedata_Vue"
     }
   ]
 }
