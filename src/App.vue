@@ -45,12 +45,17 @@ export default {
       background-color: rgba(255, 255, 255, 0.3);
       padding: 16px 16px 16px;
       min-height: calc(100vh - 32px);
+
+      & {
+        max-width: 100%;
+      }
     }
     a {
       color: rgba(16,77,130, 1);
     }
     #post {
       img {
+        max-width: 100%;
         display: block;
         margin: 0 auto;
       }
