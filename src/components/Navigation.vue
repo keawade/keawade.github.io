@@ -18,17 +18,21 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 #header {
   margin-top: 0;
 }
-.ui.menu .active.item {
-  background-color: rgba(23,107,182, 0.05);
-}
-.ui.menu .item:hover {
-  background-color: rgba(23,107,182, 0.03);
-}
-.ui.menu .active.item:hover {
-  background-color: rgba(23,107,182, 0.03);
+.ui.menu {
+  .item {
+    &.active {
+      background-color: rgba(23,107,182, 0.05);
+    }
+    .item:hover {
+      background-color: rgba(23,107,182, 0.03);
+      &.active:hover {
+        background-color: rgba(23,107,182, 0.03);
+      }
+    }
+  }
 }
 </style>

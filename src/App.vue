@@ -26,24 +26,25 @@ export default {
 }
 </script>
 
-<style>
-  .ui.segment {
-    padding: 1rem 2rem 1rem !important;
-  }
+<style lang='scss'>
   body {
     background-color: rgba(23,107,182, 1);
-  }
-  #particles-js {
-    position: fixed;
-    height: 100%;
-    width: 100%;
-  }
-  #application {
-    z-index: 1;
-  }
-  .container {
-    background-color: rgba(255, 255, 255, 0.3);
-    padding: 16px 16px 16px;
-    min-height: calc(100vh - 32px);
+
+    .ui.segment {
+      padding: 1rem 2rem 1rem !important;
+    }
+    #particles-js {
+      position: fixed;
+      height: 100%;
+      width: 100%;
+    }
+    #application {
+      z-index: 1;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.3);
+      padding: 16px 16px 16px;
+      min-height: calc(100vh - 32px);
+    }
   }
 </style>
