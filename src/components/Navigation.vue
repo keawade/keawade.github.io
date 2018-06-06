@@ -2,7 +2,7 @@
   <div id="header" class='ui stackable menu'>
     <router-link to='/' class='item header'>Keith Wade</router-link>
     <router-link to='/about' class='item' active-class='active'>about</router-link>
-    <a class='item' href='http://github.com/keawade' target='_blank'><i class="fa fa-github fa-lg" aria-hidden="true"></i></a>
+    <a class='item' href='http://gitlab.com/keawade' target='_blank'><i class="fa fa-gitlab fa-lg" aria-hidden="true"></i></a>
     <a class='item' href='http://twitter.com/TheKeithWade' target='_blank'><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a>
     <a class='item' href='http://linkedin.com/in/keawade' target='_blank'><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a>
     <!-- <a class='item' href='https://mastodon.social/web/accounts/223684' target='_blank'>
