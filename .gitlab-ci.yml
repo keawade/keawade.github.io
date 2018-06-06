@@ -1,5 +1,5 @@
 # Require NodeJS environment
-image: node-yarn:latest
+image: kkarczmarczyk/node-yarn:latest
 
 before_script:
   - yarn
