@@ -1,6 +1,6 @@
-# keawade.github.io
+# keawade.gitlab.io
 
-> Keawade.io built with Vue.
+> `keawade.io` built with Vue.
 
 ## Build Setup
 
