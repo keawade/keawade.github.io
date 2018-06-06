@@ -1,8 +1,8 @@
 # Require NodeJS environment
-image: kkarczmarczyk/node-yarn:latest
+image: node:9
 
 before_script:
-  - yarn
+  - npm install
 
 # cache 'node_modules' to speed up builds
 cache:
@@ -11,7 +11,7 @@ cache:
 
 pages:
   script:
-    - yarn build
+    - npm run build
   artifacts:
     paths:
       - public
