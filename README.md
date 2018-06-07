@@ -1,6 +1,6 @@
 # keawade.gitlab.io
 
-> `keawade.io` built with Vue.
+> `keithwade.com` built with Vue.
 
 ## Build Setup
 
