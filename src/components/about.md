@@ -1,6 +1,6 @@
 # About Me
 
-I enjoy solving problems. This is what has inspired me to work in computing as systems technicians and is also what has pushed me to study computer science to become a developer. I am currently a software developer for the digital signage company [Nanonation, Inc.](https://www.nanonation.net/)
+I enjoy solving problems. This is what inspires me to work as a software developer. I am currently a software developer for the digital signage company [Nanonation, Inc.](https://www.nanonation.net/)
 
 # Work History
 
@@ -10,12 +10,10 @@ I enjoy solving problems. This is what has inspired me to work in computing as s
 ## Union College 2012-2016
 **Information Systems Server Technician**
 
-* Installed and configured a Hyper-V Cluster with SAN storage
-* Set up over a dozen servers from scratch using both Windows and Linux environments running services such as LDAP, DHCP, DNS, NTP, Apache, Node, and Django.
-* Managed migrations from Hyper-V 2008 to 2012 R2 and Vmware to Hyper-V 2012 R2
-* Create automated scripts for Powershell, Bash, and batch
-* Worked on development for an in-house documentation web application running on Node.js
-* Implemented and managed osTicket for use by the college Information Systems deparment
+* Improved our server systems efficiency and maintainability by implementing a Hyper-V virtualization
+server cluster and migrating our existing server infrastructure to the cluster.
+* Provisioned and maintained over a dozen servers in a mixed Windows and Linux environment.
+* Improved personal efficiency by automating tasks with PowerShell, Bash, and batch scripts.
 
 **Information Systems Desktop Technician**
 
