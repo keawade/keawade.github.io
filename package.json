@@ -23,7 +23,7 @@
     "lint:base": "tslint -p tsconfig.json",
     "lint:check": "npm run lint:base",
     "lint": "npm run lint:base -- --fix",
-    "prettier:base": "prettier \"{.,{src,test}/**}/*.@(ts|js)\"",
+    "prettier:base": "prettier \"{.,{src,test}/**}/*.@(ts|tsx|js|jsx)\"",
     "prettier:check": "npm run prettier:base -- --list-different",
     "prettier": "npm run prettier:base -- --write",
     "precise-commits": "precise-commits"
