@@ -19,7 +19,8 @@
     "eject": "react-scripts eject",
     "prettier:base": "prettier \"{.,{src,test}/**}/*.@(ts|js)\"",
     "prettier:check": "npm run prettier:base -- --list-different",
-    "prettier": "npm run prettier:base -- --write"
+    "prettier": "npm run prettier:base -- --write",
+    "precise-commits": "precise-commits"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -31,6 +32,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "husky": "^1.3.1",
+    "precise-commits": "^1.0.2",
     "prettier": "^1.16.4"
   }
 }
