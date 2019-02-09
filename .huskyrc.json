@@ -1,5 +1,6 @@
 {
   "hooks": {
-    "pre-commit": "npm run precise-commits"
+    "pre-commit": "npm run precise-commits",
+    "pre-push": "npm run check"
   }
 }
