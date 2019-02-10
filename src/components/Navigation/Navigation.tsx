@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 import './Navigation.scss';
 
@@ -21,11 +22,13 @@ export const Navigation: React.FunctionComponent = (
 ) => {
   return (
     <Menu id='navigation' stackable>
-      <Menu.Item header className='icon-heading'>
-        <Image avatar className='keawade-avatar' src='GithubAvatar.png' />
+      <Menu.Item as={Link} to='/' header className='icon-heading'>
+        <Image avatar className='keawade-avatar' src='/GithubAvatar.png' />
         <span>Keith Wade</span>
       </Menu.Item>
-      <Menu.Item>About</Menu.Item>
+      <Menu.Item as={Link} to='/about' link>
+        About
+      </Menu.Item>
       <Menu.Item href='https://twitter.com/TheKeithWade' target='_blank'>
         <FontAwesomeIcon className='heading-icon' size='lg' icon={faTwitter} />
       </Menu.Item>
