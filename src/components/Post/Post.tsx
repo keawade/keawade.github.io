@@ -1,14 +1,16 @@
 import * as React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 
 import './Post.scss';
 
 import { Segment } from 'semantic-ui-react';
 
-// tslint:disable-next-line:no-empty-interface
-interface IPostProps {
-  // stuff
-}
+interface IPostProps extends RouteComponentProps<{ post: string }> {}
 
-export const Post: React.FunctionComponent = (props: IPostProps) => {
-  return <Segment>Post Page</Segment>;
+export const Post: React.FunctionComponent<IPostProps> = ({
+  history,
+  location,
+  match,
+}) => {
+  return <Segment>{match.params.post}</Segment>;
 };

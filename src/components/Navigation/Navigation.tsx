@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
 import './Navigation.scss';
 
@@ -12,14 +12,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Image, Menu } from 'semantic-ui-react';
 
-// tslint:disable-next-line:no-empty-interface
-interface INavigationProps {
-  // stuff
-}
-
-export const Navigation: React.FunctionComponent = (
-  props: INavigationProps,
-) => {
+export const Navigation: React.FunctionComponent<
+  RouteComponentProps
+> = props => {
   return (
     <Menu id='navigation' stackable>
       <Menu.Item as={Link} to='/' header className='icon-heading'>
@@ -27,7 +22,7 @@ export const Navigation: React.FunctionComponent = (
         <span>Keith Wade</span>
       </Menu.Item>
       <Menu.Item as={Link} to='/about' link>
-        About
+        about
       </Menu.Item>
       <Menu.Item href='https://twitter.com/TheKeithWade' target='_blank'>
         <FontAwesomeIcon className='heading-icon' size='lg' icon={faTwitter} />

@@ -1,14 +1,10 @@
 import * as React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 
 import './About.scss';
 
 import { Segment } from 'semantic-ui-react';
 
-// tslint:disable-next-line:no-empty-interface
-interface IAboutProps {
-  // stuff
-}
-
-export const About: React.FunctionComponent = (props: IAboutProps) => {
+export const About: React.FunctionComponent<RouteComponentProps> = props => {
   return <Segment>About Page</Segment>;
 };

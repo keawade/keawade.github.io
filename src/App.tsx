@@ -23,7 +23,7 @@ class App extends Component {
 
         <Router>
           <Container id='application'>
-            <Navigation />
+            <Route component={Navigation} />
 
             <Switch>
               <Route exact path='/' component={Home} />
