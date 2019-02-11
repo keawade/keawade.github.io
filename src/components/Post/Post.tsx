@@ -5,7 +5,9 @@ import './Post.scss';
 
 import Markdown from 'react-markdown';
 import { Loader, Segment } from 'semantic-ui-react';
+
 import { FourOhFour } from '../FourOhFour';
+import { CodeBlock } from './CodeBlock';
 
 interface IPostProps extends RouteComponentProps<{ post: string }> {}
 
@@ -51,7 +53,7 @@ export class Post extends React.Component<IPostProps, IPostState> {
   public render() {
     if (!this.state.markdownSource && !this.state.error) {
       return (
-        <Segment>
+        <Segment id='post'>
           <Loader />
         </Segment>
       );
@@ -62,8 +64,11 @@ export class Post extends React.Component<IPostProps, IPostState> {
     }
 
     return (
-      <Segment>
-        <Markdown source={this.state.markdownSource} />
+      <Segment id='post'>
+        <Markdown
+          source={this.state.markdownSource}
+          renderers={{ code: CodeBlock }}
+        />
       </Segment>
     );
   }
