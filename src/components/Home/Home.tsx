@@ -16,7 +16,7 @@ export const Home: React.FunctionComponent<RouteComponentProps> = props => {
         {posts
           .sort((a, b) => (new Date(a.date) < new Date(b.date) ? 1 : -1))
           .map(post => (
-            <PostItem post={post} />
+            <PostItem post={post} key={post.title} />
           ))}
       </List>
     </Segment>
