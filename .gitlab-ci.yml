@@ -1,0 +1,19 @@
+# Require NodeJS environment
+image: node:9
+
+before_script:
+  - npm install
+
+# cache 'node_modules' to speed up builds
+cache:
+  paths:
+    - node_modules/
+
+pages:
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
