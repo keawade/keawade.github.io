@@ -12,7 +12,7 @@ export interface IPost {
 export const posts: IPost[] = [
   {
     title: 'NTP Server Configuration',
-    date: '08-04-2014',
+    date: '2014-08-04',
     excerpt:
       'A brief guide to the Network Time Protocol and its configuration.',
     project: false,
@@ -30,7 +30,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'Configuring a Hyper-V Cluster',
-    date: '07-04-2015',
+    date: '2015-07-04',
     excerpt:
       'A step by step guide to configuring a basic Hyper-V Cluster on Windows Server 2012.',
     project: false,
@@ -41,7 +41,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'Advent of Code: Not Quite Lisp',
-    date: '12-27-2015',
+    date: '2015-12-27',
     excerpt:
       'My solutions and approach to the first Advent of Code challenge for 2015.',
     project: false,
@@ -52,7 +52,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'Advent of Code: I Was Told There Would Be No Math',
-    date: '12-28-2015',
+    date: '2015-12-28',
     excerpt:
       'My solutions and approach to the second Advent of Code challenge for 2015.',
     project: false,
@@ -63,7 +63,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'Cuddly Weasel',
-    date: '01-21-2016',
+    date: '2016-01-21',
     excerpt: 'A calculated adventure in DOM manipulation for calculators.',
     project: true,
     tags: ['javascript', 'dom', 'web development', 'browser'],
@@ -73,7 +73,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'PokéData',
-    date: '07-12-2016',
+    date: '2016-07-12',
     excerpt: 'Pokémon strengths and weaknesses Pokédex built with React/Redux.',
     project: true,
     tags: ['pokemon', 'javascript', 'react', 'redux'],
@@ -83,7 +83,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'PokéData Improved',
-    date: '09-06-2016',
+    date: '2016-09-06',
     excerpt: 'Pokémon strengths and weaknesses Pokédex built with React.',
     project: true,
     tags: ['pokemon', 'javascript', 'react'],
@@ -93,7 +93,7 @@ export const posts: IPost[] = [
   },
   {
     title: 'PokéData Vue',
-    date: '01-22-2017',
+    date: '2017-01-22',
     excerpt: 'Pokémon strengths and weaknesses Pokédex built with Vue!',
     project: true,
     tags: ['pokemon', 'javascript', 'vue'],
