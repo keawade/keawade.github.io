@@ -1,6 +1,7 @@
 export interface IPost {
   title: string;
   date: string;
+  author: string;
   excerpt: string;
   project: boolean;
   tags: string[];
@@ -13,6 +14,7 @@ export const posts: IPost[] = [
   {
     title: 'NTP Server Configuration',
     date: '2014-08-04',
+    author: 'Keith Wade',
     excerpt:
       'A brief guide to the Network Time Protocol and its configuration.',
     project: false,
@@ -31,6 +33,7 @@ export const posts: IPost[] = [
   {
     title: 'Configuring a Hyper-V Cluster',
     date: '2015-07-04',
+    author: 'Keith Wade',
     excerpt:
       'A step by step guide to configuring a basic Hyper-V Cluster on Windows Server 2012.',
     project: false,
@@ -42,6 +45,7 @@ export const posts: IPost[] = [
   {
     title: 'Advent of Code: Not Quite Lisp',
     date: '2015-12-27',
+    author: 'Keith Wade',
     excerpt:
       'My solutions and approach to the first Advent of Code challenge for 2015.',
     project: false,
@@ -53,6 +57,7 @@ export const posts: IPost[] = [
   {
     title: 'Advent of Code: I Was Told There Would Be No Math',
     date: '2015-12-28',
+    author: 'Keith Wade',
     excerpt:
       'My solutions and approach to the second Advent of Code challenge for 2015.',
     project: false,
@@ -64,6 +69,7 @@ export const posts: IPost[] = [
   {
     title: 'Cuddly Weasel',
     date: '2016-01-21',
+    author: 'Keith Wade',
     excerpt: 'A calculated adventure in DOM manipulation for calculators.',
     project: true,
     tags: ['javascript', 'dom', 'web development', 'browser'],
@@ -74,6 +80,7 @@ export const posts: IPost[] = [
   {
     title: 'PokéData',
     date: '2016-07-12',
+    author: 'Keith Wade',
     excerpt: 'Pokémon strengths and weaknesses Pokédex built with React/Redux.',
     project: true,
     tags: ['pokemon', 'javascript', 'react', 'redux'],
@@ -84,6 +91,7 @@ export const posts: IPost[] = [
   {
     title: 'PokéData Improved',
     date: '2016-09-06',
+    author: 'Keith Wade',
     excerpt: 'Pokémon strengths and weaknesses Pokédex built with React.',
     project: true,
     tags: ['pokemon', 'javascript', 'react'],
@@ -94,6 +102,7 @@ export const posts: IPost[] = [
   {
     title: 'PokéData Vue',
     date: '2017-01-22',
+    author: 'Keith Wade',
     excerpt: 'Pokémon strengths and weaknesses Pokédex built with Vue!',
     project: true,
     tags: ['pokemon', 'javascript', 'vue'],

@@ -32,7 +32,9 @@ export const PostItem: React.FunctionComponent<{ post: IPost }> = ({
         <Header as='h2'>
           <Link to={`/posts/${post.filename}`}>{post.title}</Link>
         </Header>
-        <div className='date'>{moment(post.date).format('LL')}</div>
+        <div className='date'>
+          {moment(post.date).format('LL')} - {post.author}
+        </div>
       </div>
       <div className='excerpt'>{post.excerpt}</div>
     </List.Item>

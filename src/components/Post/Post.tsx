@@ -10,6 +10,8 @@ import { Header, Loader, Segment } from 'semantic-ui-react';
 import { FourOhFour } from '../FourOhFour';
 import { CodeBlock } from './CodeBlock';
 
+import { IPost, posts } from '../../posts/posts';
+
 interface IPostProps extends RouteComponentProps<{ post: string }> {}
 
 interface IPostState {
@@ -64,19 +66,17 @@ export class Post extends React.Component<IPostProps, IPostState> {
       return <FourOhFour {...this.props} />;
     }
 
-    const title = this.props.match.params.post
-      .slice(11)
-      .split('_')
-      .join(' ');
-    const date = moment(this.props.match.params.post.slice(0, 10)).format('LL');
-    const author = 'Keith Wade';
+    const post = posts.find(
+      item => item.filename === this.props.match.params.post,
+    )!;
+    const date = moment(post.date).format('LL');
 
     return (
       <Segment id='post'>
         <Header as='h1'>
-          {title}
+          {post.title}
           <Header.Subheader>
-            {author} - {date}
+            {date} - {post.author}
           </Header.Subheader>
         </Header>
 
