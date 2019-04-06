@@ -3,8 +3,9 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import './Post.scss';
 
+import moment from 'moment';
 import Markdown from 'react-markdown';
-import { Loader, Segment } from 'semantic-ui-react';
+import { Header, Loader, Segment } from 'semantic-ui-react';
 
 import { FourOhFour } from '../FourOhFour';
 import { CodeBlock } from './CodeBlock';
@@ -63,8 +64,22 @@ export class Post extends React.Component<IPostProps, IPostState> {
       return <FourOhFour {...this.props} />;
     }
 
+    const title = this.props.match.params.post
+      .slice(11)
+      .split('_')
+      .join(' ');
+    const date = moment(this.props.match.params.post.slice(0, 10)).format('LL');
+    const author = 'Keith Wade';
+
     return (
       <Segment id='post'>
+        <Header as='h1'>
+          {title}
+          <Header.Subheader>
+            {author} - {date}
+          </Header.Subheader>
+        </Header>
+
         <Markdown
           source={this.state.markdownSource}
           renderers={{ code: CodeBlock }}
