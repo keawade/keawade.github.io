@@ -7,6 +7,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.7.1",
     "@fortawesome/free-solid-svg-icons": "^5.7.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
+    "@keawade/tslint-config": "^0.1.8",
     "@types/highlight.js": "^9.12.3",
     "@types/jest": "24.0.0",
     "@types/node": "10.12.24",
@@ -28,8 +29,6 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.85.0",
     "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-microsoft-contrib": "^6.0.0",
     "tslint-react-hooks": "^1.1.0",
     "typescript": "3.3.3"
   },

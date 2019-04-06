@@ -29,6 +29,7 @@ export function register(config?: IConfig) {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(
+      // tslint:disable-next-line:prefer-type-cast
       (process as { env: { [key: string]: string } }).env.PUBLIC_URL,
       window.location.href,
     );
@@ -111,6 +112,7 @@ function checkValidServiceWorker(swUrl: string, config?: IConfig) {
   fetch(swUrl)
     .then(response => {
       // Ensure service worker exists, and that we really are getting a JS file.
+      // tslint:disable-next-line:no-backbone-get-set-outside-model
       const contentType = response.headers.get('content-type');
       if (
         response.status === 404 ||
