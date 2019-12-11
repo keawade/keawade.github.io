@@ -34,6 +34,7 @@ POSIX-compliant bash script to manage multiple active node.js versions.
 
 ```shell
 # Install nvm
+# Note: Don't install this via brew as it doesn't work as of the time of writing.
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 
 # Install fast-nvm-fish
