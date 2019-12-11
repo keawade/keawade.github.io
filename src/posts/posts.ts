@@ -110,4 +110,15 @@ export const posts: IPost[] = [
     id: '0007',
     filename: '2017-01-22-Pokedata_Vue',
   },
+  {
+    title: 'Development Environment Opinions',
+    date: '2019-12-11',
+    author: 'Keith Wade',
+    excerpt: 'Opinionated list of software I recommend.',
+    project: true,
+    tags: ['software', 'development', 'tools'],
+    comments: true,
+    id: '0008',
+    filename: '2019-12-11-Development_Environment_Opinions',
+  },
 ];
