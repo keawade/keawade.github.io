@@ -9,7 +9,7 @@ jobs:
 
       - name: Install
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: Upload Artifacts # The project is then uploaded as an artifact named 'site'.
