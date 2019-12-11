@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import './Navigation.scss';
 
 import {
-  faGitlab,
+  faGitHub,
   faLinkedin,
   faMastodon,
   faTwitter,
@@ -30,8 +30,8 @@ export const Navigation: React.FunctionComponent<
       <Menu.Item href='https://fosstodon.org/@keawade' target='_blank'>
         <FontAwesomeIcon className='heading-icon' size='lg' icon={faMastodon} />
       </Menu.Item>
-      <Menu.Item href='https://gitlab.com/keawade' target='_blank'>
-        <FontAwesomeIcon className='heading-icon' size='lg' icon={faGitlab} />
+      <Menu.Item href='https://github.com/keawade' target='_blank'>
+        <FontAwesomeIcon className='heading-icon' size='lg' icon={faGitHub} />
       </Menu.Item>
       <Menu.Item href='https://linkedin.com/in/keawade' target='_blank'>
         <FontAwesomeIcon className='heading-icon' size='lg' icon={faLinkedin} />

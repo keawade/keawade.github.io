@@ -1,6 +1,4 @@
-*Edit 06/06/18: Updated GitHub links to point to GitLab*
-
-Last fall I had a bit of fun building a calculator app, [cuddly-weasel](https://keawade.gitlab.io/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
+Last fall I had a bit of fun building a calculator app, [cuddly-weasel](https://keawade.github.io/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
 
 The [Data Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction), or DOM, is a programming interface for HTML and XML documents. The DOM provides a way to store a HTML or XML document in an object-oriented representation that can be manipulated with a scripting language like JavaScript.
 
@@ -8,13 +6,13 @@ While [DOM manipulation](https://www.codecademy.com/skills/make-an-interactive-w
 
 # Cuddly Weasel
 
-The complete [app is available here](https://keawade.gitlab.io/cuddly-weasel/) and the [source code is available on GitLab](https://gitlab.com/keawade/cuddly-weasel). The rest of this article will highlight some of the more interesting implementations and manipulations in the application.
+The complete [app is available here](https://keawade.github.io/cuddly-weasel/) and the [source code is available on GitHub](https://github.com/keawade/cuddly-weasel). The rest of this article will highlight some of the more interesting implementations and manipulations in the application.
 
 ## Name
 
 This project was one of the first projects that I used GitHub's built in project name generator for. I knew what I was building but didn't care for the dull name of just "Calculator" so I cycled through several names until settling upon `cuddly-weasel`. If I were building this app for anything other than my own personal use and practice, I would probably need to put in more effort. As it stands, though, I just need a unique name for my project and this one is a fun one.
 
-[![Rendered app](http://image.thum.io/get/width/800/crop/700/https://keawade.gitlab.io/cuddly-weasel)](https://keawade.gitlab.io/cuddly-weasel/)
+[![Rendered app](http://image.thum.io/get/width/800/crop/700/https://keawade.github.io/cuddly-weasel)](https://keawade.github.io/cuddly-weasel/)
 
 ## Design Considerations
 
