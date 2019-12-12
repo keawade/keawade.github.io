@@ -43,15 +43,21 @@ For this guide, I've selected seven stratum one servers from around the United S
 This guide will work with NTP on CentOS. Other Linux distributions will have slight differences but should not be to difficult to configure using this guide.
 First, install the Network Time Protocol.
 
-`yum install ntp -y`
+```shell
+yum install ntp -y
+```
 
 You will likely want NTP to start on boot. CentOS 7 uses SystemD to manage services. Use the following command to enable starting on boot.
 
-`systemctl enable ntpd`
+```shell
+systemctl enable ntpd
+```
 
 If you are running an older version of CentOS you will need to use chkconfig to do this.
 
-`chkconfig ntpd on`
+```shell
+chkconfig ntpd on
+```
 
 Now our NTP service will run every time the server boots. At this point we're ready to start configuring the server. We won't start the service yet, we'll wait until we have a basic configuration to test first.
 
@@ -59,32 +65,36 @@ Now our NTP service will run every time the server boots. At this point we're re
 
 Now that you have selected your upstream servers and have installed NTP on your own server, you are ready to start configuring NTP to synchronize. We will first make a backup of your original NTP configuration file so we can look through it later. For now though we will delete the original (But not the backup!), and then create our own config file to work with.
 
-`cp /etc/ntp.conf /etc/ntp.conf.bak`
-
-`rm /etc/ntp.conf`
-
-`nano /etc/ntp.conf`
+```shell
+cp /etc/ntp.conf /etc/ntp.conf.bak
+rm /etc/ntp.conf
+nano /etc/ntp.conf
+```
 
 If you want to return to the original file, just replace the actual file with your backup to start over by running the following command.
 
-`cp /etc/ntp.conf.bak /etc/ntp.conf`
+```shell
+cp /etc/ntp.conf.bak /etc/ntp.conf`
+```
 
 Here is an example ntp.conf file that I'll be using to explain the basic concepts of the configuration.
 
-    # Drift file.
-    driftfile /var/lib/ntp/drift
-    # Permit
-    restrict default limited kod nomodify notrap nopeer
-    restrict -6 default limited kod nomodify notrap nopeer
-    # Servers
-    server ntp.your.org iburst
-    server time-b.timefreq.bldrdoc.gov iburst
-    server rackety.udel.edu iburst
-    server clock.fmt.he.net iburst
-    server gpstime.la-archdiocese.net iburst
-    server nist1.columbiacountyga.gov iburst
-    server gclock02.dupa01.burst.net iburst
-    disable monitor
+```
+# Drift file.
+driftfile /var/lib/ntp/drift
+# Permit
+restrict default limited kod nomodify notrap nopeer
+restrict -6 default limited kod nomodify notrap nopeer
+# Servers
+server ntp.your.org iburst
+server time-b.timefreq.bldrdoc.gov iburst
+server rackety.udel.edu iburst
+server clock.fmt.he.net iburst
+server gpstime.la-archdiocese.net iburst
+server nist1.columbiacountyga.gov iburst
+server gclock02.dupa01.burst.net iburst
+disable monitor
+```
 
 Now lets break down each of these pieces and figure out what they do.
 First, the **drift file**. The drift file stores information about your system clock's drift tendency. Most system clocks keep time reasonably well but still require synchronization in order to remain accurate. The drift file keeps track of how much your system clock tends to drift from actual time. Then, if you lose your connection to your synchronization servers, it can correct itself based on the drift data it has collected. This give you a bit of slack to work with if your connections ever go down.
@@ -95,25 +105,33 @@ The **disable monitor** line [fixes a vulnerability](http://support.ntp.org/bin/
 
 We can now save our config file and start the service!
 
-`systemctl start ntpd`
+```shell
+systemctl start ntpd
+```
 
 or
 
-`service ntpd start`
+```shell
+service ntpd start
+```
 
 Now that the NTP service is running, we need to make sure our firewall is configured to allow incoming NTP traffic so our clients can synchronize with our server.
 
-`firewall-cmd --permanent --add-service=ntp`
-
-`systemctl restart firewalld`
+```shell
+firewall-cmd --permanent --add-service=ntp
+systemctl restart firewalld
+```
 
 or
 
-`iptables -A INPUT -p tcp --dport 123 -j ACCEPT`
+```shell
+iptables -A INPUT -p tcp --dport 123 -j ACCEPT
+/sbin/service iptables save
+```
 
-`/sbin/service iptables save`
-
-`service iptables restart`
+```shell
+service iptables restart
+```
 
 Once the server is running we can use the command `ntpq -p` to list our servers and view details about our connections to them. We can also use `ntpstat` to see our current synchronization status. For details on what this data means, check the [NTP documentation page for the ntpq command](http://doc.ntp.org/4.2.4/ntpq.html).
 
@@ -121,13 +139,15 @@ Once the server is running we can use the command `ntpq -p` to list our servers 
 
 The client configuration is much simpler than the server configuration was. First, repeat the installation steps for the NTP service. Next, repeat the configuration steps but when you create your new ntp.conf file we will do some things differently.
 
-    # Drift file.
-    driftfile /var/lib/ntp/drift
-    # Permit
-    restrict default limited kod nomodify notrap nopeer
-    restrict -6 default limited kod nomodify notrap nopeer
-    # Servers
-    server time.mydomain.com iburst
+```
+# Drift file.
+driftfile /var/lib/ntp/drift
+# Permit
+restrict default limited kod nomodify notrap nopeer
+restrict -6 default limited kod nomodify notrap nopeer
+# Servers
+server time.mydomain.com iburst
+```
 
 Since our source is known, and likely internal, we can get away with a bit less security. Also, since we don't need anything to connect to the clients on an incoming port, we don't need to modify our firewall rules as long as outgoing traffic is unrestricted (As it is by default).
 Finally, use the `ntpq -p` and `ntpstat` commands to verify your NTP service is synchronizing with your server.

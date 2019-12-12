@@ -44,7 +44,9 @@ necessary for your own network environment.
 
 Enable Remote Desktop connections to each of your nodes so we can manage them more easily later. We also need to add each node to our domain. If your remote storage solution uses Multipath I/O, install that now using this [PowerShell command](https://technet.microsoft.com/en-us/library/hh852172.aspx):
 
-`Enable-WindowsOptionalFeature –Online –FeatureName MultiPathIO`
+```powershell
+Enable-WindowsOptionalFeature –Online –FeatureName MultiPathIO
+```
 
 >If you are using a NimbleStorage SAN, you should install their Nimble Connection utility now. Be sure to select the deselected option when prompted for components to install.
 
@@ -53,7 +55,9 @@ Enable Remote Desktop connections to each of your nodes so we can manage them mo
 ## Install Hyper-V
 To install the Hyper-V service, run the following [PowerShell command](https://technet.microsoft.com/en-us/library/jj205467%28v=wps.630%29.aspx) on each node:
 
-`Install-WindowsFeature –Name Hyper-V -IncludeManagementTools -Restart`
+```powershell
+Install-WindowsFeature –Name Hyper-V -IncludeManagementTools -Restart
+```
 
 > This command will install the Hyper-V service with its management tools and then restart the server.
 
@@ -61,7 +65,9 @@ To install the Hyper-V service, run the following [PowerShell command](https://t
 
 We need to create our Hyper-V Virtual Switches. For a smooth cluster installation, make sure each of these switches is identical on each node. A way to do this without much hassle is to run the same [PowerShell commands](https://technet.microsoft.com/en-us/library/hh848455%28v=wps.630%29.aspx) on each node instead of manually configuring each switch. Run the following command on each node. If you are accessing your node via RDP your connection will be interrupted for a few seconds.
 
-`New-VMSwitch “Data” –NetAdapterName “Data” –AllowManagementOS:$true`
+```powershell
+New-VMSwitch “Data” –NetAdapterName “Data” –AllowManagementOS:$true
+```
 
 >This command will create a new virtual switch named Data that is connected to the network adapter on your server node named Data. It will create a new virtual NIC on your node called vData that your local node will use since
 the physical NIC is now tied directly to the virtual switch.
@@ -70,17 +76,23 @@ the physical NIC is now tied directly to the virtual switch.
 
 We are nearly ready to cluster our node servers! On each node, run the following [PowerShell command](https://technet.microsoft.com/en-us/library/jj205467%28v=wps.630%29.aspx) to install the Failover Clustering service with its management tools:
 
-`Install-WindowsFeature –Name Failover-Clustering –IncludeManagementTools`
+```powershell
+Install-WindowsFeature –Name Failover-Clustering –IncludeManagementTools
+```
 
 Before we actually cluster our nodes, let's test our configuration. Run the following [PowerShell command](https://technet.microsoft.com/en-us/library/ee461026.aspx) and check the report for any failures.
 
-`Test-Cluster –Node Node1,Node2,Node3 -ReportName "C:\TestClusterReport"`
+```powershell
+Test-Cluster –Node Node1,Node2,Node3 -ReportName "C:\TestClusterReport"
+```
 
 >You are likely to get warnings concerning your cluster's storage. This is fine. We will configure the cluster's shared storage soon.
 
 After reviewing the report and addressing any problems, we are ready to cluster our nodes! Run the following [PowerShell command](https://technet.microsoft.com/en-us/library/ee460973.aspx) to create the cluster:
 
-`New-Cluster –Name Cluster1 –Node Node1,Node2,Node3 –StaticAddress 192.168.0.10`
+```powershell
+New-Cluster –Name Cluster1 –Node Node1,Node2,Node3 –StaticAddress 192.168.0.10
+```
 
 ## Configure Cluster Shared Volumes
 
@@ -102,4 +114,4 @@ On only one of your nodes, open Disk Management and bring the new disk online. I
 
 ## Ready for Roles
 
-We are done installing and configuring our Hyper-V cluster! At this point, we are free to add VMs to the cluster as roles. I may write another article describing what can be done here later.
+We are done installing and configuring our Hyper-V cluster! At this point, we are free to add VMs to the cluster as roles.
