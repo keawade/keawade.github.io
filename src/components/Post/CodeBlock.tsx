@@ -1,6 +1,12 @@
 import React from 'react';
 
-import hljs from 'highlight.js';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/plugins/autolinker/prism-autolinker';
 
 interface IProps {
   language?: string;
@@ -8,15 +14,12 @@ interface IProps {
 }
 
 export class CodeBlock extends React.Component<IProps> {
+  private ref: React.RefObject<HTMLElement>;
+
   constructor(props: IProps) {
     super(props);
+    this.ref = React.createRef();
   }
-
-  private codeEl!: any;
-
-  private setRef = (el: any) => {
-    this.codeEl = el;
-  };
 
   public componentDidMount() {
     this.highlightCode();
@@ -27,14 +30,17 @@ export class CodeBlock extends React.Component<IProps> {
   }
 
   private highlightCode = () => {
-    hljs.highlightBlock(this.codeEl);
+    if (this.ref && this.ref.current) {
+      Prism.highlightElement(this.ref.current);
+    }
   };
 
   public render() {
+    console.log(this.props.language);
     return (
       <pre>
-        <code ref={this.setRef} className={`language-${this.props.language}`}>
-          {this.props.value}
+        <code ref={this.ref} className={`language-${this.props.language}`}>
+          {this.props.value.trim()}
         </code>
       </pre>
     );
