@@ -15,7 +15,7 @@ Homebrew is a package manager for macOS. It has some annoyances but has the larg
 
 [https://fishshell.com/](https://fishshell.com/)
 
-The `fish` shell provides a modern take on the shell and has some great documentatation.
+The `fish` shell provides a modern take on the shell and has some great documentation.
 
 ```shell
 # Install fish
@@ -57,7 +57,7 @@ nvm use 10
 
 [https://www.gnu.org/software/coreutils/coreutils.html](https://www.gnu.org/software/coreutils/coreutils.html)
 
-The `coreutils` brew formulae contains GNU file, shell, and text utilities. The default utils provided by macOS have some shortcomings and idiosycracies that don't exist in the canoncial GNU utilities.
+The `coreutils` brew formulae contains GNU file, shell, and text utilities. The default utils provided by macOS have some shortcomings and idiosyncrasies that don't exist in the canonical GNU utilities.
 
 ```shell
 # Install coreutils
