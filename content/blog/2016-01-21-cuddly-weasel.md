@@ -1,6 +1,7 @@
 +++
 title = "Cuddly Weasel"
 date = 2016-01-21
+slug = "2016-01-21-Cuddly-Weasel"
 +++
 
 

@@ -1,6 +1,7 @@
 +++
 title = "Configuring a Hyper-V Cluster"
 date = 2015-07-04
+slug = "2015-07-04-Configuring_a_Hyper-V_Cluster"
 +++
 
 Hyper-V can be a particularly useful tool for consolidating computing resources. However, while consolidating machines into VMs can lower your hardware overhead costs, this introduces a single failure point for all your machines. If the Hyper-V server goes down, all your VMs will go down as well.
