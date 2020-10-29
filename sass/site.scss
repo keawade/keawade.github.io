@@ -50,11 +50,11 @@ body {
   }
 }
 
-#home {
-  min-height: calc(100vh - 96px);
+#content {
+  min-height: calc(100vh - 98px);
   padding-top: 1.5rem;
 
-  h1 {
+  .article-list-title {
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
@@ -88,6 +88,10 @@ body {
       font-size: 1.1rem;
     }
   }
+
+  img {
+    max-width: 100%;
+  }
 }
 
 #about {
@@ -96,4 +100,9 @@ body {
     border-left: 3px solid #ccc;
     margin-left: 1rem;
   }
+}
+
+pre {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 }
