@@ -1,8 +1,16 @@
 {% extends "base.html" %} {% block content %}
-<h1 class="title">{{ section.title }}</h1>
-<ul>
+<h1>{{ section.title }}</h1>
+<div role="list" class="ui list article-list">
   {% for page in section.pages %}
-  <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a></li>
+  <div role="listitem" class="item article">
+    <div class="title">
+      <h2 class="ui header">
+        <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
+      </h2>
+      <div class="date">{{page.date}}</div>
+    </div>
+    <div class="excerpt">{{page.description}}</div>
+  </div>
   {% endfor %}
-</ul>
+</div>
 {% endblock content %}

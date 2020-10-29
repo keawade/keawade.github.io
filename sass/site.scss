@@ -20,6 +20,16 @@ body {
   }
 }
 
+#particles-js {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+
+#application {
+  z-index: 1;
+}
+
 #navigation {
   margin-top: 0;
   font-size: 1.1rem;
@@ -37,5 +47,53 @@ body {
 
   .heading-icon {
     color: #333;
+  }
+}
+
+#home {
+  min-height: calc(100vh - 96px);
+  padding-top: 1.5rem;
+
+  h1 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .article-list {
+    .article {
+      padding-bottom: 1.5rem;
+    }
+
+    .header {
+      a {
+        text-decoration: none;
+      }
+    }
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0.67rem;
+
+      h2 {
+        margin-bottom: 0.25rem;
+      }
+
+      .date {
+        font-size: 0.9rem;
+      }
+    }
+
+    .excerpt {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+#about {
+  blockquote {
+    padding-left: 1rem;
+    border-left: 3px solid #ccc;
+    margin-left: 1rem;
   }
 }

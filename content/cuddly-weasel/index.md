@@ -2,6 +2,7 @@
 title = "Cuddly Weasel"
 date = 2016-01-21
 slug = "2016-01-21-Cuddly-Weasel"
+description = "A calculated adventure in DOM manipulation for calculators."
 +++
 
 

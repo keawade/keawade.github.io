@@ -2,6 +2,7 @@
 title = "PokéData Vue"
 date = 2017-01-22
 slug = "2017-01-22-Pokedata_Vue"
+description = "Pokémon strengths and weaknesses Pokédex built with Vue!"
 +++
 
 The latest technology in my serial of [Pokedex's](https://keawade.github.io/pokedata) with different JavaScript frameworks is [Vue](https://vuejs.org/)! I've been working with Vue off and on for the last few months with [garden-vue](https://github.com/garden-stream/garden-vue) and [w-os](https://github.com/whiteboards/w-os). Now I've finally gotten around to building my recurring PokeData with Vue as well.

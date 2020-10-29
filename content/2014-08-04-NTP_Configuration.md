@@ -2,6 +2,7 @@
 title = "NTP Configuration"
 date = 2014-08-04
 slug = "2014-08-04-NTP_Configuration"
+description = "A brief guide to the Network Time Protocol and its configuration."
 +++
 
 [Network Time Protocol](https://en.wikipedia.org/wiki/Network_Time_Protocol) (NTP) is used to synchronize computers around the world to allow for better communications on networks with changing latency such as the internet. This is done with a tiered infrastructure of timing devices.

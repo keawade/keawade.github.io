@@ -2,6 +2,7 @@
 title = "PokéData"
 date = 2016-07-12
 slug = "2016-07-12-Pokedata"
+description = "Pokémon strengths and weaknesses Pokédex built with React/Redux."
 +++
 
 **Update:** I have recently rebuilt this app without Redux or PokeAPI. [Check it out over here.](https://keawade.github.io/pokedata)
