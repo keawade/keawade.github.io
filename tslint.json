@@ -1,6 +1,0 @@
-{
-  "extends": "@keawade/tslint-config",
-  "rules": {
-    "non-literal-require": [false]
-  }
-}
