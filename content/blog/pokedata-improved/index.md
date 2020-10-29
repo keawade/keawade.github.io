@@ -6,7 +6,7 @@ slug = "2016-09-06-Pokedata_Improved"
 
 I took another look at the [PokeData](https://keawade.github.io/pokedata-old) app, this time with an eye towards what technologies would work best rather than trying to cram some odd things in for the development experience. What I've come up with is [a new version of PokeData](https://keawade.github.io/pokedata) built using [React](https://facebook.github.io/react/) without [Redux](http://redux.js.org/) or [PokeAPI](https://pokeapi.co/).
 
-![PokeData](//image.thum.io/get/width/800/crop/700/https://keawade.github.io/pokedata/)
+[![PokeData](pokedata-improved.png)](https://keawade.github.io/pokedata/)
 
 Removing Redux was an easy choice for this app since it wasn't necessary in the slightest and just complicated the app for no reason. The [Redux FAQ answer to "When should I use Redux?"](http://redux.js.org/docs/FAQ.html#when-should-i-use-redux), while slightly cryptic, is a good one.
 
