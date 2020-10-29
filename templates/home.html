@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="article-list-title">{{ section.title }}</h1>
+<div role="list" class="ui list article-list">
+  {% for page in section.pages %}
+  <div role="listitem" class="item article">
+    <div class="title">
+      <h2 class="ui header">
+        <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
+      </h2>
+      <div class="date">
+        {{ page.date | date(format="%B %d, %Y")}} - Keith Wade
+      </div>
+    </div>
+    <div class="excerpt">{{page.description}}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock content %}
