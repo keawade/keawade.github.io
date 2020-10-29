@@ -1,7 +1,9 @@
 {% extends "base.html" %} {% block content %}
 <h1 class="ui header">
   {{ page.title }}
-  <div class="sub header">{{ page.date }} - Keith Wade</div>
+  <div class="sub header">
+    {{ page.date | date(format="%B %d, %Y")}} - Keith Wade
+  </div>
 </h1>
 <p>{{ page.content | safe }}</p>
 {% endblock content %}

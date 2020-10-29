@@ -7,7 +7,9 @@
       <h2 class="ui header">
         <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
       </h2>
-      <div class="date">{{page.date}}</div>
+      <div class="date">
+        {{ page.date | date(format="%B %d, %Y")}} - Keith Wade
+      </div>
     </div>
     <div class="excerpt">{{page.description}}</div>
   </div>
