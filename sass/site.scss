@@ -1,0 +1,41 @@
+body {
+  background-color: rgba(23, 107, 182, 1);
+
+  .ui.segment {
+    padding: 1rem 2rem 1rem !important;
+  }
+
+  .container {
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 16px 16px 16px;
+    min-height: calc(100vh - 32px);
+
+    & {
+      max-width: 100%;
+    }
+  }
+
+  a {
+    color: rgba(16, 77, 130, 1);
+  }
+}
+
+#navigation {
+  margin-top: 0;
+  font-size: 1.1rem;
+
+  .icon-heading {
+    display: flex;
+    justify-content: space-between;
+    width: 10.75rem;
+  }
+
+  .keawade-avatar {
+    width: 1.5rem;
+    height: auto;
+  }
+
+  .heading-icon {
+    color: #333;
+  }
+}

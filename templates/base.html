@@ -3,15 +3,44 @@
   <head>
     <meta charset="utf-8" />
     <title>Keith Wade</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.7/dist/semantic.min.js"></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://use.fontawesome.com/releases/v5.9.0/css/all.css"
+    />
+    <link rel="stylesheet" href="{{ get_url(path="/site.css", cachebust=true) |
+    safe }}" />
+    <link rel="icon" href="/favicon.png" />
   </head>
 
   <body>
-    <section class="section">
-      <div class="container">{% block content %} {% endblock %}</div>
-    </section>
+    <div class="ui container">
+      <div id="navigation" class="ui menu stackable">
+        <a class="header item icon-heading" href="/">
+          <img class="ui avatar image keawade-avatar" src="/GithubAvatar.png" />
+          <span>Keith Wade</span>
+        </a>
+        <a class="link item" href="/about">about</a>
+        <a class="link item" href="https://twitter.com/TheKeithWade">
+          <i class="fab fa-twitter fa-lg"></i>
+        </a>
+        <a class="link item" href="https://github.com/keawade">
+          <i class="fab fa-github fa-lg"></i>
+        </a>
+        <a class="link item" href="https://linkedin.com/in/keawade">
+          <i class="fab fa-linkedin fa-lg"></i>
+        </a>
+      </div>
+      <section class="ui segment">
+        <div class="container">{% block content %} {% endblock %}</div>
+      </section>
+    </div>
   </body>
 </html>
