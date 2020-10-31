@@ -2,7 +2,7 @@ body {
   background-color: rgba(23, 107, 182, 1);
 
   .ui.segment {
-    padding: 1rem 2rem 1rem !important;
+    padding: 2rem 2rem 1rem;
   }
 
   .container {
@@ -18,16 +18,6 @@ body {
   a {
     color: rgba(16, 77, 130, 1);
   }
-}
-
-#particles-js {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-}
-
-#application {
-  z-index: 1;
 }
 
 #navigation {
