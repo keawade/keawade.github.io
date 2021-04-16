@@ -26,8 +26,11 @@ body {
       }
     }
 
-    nav a {
-      border: none;
+    nav .external {
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    nav .external:hover {
+      border-color: rgba(255, 255, 255, 0.9);
     }
   }
 
