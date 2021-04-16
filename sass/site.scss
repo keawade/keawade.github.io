@@ -1,98 +1,57 @@
+:root {
+  --bg: rgba(23, 107, 182, 1);
+  --accent-bg: rgba(16, 77, 130, 1);
+  --text: rgba(255, 255, 255, 0.9);
+  --text-light: rgba(255, 255, 255, 0.9);
+  --border: #d8dae1;
+  --accent: rgba(255, 255, 255, 0.9);
+  --accent-light: #90caf9;
+  --code: #bbb;
+  --preformatted: #444;
+  --marked: #ffdd33;
+  --disabled: #efefef;
+}
+
 body {
-  background-color: rgba(23, 107, 182, 1);
+  margin-bottom: 2rem;
+  header {
+    .keawade-avatar {
+      width: 20rem;
+      height: auto;
+      border-radius: 10rem;
+      background-color: white;
+      transform: rotate(45deg);
 
-  .ui.segment {
-    padding: 2rem 2rem 1rem;
-  }
-
-  .container {
-    background-color: rgba(255, 255, 255, 0.3);
-    padding: 16px 16px 16px;
-    min-height: calc(100vh - 32px);
-
-    & {
-      max-width: 100%;
-    }
-  }
-
-  a {
-    color: rgba(16, 77, 130, 1);
-  }
-}
-
-#navigation {
-  margin-top: 0;
-  font-size: 1.1rem;
-
-  .icon-heading {
-    display: flex;
-    justify-content: space-between;
-    width: 10.75rem;
-  }
-
-  .keawade-avatar {
-    width: 1.5rem;
-    height: auto;
-  }
-
-  .heading-icon {
-    color: #333;
-  }
-}
-
-#content {
-  min-height: calc(100vh - 98px);
-  padding-top: 1.5rem;
-
-  .article-list-title {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-
-  .article-list {
-    .article {
-      padding-bottom: 1.5rem;
-    }
-
-    .header {
-      a {
-        text-decoration: none;
+      polygon {
+        fill: rgba(23, 107, 182, 1);
       }
     }
 
-    .title {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 0.67rem;
+    nav a {
+      border: none;
+    }
+  }
 
-      h2 {
-        margin-bottom: 0.25rem;
-      }
-
-      .date {
-        font-size: 0.9rem;
-      }
+  main {
+    h1 {
+      margin-bottom: 0rem;
     }
 
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin-top: 1rem;
+      margin-bottom: 0rem;
+    }
+
+    .date {
+      font-size: small;
+      margin: 0rem;
+    }
     .excerpt {
-      font-size: 1.1rem;
+      margin: 0rem;
     }
   }
-
-  img {
-    max-width: 100%;
-  }
-}
-
-#about {
-  blockquote {
-    padding-left: 1rem;
-    border-left: 3px solid #ccc;
-    margin-left: 1rem;
-  }
-}
-
-pre {
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
 }
