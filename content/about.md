@@ -3,18 +3,33 @@ title = "About Me"
 template = "about.html"
 +++
 
-I enjoy solving problems. This is what inspires me to work as a software developer. I am currently a full stack developer for [Nelnet](https://www.nelnet.com/).
+I enjoy solving problems. This is what inspires me to work as a software developer. I am currently a software developer for [Ally](https://www.ally.com/).
 
 ## Work History
 
-### Nelnet 2018-Present
+### Ally 2021-Present
+
+**Software Developer**
+
+### Nelnet 2018-2021
 
 **Full Stack Developer**
+
+- Full stack development with React/Typescript front end and Node/Typescript back end.
+- Leveraged Typescript, object oriented programming, domain driven design, and functional programming to build services and libraries for a microservices platform.
+- Technical lead for a product deployment implementation squad.
+- Implemented CI/CD processes for testing, building, releasing, and deploying services and libraries with Bitbucket Pipelines.
+- Worked with team to migrate code hosting and CI/CD processes from Bitbucket and Bitbucket Pipelines to GitHub and GitHub Actions.
+- Helped build Nelnet’s first successful design system based on Material Design to help designers and developers collaborate on building beautiful and accessible user interfaces and experiences.
+- Developed internal CLI tool for managing private registry authentication, repository templating, and services deployment.
+- Developed software in agile environments with an emphasis on finding processes and tools to support the given team rather than adhering to specific methodologies religiously.
+- Prepared and facilitated eight instances of one month long developer "immersion" training sessions to cross train existing development staff on a new microservices platform and tech stack.
 
 ### Nanonation, Inc. 2016-2018
 
 **Software Developer**
 
+- Full stack development with React/Typescript front end and ASP .NET back end.
 - Partnered with a senior developer to reinvent our digital signage content management system used to manage over 40,000 client devices.
 - Empowered our Customer's ability to effectively reach target audiences by developing hardware and web API integrations for their digital signage solutions.
 
