@@ -7,11 +7,7 @@ I enjoy solving problems. This is what inspires me to work as a software develop
 
 ## Work History
 
-### Ally 2021-Present
-
-**Software Developer**
-
-### Nelnet 2018-2021
+### Nelnet 2018-Present
 
 **Full Stack Developer**
 
