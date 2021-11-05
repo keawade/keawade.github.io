@@ -3,7 +3,7 @@ title = "About Me"
 template = "about.html"
 +++
 
-I enjoy solving problems. This is what inspires me to work as a software developer. I am currently a software developer for [Ally](https://www.ally.com/).
+I enjoy solving problems. This is what inspires me to work as a software developer. I am currently a software developer for [Nelnet](https://nelnetinc.com/capabilities/consumer-services/nelnet-velocity/).
 
 ## Work History
 
