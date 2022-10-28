@@ -3,6 +3,7 @@ title: "Advent of Code: I Was Told There Would Be No Math"
 date: "2015-12-28"
 slug: "2015-12-28-Advent_of_Code"
 excerpt: "Advent of Code 2015 day 2 writeup."
+coverImage: "/assets/blog/advent-of-code.jpeg"
 ogImage:
   url: ""
 ---

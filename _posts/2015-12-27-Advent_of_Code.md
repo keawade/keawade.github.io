@@ -3,6 +3,7 @@ title: "Advent of Code: Not Quite Lisp"
 date: "2015-12-27"
 slug: "2015-12-27-Advent_of_Code"
 excerpt: "Advent of Code 2015 day 1 writeup."
+coverImage: "/assets/blog/advent-of-code.jpeg"
 ogImage:
   url: ""
 ---

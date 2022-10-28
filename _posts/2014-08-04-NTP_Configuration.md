@@ -3,7 +3,7 @@ title: "NTP Configuration"
 date: "2014-08-04"
 slug: "2014-08-04-NTP_Configuration"
 excerpt: "A brief guide to the Network Time Protocol and its configuration."
-coverImage: "/assets/blog/ntp-configuration/clock.jpg"
+coverImage: "/assets/blog/clockwork.jpg"
 ogImage:
   url: ""
 ---

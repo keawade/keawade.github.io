@@ -3,7 +3,7 @@ title: "PokéData Improved"
 date: "2016-09-06"
 slug: "2016-09-06-Pokedata_Improved"
 excerpt: "Building a more sane Pokémon app with React."
-coverImage: "/assets/blog/pokedata-improved/react-banner.png"
+coverImage: "/assets/blog/react-banner.png"
 ogImage:
   url: ""
 ---

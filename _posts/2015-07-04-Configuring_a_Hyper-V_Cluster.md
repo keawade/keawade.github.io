@@ -3,6 +3,7 @@ title: "Configuring a Hyper-V Cluster"
 date: "2015-07-04"
 slug: "2015-07-04-Configuring_a_Hyper-V_Cluster"
 excerpt: "A step by step guide to configuring a basic Hyper-V Cluster on Windows Server 2012."
+coverImage: "/assets/blog/hyper-v-banner.png"
 ogImage:
   url: ""
 ---

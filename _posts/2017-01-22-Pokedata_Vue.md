@@ -3,9 +3,9 @@ title: "PokéData Vue"
 date: "2017-01-22"
 slug: "2017-01-22-Pokedata_Vue"
 excerpt: "Learning Vue + Vuex with Pokémon."
-coverImage: "/assets/blog/pokedata-vue/vue-js-banner.jpg"
+coverImage: "/assets/blog/vue-js-banner.jpg"
 ogImage:
-  url: "/assets/blog/pokedata-vue/vue-js-banner.jpg"
+  url: "/assets/blog/vue-js-banner.jpg"
 ---
 
 The latest technology in my serial of [Pokedex's](https://keawade.github.io/pokedata) with different JavaScript frameworks is [Vue](https://vuejs.org/)! I've been working with Vue off and on for the last few months with [garden-vue](https://github.com/garden-stream/garden-vue) and [w-os](https://github.com/whiteboards/w-os). Now I've finally gotten around to building my recurring PokeData with Vue as well.
