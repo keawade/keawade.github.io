@@ -1,8 +1,5 @@
 ---
 title: "PokéData Vue"
-author:
-  name: "Keith Wade"
-  picture: "/assets/blog/authors/keawade.jpeg"
 date: "2017-01-22"
 slug: "2017-01-22-Pokedata_Vue"
 excerpt: "Pokémon strengths and weaknesses Pokédex built with Vue!"

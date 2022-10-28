@@ -1,8 +1,5 @@
 ---
 title: "Development Environment Opinions"
-author:
-  name: "Keith Wade"
-  picture: "/assets/blog/authors/keawade.jpeg"
 date: "2019-12-11"
 slug: "2019-12-11-Development_Environment_Opinions"
 excerpt: "Opinionated list of software I recommend."

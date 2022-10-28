@@ -1,21 +1,15 @@
 import Image from "next/image";
+import keawade from "../public/assets/blog/authors/keawade.jpeg";
 
-type Props = {
-  name: string;
-  picture: string;
-};
-
-const Avatar = ({ name, picture }: Props) => {
+const Avatar = () => {
   return (
     <div className="flex items-center">
       <Image
-        src={picture}
+        src={keawade}
         className="w-12 h-12 rounded-full mr-4"
-        alt={name}
-        width={5}
-        height={5}
+        alt="Keith Wade"
       />
-      <div className="text-xl font-bold">{name}</div>
+      <div className="text-xl font-bold">Keith Wade</div>
     </div>
   );
 };

@@ -1,8 +1,5 @@
 ---
 title: "Advent of Code: Not Quite Lisp"
-author:
-  name: "Keith Wade"
-  picture: "/assets/blog/authors/keawade.jpeg"
 date: "2015-12-27"
 slug: "2015-12-27-Advent_of_Code"
 excerpt: "My solutions and approach to the first Advent of Code challenge for 2015."

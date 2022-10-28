@@ -1,8 +1,5 @@
 ---
 title: "NTP Configuration"
-author:
-  name: "Keith Wade"
-  picture: "/assets/blog/authors/keawade.jpeg"
 date: "2014-08-04"
 slug: "2014-08-04-NTP_Configuration"
 excerpt: "A brief guide to the Network Time Protocol and its configuration."

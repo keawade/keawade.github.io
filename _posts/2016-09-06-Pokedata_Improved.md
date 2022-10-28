@@ -1,8 +1,5 @@
 ---
 title: "PokéData Improved"
-author:
-  name: "Keith Wade"
-  picture: "/assets/blog/authors/keawade.jpeg"
 date: "2016-09-06"
 slug: "2016-09-06-Pokedata_Improved"
 excerpt: "Pokémon strengths and weaknesses Pokédex built with React."
