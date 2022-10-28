@@ -34,7 +34,7 @@ Finally, I add up the dimensions using the given formula and add `smallest` as a
 
 ### Node.js
 
-```js
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
@@ -112,7 +112,7 @@ This time I need to compare the widths of the packages instead of their face are
 
 ### Node.js
 
-```js
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')

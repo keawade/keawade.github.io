@@ -27,7 +27,7 @@ Both of these solutions follow the same basic formula. First, I read in the inpu
 ## Solutions
 
 ### Node.js
-```js
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -73,7 +73,7 @@ To solve this, I modified my code to detect when the `floor` variable equals `-1
 ## Solutions
 
 ### Node.js
-```js
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()

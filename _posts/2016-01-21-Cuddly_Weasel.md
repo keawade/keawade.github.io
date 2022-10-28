@@ -45,7 +45,7 @@ My app is an interface that uses the [mathjs](http://mathjs.org/) library to do 
 
 Each button element has an event listener listening for a click event. When that event occurs, it calls the `handleButton(event)` function.
 
-```js
+```javascript
 function handleButton(event) {
   var box = document.getElementById('cal-box');
 
@@ -115,7 +115,7 @@ At the end of the list of possible inputs, I've called `this.blur()` to remove f
 
 The keyboard input was interesting. I started by implementing an event listener to listen for keypress events and evaluate them.
 
-```js
+```javascript
 document.addEventListener('keypress', function(key) {
   var keyString = String.fromCharCode(key.charCode);
   if (key.keyCode == 13) {

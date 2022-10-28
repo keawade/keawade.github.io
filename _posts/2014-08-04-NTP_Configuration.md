@@ -53,19 +53,19 @@ For this guide, I've selected seven stratum one servers from around the United S
 This guide will work with NTP on CentOS. Other Linux distributions will have slight differences but should not be to difficult to configure using this guide.
 First, install the Network Time Protocol.
 
-```sh
+```shell
 yum install ntp -y
 ```
 
 You will likely want NTP to start on boot. CentOS 7 uses SystemD to manage services. Use the following command to enable starting on boot.
 
-```sh
+```shell
 systemctl enable ntpd
 ```
 
 If you are running an older version of CentOS you will need to use chkconfig to do this.
 
-```sh
+```shell
 chkconfig ntpd on
 ```
 
@@ -75,7 +75,7 @@ Now our NTP service will run every time the server boots. At this point we're re
 
 Now that you have selected your upstream servers and have installed NTP on your own server, you are ready to start configuring NTP to synchronize. We will first make a backup of your original NTP configuration file so we can look through it later. For now though we will delete the original (But not the backup!), and then create our own config file to work with.
 
-```sh
+```shell
 cp /etc/ntp.conf /etc/ntp.conf.bak
 rm /etc/ntp.conf
 nano /etc/ntp.conf
@@ -83,7 +83,7 @@ nano /etc/ntp.conf
 
 If you want to return to the original file, just replace the actual file with your backup to start over by running the following command.
 
-```sh
+```shell
 cp /etc/ntp.conf.bak /etc/ntp.conf`
 ```
 
@@ -115,31 +115,31 @@ The **disable monitor** line [fixes a vulnerability](http://support.ntp.org/bin/
 
 We can now save our config file and start the service!
 
-```sh
+```shell
 systemctl start ntpd
 ```
 
 or
 
-```sh
+```shell
 service ntpd start
 ```
 
 Now that the NTP service is running, we need to make sure our firewall is configured to allow incoming NTP traffic so our clients can synchronize with our server.
 
-```sh
+```shell
 firewall-cmd --permanent --add-service=ntp
 systemctl restart firewalld
 ```
 
 or
 
-```sh
+```shell
 iptables -A INPUT -p tcp --dport 123 -j ACCEPT
 /sbin/service iptables save
 ```
 
-```sh
+```shell
 service iptables restart
 ```
 
