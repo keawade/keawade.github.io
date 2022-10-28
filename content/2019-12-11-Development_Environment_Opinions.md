@@ -13,7 +13,7 @@ This is a collection of software I've used that I have found useful or neat. I'v
 
 Homebrew is a package manager for macOS. It has some annoyances but has the largest package base and community around it.
 
-```shell
+```sh
 # Install brew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
@@ -24,7 +24,7 @@ Homebrew is a package manager for macOS. It has some annoyances but has the larg
 
 The `fish` shell provides a modern take on the shell and has some great documentation.
 
-```shell
+```sh
 # Install fish
 brew install fish
 # Add fish to the list of available shells
@@ -39,7 +39,7 @@ chsh -s /usr/local/bin/fish
 
 POSIX-compliant bash script to manage multiple active node.js versions.
 
-```shell
+```sh
 # Install nvm
 # Note: Don't install this via brew as it doesn't work as of the time of writing.
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
@@ -55,7 +55,7 @@ nvm use 18
 
 You may also need to add a line to your configs:
 
-```shell
+```sh
 # ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
 nvm use 18
 ```
@@ -66,14 +66,14 @@ nvm use 18
 
 The `coreutils` brew formulae contains GNU file, shell, and text utilities. The default utils provided by macOS have some shortcomings and idiosyncrasies that don't exist in the canonical GNU utilities.
 
-```shell
+```sh
 # Install coreutils
 brew install coreutils
 ```
 
 You will need to update your `PATH` and `MANPATH` variables to tell macOS to use the new utils over the macOS utils:
 
-```shell
+```sh
 # ~/.config/fish/config.fish
 set PATH /usr/local/opt/coreutils/libexec/gnubin $PATH
 set MANPATH /usr/local/opt/coreutils/libexec/gnuman $MANPATH
@@ -88,14 +88,14 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
 
 `thefuck` is one of the most useful command line utilities I have found.
 
-```shell
+```sh
 # Install thefuck
 brew install thefuck
 ```
 
 You will need to configure it before use as well:
 
-```shell
+```sh
 # ~/.config/fish/config.fish
 thefuck --alias | source
 # ~/.zshrc or  ~/.bashrc
@@ -104,7 +104,7 @@ eval "$(thefuck --alias)"
 
 I would also recommend adding an alias ;)
 
-```shell
+```sh
 # Be more polite
 alias f='fuck'
 ```
@@ -115,13 +115,13 @@ alias f='fuck'
 
 Starship is a minimal, fast, and extremely customizable prompt for any shell.
 
-```shell
+```sh
 brew install starship
 ```
 
 You will need to configure your shell to use starship:
 
-```shell
+```sh
 # ~/.config/fish/config.fish
 starship init fish | source
 # ~/.zshrc
@@ -136,7 +136,7 @@ eval "$(starship init bash)"
 
 VSCodium is a build of VSCode that strips out all of Microsoft's telemetry.
 
-```shell
+```sh
 # Install vscodium
 brew cask install vscodium
 
@@ -150,7 +150,7 @@ code ~/foo.txt
 
 FiraCode is a nice monospace font with ligatures.
 
-```shell
+```sh
 # Install FiraCode
 brew tap homebrew/cask-fonts
 brew cask install font-fira-code
@@ -174,13 +174,13 @@ You will also need to configure Visual Studio Code:
 
 `exa` attempts to be a more featureful, more user-friendly version of `ls`.
 
-```shell
+```sh
 brew install exa
 ```
 
 You can replace `ls` with `exa` with an alias in your config file:
 
-```shell
+```sh
 # ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
 alias ls='exa'
 ```
@@ -191,14 +191,14 @@ alias ls='exa'
 
 A `cat` clone with syntax highlighting and Git integration.
 
-```shell
+```sh
 # Install bat
 brew install bat
 ```
 
 Again, we can replace `cat` with `bat` with an alias:
 
-```shell
+```sh
 # ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
 alias cat='bat'
 ```
@@ -209,12 +209,12 @@ alias cat='bat'
 
 `fd` is a simple, fast and user-friendly alternative to [`find`](https://www.gnu.org/software/findutils/).
 
-```shell
+```sh
 # Install fd
 brew install fd
 ```
 
-```shell
+```sh
 # ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
 alias find='fd'
 ```
@@ -225,7 +225,7 @@ alias find='fd'
 
 A collection of simplified and community-driven man pages.
 
-```shell
+```sh
 # Install tldr
 brew install tealdeer
 
@@ -239,7 +239,7 @@ tldr node
 
 A terminal based process/task manager for unix systems.
 
-```shell
+```sh
 # Install htop
 brew install htop
 ```
@@ -248,7 +248,7 @@ brew install htop
 
 Git comes on macOS by default but it isn't updated very frequently. You can install the latest git with brew:
 
-```shell
+```sh
 # Install git
 brew install git
 ```
@@ -259,7 +259,7 @@ Mark Text is a markdown based notes application. I like having my markdown notes
 
 I used Mark Text to write this article. :D
 
-```shell
+```sh
 # Install Mark Text
 brew cask install mark-text
 ```
