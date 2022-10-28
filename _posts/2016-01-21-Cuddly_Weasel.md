@@ -2,7 +2,7 @@
 title: "Cuddly Weasel"
 date: "2016-01-21"
 slug: "2016-01-21-Cuddly_Weasel"
-excerpt: "A calculated adventure in DOM manipulation for calculators."
+excerpt: "A calculated adventure in DOM manipulation."
 ogImage:
   url: ""
 ---

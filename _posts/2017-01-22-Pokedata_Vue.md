@@ -2,7 +2,7 @@
 title: "PokéData Vue"
 date: "2017-01-22"
 slug: "2017-01-22-Pokedata_Vue"
-excerpt: "Pokémon strengths and weaknesses Pokédex built with Vue!"
+excerpt: "Learning Vue + Vuex with Pokémon."
 coverImage: "/assets/blog/pokedata-vue/vue-js-banner.jpg"
 ogImage:
   url: "/assets/blog/pokedata-vue/vue-js-banner.jpg"

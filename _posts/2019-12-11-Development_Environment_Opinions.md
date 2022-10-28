@@ -2,7 +2,7 @@
 title: "Development Environment Opinions"
 date: "2019-12-11"
 slug: "2019-12-11-Development_Environment_Opinions"
-excerpt: "Opinionated list of software I like enough to recommend."
+excerpt: "An opinionated list of software I like enough to recommend."
 ogImage:
   url: ""
 ---
