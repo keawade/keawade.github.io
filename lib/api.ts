@@ -34,7 +34,6 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
     }
   });
 
-  console.log(items);
   return items;
 }
 
