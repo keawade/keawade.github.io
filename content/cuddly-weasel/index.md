@@ -1,10 +1,9 @@
 +++
 title = "Cuddly Weasel"
 date = 2016-01-21
-slug = "2016-01-21-Cuddly-Weasel"
-description = "A calculated adventure in DOM manipulation for calculators."
+slug = "2016-01-21-Cuddly_Weasel"
+description = "A calculated adventure in DOM manipulation."
 +++
-
 
 Last fall I had a bit of fun building a calculator app, [cuddly-weasel](https://keawade.github.io/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
 
@@ -44,7 +43,7 @@ My app is an interface that uses the [mathjs](http://mathjs.org/) library to do 
 
 Each button element has an event listener listening for a click event. When that event occurs, it calls the `handleButton(event)` function.
 
-```js
+```javascript
 function handleButton(event) {
   var box = document.getElementById('cal-box');
 
@@ -114,7 +113,7 @@ At the end of the list of possible inputs, I've called `this.blur()` to remove f
 
 The keyboard input was interesting. I started by implementing an event listener to listen for keypress events and evaluate them.
 
-```js
+```javascript
 document.addEventListener('keypress', function(key) {
   var keyString = String.fromCharCode(key.charCode);
   if (key.keyCode == 13) {

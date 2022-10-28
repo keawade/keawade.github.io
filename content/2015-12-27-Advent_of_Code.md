@@ -2,7 +2,7 @@
 title = "Advent of Code: Not Quite Lisp"
 date = 2015-12-27
 slug = "2015-12-27-Advent_of_Code"
-description = "My solutions and approach to the first Advent of Code challenge for 2015."
+description = "Advent of Code 2015 day 1 writeup."
 +++
 
 [Eric Wastl](http://was.tl/) has created a series of holiday themed programming exercises over at [Advent of Code](http://adventofcode.com/) and I thought it would be fun to post my solutions to these exercises now that they have all been released. I'll be posting more of my solutions as I have time to write up my methodologies (and complete some of them).
@@ -20,12 +20,14 @@ The first set of puzzles involves Santa navigating an infinite high-rise buildin
 >The apartment building is very tall, and the basement is very deep; he will never find the top or bottom floors.
 
 ## Methodology
+
 Both of these solutions follow the same basic formula. First, I read in the input that I've saved in `source/day1source.txt` and assign it to a variable. Next, I create a variable to hold the value of the current floor. I then use a loop to loop through each character in the string. For each character I check if the instruction is to go up one floor and if it is, I increment the `floor` variable by 1, otherwise I decrement the `floor` variable by 1. When the loop completes going through all the characters, I print out the final `floor` variable value.
 
 ## Solutions
 
 ### Node.js
-```js
+
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -63,15 +65,18 @@ print "Santa ends up on floor", floor
 # Part 2
 
 ## Problem
+
 >Now, given the same instructions, find the position of the first character that causes him to enter the basement (floor `-1`). The first character in the instructions has position `1`, the second character has position `2`, and so on.
 
 ## Methodology
+
 To solve this, I modified my code to detect when the `floor` variable equals `-1` and prints out the current position in the string.
 
 ## Solutions
 
 ### Node.js
-```js
+
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day1source.txt').toString()
@@ -90,6 +95,7 @@ for (var i = 0; i < end; i++) {
 ```
 
 ### Python
+
 ```python
 filename = '../source/day1source.txt'
 

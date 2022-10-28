@@ -2,7 +2,7 @@
 title = "PokéData Improved"
 date = 2016-09-06
 slug = "2016-09-06-Pokedata_Improved"
-description = "Pokémon strengths and weaknesses Pokédex built with React."
+description = "Building a more sane Pokémon app with React."
 +++
 
 I took another look at the [PokeData](https://keawade.github.io/pokedata-old) app, this time with an eye towards what technologies would work best rather than trying to cram some odd things in for the development experience. What I've come up with is [a new version of PokeData](https://keawade.github.io/pokedata) built using [React](https://facebook.github.io/react/) without [Redux](http://redux.js.org/) or [PokeAPI](https://pokeapi.co/).

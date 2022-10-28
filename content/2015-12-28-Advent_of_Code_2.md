@@ -2,7 +2,7 @@
 title = "Advent of Code: I Was Told There Would Be No Math"
 date = 2015-12-28
 slug = "2015-12-28-Advent_of_Code"
-description = "My solutions and approach to the second Advent of Code challenge for 2015."
+description = "Advent of Code 2015 day 2 writeup."
 +++
 
 The elves have run out of wrapping paper and ribbon! For this puzzle we are given the dimensions of a bunch of presents as a list of strings and are asked to compute how much wrapping paper and ribbon should be ordered to wrap the remaining presents.
@@ -18,6 +18,7 @@ Get your own puzzle input and record your progress over at [Advent of Code](http
 >All numbers in the elves' list are in feet. How many total **square feet of wrapping paper** should they order?
 
 ## Methodology
+
 I handled the solutions for Node and Python slightly differently because of syntatic differences. Despite these slight changes, the general approach is still the same. I will describe my methodology in terms of the Node.js code.
 
 First, I read in the source from `source/day2source.txt` and `split()` the string on the new line character, `\n`. I assign this output to the variable `source`. This variable is an array with each element of that array containing the string from each line of the original file.
@@ -32,7 +33,7 @@ Finally, I add up the dimensions using the given formula and add `smallest` as a
 
 ### Node.js
 
-```js
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
@@ -97,6 +98,7 @@ print "The elves need to order", total, "square feet of wrapping paper"
 ```
 
 ## Problem 2
+
 >The elves are also running low on ribbon. Ribbon is all the same width, so they only have to worry about the length they need to order, which they would again like to be exact.
 >
 >The ribbon required to wrap a present is the shortest distance around its sides, or the smallest perimeter of any one face. Each present also requires a bow made out of ribbon as well; the feet of ribbon required for the perfect bow is equal to the cubic feet of volume of the present. Don't ask how they tie the bow, though; they'll never tell.
@@ -104,13 +106,14 @@ print "The elves need to order", total, "square feet of wrapping paper"
 >How many total **feet of ribbon** should they order?
 
 ## Methodology
+
 This time I need to compare the widths of the packages instead of their face areas. I also need to find the two smallest widths rather than just the smallest. Finally, instead of finding surface area, I need to find a length of ribbon using the given formula.
 
 ## Solutions
 
 ### Node.js
 
-```js
+```javascript
 var fs = require('fs')
 
 var source = fs.readFileSync('../source/day2source.txt').toString().split('\n')
