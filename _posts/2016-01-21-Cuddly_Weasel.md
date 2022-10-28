@@ -1,12 +1,11 @@
 ---
 title: "Cuddly Weasel"
 date: "2016-01-21"
-slug: "2016-01-21-Cuddly-Weasel"
+slug: "2016-01-21-Cuddly_Weasel"
 excerpt: "A calculated adventure in DOM manipulation for calculators."
 ogImage:
   url: ""
 ---
-
 
 Last fall I had a bit of fun building a calculator app, [cuddly-weasel](https://keawade.github.io/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
 
@@ -22,7 +21,7 @@ The complete [app is available here](https://keawade.github.io/cuddly-weasel/) a
 
 This project was one of the first projects that I used GitHub's built in project name generator for. I knew what I was building but didn't care for the dull name of just "Calculator" so I cycled through several names until settling upon `cuddly-weasel`. If I were building this app for anything other than my own personal use and practice, I would probably need to put in more effort. As it stands, though, I just need a unique name for my project and this one is a fun one.
 
-[![Rendered app](cuddly-weasel.png)](https://keawade.github.io/cuddly-weasel/)
+[![Rendered app](/assets/blog/cuddly-weasel/cuddly-weasel.png)](https://keawade.github.io/cuddly-weasel/)
 
 ## Design Considerations
 
