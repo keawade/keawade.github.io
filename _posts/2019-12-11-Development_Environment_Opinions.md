@@ -51,15 +51,15 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | 
 curl -sSL https://raw.githubusercontent.com/brigand/fast-nvm-fish/master/nvm.fish > ~/.config/fish/functions/nvm.fish
 
 # Install node and npm via nvm
-nvm install 10
-nvm use 10
+nvm install 18
+nvm use 18
 ```
 
 You may also need to add a line to your configs:
 
 ```shell
 # ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
-nvm use 10
+nvm use 18
 ```
 
 ## coreutils
