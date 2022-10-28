@@ -60,8 +60,6 @@ I enjoy solving problems. This is what inspires me to work as a software develop
 - Was part of a team that provided support for over 700 users
 - Set up over 140 machines from box to user
 
-### Union College 2015-2016 Extracurricular
-
 **Tech & Tabletop Club Officer**
 
 - Organized monthly technology lectures for students
