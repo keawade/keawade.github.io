@@ -1,3 +1,7 @@
 .markdown {
   @apply prose md:prose-lg;
 }
+
+.markdown code {
+  @apply before:content-none after:content-none;
+}
