@@ -1,13 +1,19 @@
-+++
-title = "PokéData Vue"
-date = 2017-01-22
-slug = "2017-01-22-Pokedata_Vue"
-description = "Pokémon strengths and weaknesses Pokédex built with Vue!"
-+++
+---
+title: "PokéData Vue"
+author:
+  name: "Keith Wade"
+  picture: "/assets/blog/authors/keawade.jpeg"
+date: "2017-01-22"
+slug: "2017-01-22-Pokedata_Vue"
+excerpt: "Pokémon strengths and weaknesses Pokédex built with Vue!"
+coverImage: "/assets/blog/pokedata-vue/vue-js-banner.jpg"
+ogImage:
+  url: "/assets/blog/pokedata-vue/vue-js-banner.jpg"
+---
 
 The latest technology in my serial of [Pokedex's](https://keawade.github.io/pokedata) with different JavaScript frameworks is [Vue](https://vuejs.org/)! I've been working with Vue off and on for the last few months with [garden-vue](https://github.com/garden-stream/garden-vue) and [w-os](https://github.com/whiteboards/w-os). Now I've finally gotten around to building my recurring PokeData with Vue as well.
 
-[![PokeData](pokedata-vue.png)](http://keawade.github.io/pokedata-vue/)
+[![PokeData](/assets/blog/pokedata-vue/pokedata-vue.png)](http://keawade.github.io/pokedata-vue/)
 
 The main thing that struck me was how quickly I was able to build this app with Vue. Total dev time on this project was approximately 3 to 4 hours. Vue seems to me to be an excellent choice for small focused projects or rapid prototyping.
 

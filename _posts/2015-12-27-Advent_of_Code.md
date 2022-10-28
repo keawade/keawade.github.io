@@ -1,9 +1,14 @@
-+++
-title = "Advent of Code: Not Quite Lisp"
-date = 2015-12-27
-slug = "2015-12-27-Advent_of_Code"
-description = "My solutions and approach to the first Advent of Code challenge for 2015."
-+++
+---
+title: "Advent of Code: Not Quite Lisp"
+author:
+  name: "Keith Wade"
+  picture: "/assets/blog/authors/keawade.jpeg"
+date: "2015-12-27"
+slug: "2015-12-27-Advent_of_Code"
+excerpt: "My solutions and approach to the first Advent of Code challenge for 2015."
+ogImage:
+  url: ""
+---
 
 [Eric Wastl](http://was.tl/) has created a series of holiday themed programming exercises over at [Advent of Code](http://adventofcode.com/) and I thought it would be fun to post my solutions to these exercises now that they have all been released. I'll be posting more of my solutions as I have time to write up my methodologies (and complete some of them).
 

@@ -1,9 +1,14 @@
-+++
-title = "Development Environment Opinions"
-date = 2019-12-11
-slug = "2019-12-11-Development_Environment_Opinions"
-description = "Opinionated list of software I recommend."
-+++
+---
+title: "Development Environment Opinions"
+author:
+  name: "Keith Wade"
+  picture: "/assets/blog/authors/keawade.jpeg"
+date: "2019-12-11"
+slug: "2019-12-11-Development_Environment_Opinions"
+excerpt: "Opinionated list of software I recommend."
+ogImage:
+  url: ""
+---
 
 This is a collection of software I've used that I have found useful or neat. I've included install instructions for macOS but if you're on linux, finding other ways to install this software shouldn't be difficult.
 

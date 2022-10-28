@@ -1,9 +1,14 @@
-+++
-title = "Cuddly Weasel"
-date = 2016-01-21
-slug = "2016-01-21-Cuddly-Weasel"
-description = "A calculated adventure in DOM manipulation for calculators."
-+++
+---
+title: "Cuddly Weasel"
+author:
+  name: "Keith Wade"
+  picture: "/assets/blog/authors/keawade.jpeg"
+date: "2016-01-21"
+slug: "2016-01-21-Cuddly-Weasel"
+excerpt: "A calculated adventure in DOM manipulation for calculators."
+ogImage:
+  url: ""
+---
 
 
 Last fall I had a bit of fun building a calculator app, [cuddly-weasel](https://keawade.github.io/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
