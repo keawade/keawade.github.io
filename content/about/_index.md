@@ -7,7 +7,7 @@ I enjoy solving problems. This is what inspires me to work as a software develop
 
 ## Work History
 
-## Nelnet 2021-Current
+### Nelnet 2021-Current
 
 **Platform Software Developer**
 
@@ -19,7 +19,7 @@ I enjoy solving problems. This is what inspires me to work as a software develop
 - Trained developers in use of Kubernetes and Helm for local microservices development.
 - Developed software in agile environments with an emphasis on finding processes and tools to support the given team rather than adhering to specific methodologies religiously.
 
-## Ally Bank
+### Ally Bank 2021
 
 **Software Developer**
 
