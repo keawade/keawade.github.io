@@ -6,7 +6,7 @@ description = "A calculated adventure in DOM manipulation."
 +++
 
 Last fall I had a bit of fun building a calculator app, [cuddly-weasel](https://keawade.github.io/cuddly-weasel/), using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.
-
+<!-- more -->
 The [Data Object Model](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction), or DOM, is a programming interface for HTML and XML documents. The DOM provides a way to store a HTML or XML document in an object-oriented representation that can be manipulated with a scripting language like JavaScript.
 
 While [DOM manipulation](https://www.codecademy.com/skills/make-an-interactive-website/topics/jquery-dom-manipulation/jquery-dom) is useful, it generally isn't recommended to do your entire front end with DOM manipulation as it is much simpler to build the outline in HTML or a templating engine like ~~[Jade](http://jade-lang.com/)~~ *Edit: Jade has been renamed to [Pug](http://pugjs.org/)* or [Handlebars](http://handlebarsjs.com/) and then modify that existing code. However, it is possible to generate a page using very little markup and building the page with DOM manipulation and this is exactly what I did for this project.

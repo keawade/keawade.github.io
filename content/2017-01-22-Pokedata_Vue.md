@@ -6,7 +6,7 @@ description = "Learning Vue + Vuex with Pokémon."
 +++
 
 The latest technology in my serial of [Pokedex's](https://keawade.github.io/pokedata) with different JavaScript frameworks is [Vue](https://vuejs.org/)! I've been working with Vue off and on for the last few months with [garden-vue](https://github.com/garden-stream/garden-vue) and [w-os](https://github.com/whiteboards/w-os). Now I've finally gotten around to building my recurring PokeData with Vue as well.
-
+<!-- more -->
 [![PokeData](/assets/pokedata-vue.png)](http://keawade.github.io/pokedata-vue/)
 
 The main thing that struck me was how quickly I was able to build this app with Vue. Total dev time on this project was approximately 3 to 4 hours. Vue seems to me to be an excellent choice for small focused projects or rapid prototyping.

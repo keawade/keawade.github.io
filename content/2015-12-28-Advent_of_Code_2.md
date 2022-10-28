@@ -6,7 +6,7 @@ description = "Advent of Code 2015 day 2 writeup."
 +++
 
 The elves have run out of wrapping paper and ribbon! For this puzzle we are given the dimensions of a bunch of presents as a list of strings and are asked to compute how much wrapping paper and ribbon should be ordered to wrap the remaining presents.
-
+<!-- more -->
 Get your own puzzle input and record your progress over at [Advent of Code](http://adventofcode.com/)!
 
 ## Problem 1

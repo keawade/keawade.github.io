@@ -7,8 +7,8 @@
   --text-light: rgba(255, 255, 255, 0.9);
   --border: #d8dae1;
   --accent: rgba(255, 255, 255, 0.9);
-  --accent-light: #90caf9;
-  --code: #bbb;
+  --accent-light: #c5e5ff;
+  --code: #eee;
   --preformatted: #444;
   --marked: #ffdd33;
   --disabled: #efefef;
@@ -21,11 +21,6 @@ body {
       height: auto;
       border-radius: 10rem;
       background-color: white;
-      transform: rotate(45deg);
-
-      polygon {
-        fill: rgba(23, 107, 182, 1);
-      }
     }
 
     nav .external {
@@ -50,6 +45,10 @@ body {
       margin-bottom: 0rem;
     }
 
+    .section-link {
+      text-decoration: none;
+    }
+
     .date {
       font-size: small;
       margin: 0rem;
@@ -58,9 +57,23 @@ body {
     .excerpt {
       margin: 0rem;
     }
+
+    .summary {
+      color: var(--accent-light);
+      font-size: medium;
+
+      a {
+        color: var(--accent-light);
+      }
+
+      a:hover {
+        color: var(--text);
+      }
+    }
   }
 }
 
+// Recommended styling from Zola for code syntax highlighting
 pre {
   padding: 1rem;
   overflow: auto;

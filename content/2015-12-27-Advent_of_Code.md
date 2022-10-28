@@ -6,7 +6,7 @@ description = "Advent of Code 2015 day 1 writeup."
 +++
 
 [Eric Wastl](http://was.tl/) has created a series of holiday themed programming exercises over at [Advent of Code](http://adventofcode.com/) and I thought it would be fun to post my solutions to these exercises now that they have all been released. I'll be posting more of my solutions as I have time to write up my methodologies (and complete some of them).
-
+<!-- more -->
 The first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.
 
 # Part 1

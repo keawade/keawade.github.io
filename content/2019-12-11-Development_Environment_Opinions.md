@@ -6,7 +6,7 @@ description = "An opinionated list of software I like enough to recommend."
 +++
 
 This is a collection of software I've used that I have found useful or neat. I've included install instructions for macOS but if you're on linux, finding other ways to install this software shouldn't be difficult.
-
+<!-- more -->
 ## Homebrew
 
 [https://brew.sh/](https://brew.sh/)

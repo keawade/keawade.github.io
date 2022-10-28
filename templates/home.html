@@ -2,13 +2,14 @@
 <h1>{{ section.title }}</h1>
 <div role="list">
   {% for page in section.pages %}
-  <section role="listitem">
-    <h2>
-      <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
-    </h2>
-    <p class="date">{{ page.date | date(format="%B %d, %Y")}}</p>
-    <p class="excerpt">{{page.description}}</p>
-  </section>
+  <a class="section-link" href="{{ page.permalink | safe }}">
+    <section role="listitem">
+      <h2>{{ page.title }}</h2>
+      <p class="date">{{ page.date | date(format="%B %d, %Y")}}</p>
+      <p class="excerpt">{{ page.description }}</p>
+      <div class="summary">{{ page.summary | striptags }}</div>
+    </section>
+  </a>
   {% endfor %}
 </div>
 {% endblock content %}
