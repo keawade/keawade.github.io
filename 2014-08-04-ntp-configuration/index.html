@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="NTP Configuration" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keithwade.com/2014-08-04-ntp-configuration/" />
+<meta property="og:description" content="A brief guide to the Network Time Protocol and its configuration." />
+
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+    <link rel="stylesheet" href="https://keithwade.com/site.css?h=c87c9c1fdcc6238b7304fcddc77f04712d4a3f8ffa6b5765e45edc3b2a6960e3" />
+    <link rel="icon" href="/favicon.png" />
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img
+          src="/assets/keawade.jpeg"
+          alt="Keith Wade avatar"
+          class="keawade-avatar"
+          width="500"
+          height="500"
+        />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        <a href="/about">About Me</a>
+        <a class="external" href="https://github.com/keawade" target="_blank"
+          >GitHub
+        </a>
+        <a
+          class="external"
+          href="https://twitter.com/TheKeithWade"
+          target="_blank"
+          >Twitter</a
+        >
+        <a
+          class="external"
+          href="https://linkedin.com/in/keawade"
+          target="_blank"
+          >LinkedIn</a
+        >
+      </nav>
+    </header>
+    <main>
+<h1>NTP Configuration</h1>
+<p class="date">August 04, 2014</p>
+<p><p><a href="https://en.wikipedia.org/wiki/Network_Time_Protocol">Network Time Protocol</a> (NTP) is used to synchronize computers around the world to allow for better communications on networks with changing latency such as the internet. This is done with a tiered infrastructure of timing devices.</p>
+<span id="continue-reading"></span>
+<p>The top tier, stratum zero, consists of high precision time devices like <a href="https://en.wikipedia.org/wiki/Atomic_clock">atomic clocks</a> or <a href="https://en.wikipedia.org/wiki/GPS_clock#GPS_clocks">global positioning system clocks</a> that keep extremely precise time. Below this tier is stratum one which consists of servers with their system clocks closely synchronized with an attached stratum zero device. Next are the stratum two servers with synchronization to stratum one servers and so on.</p>
+<p>To avoid overloading stratum one servers with time requests from clients most stratum one servers are not available for public time requests. Instead, many stratum two servers are maintained specifically for the purpose of providing time synchronization to any client machine. These servers are often managed by businesses for their internal networks but many are managed by organizations like universities or the National Institute of Standards and Technology (NIST) for general use.</p>
+<p>The rest of this article will explain how to implement your own time server and configure it.</p>
+<h2 id="planning">Planning</h2>
+<p>We need to choose public servers to synchronize with. There are several lists we can choose upstream servers from.</p>
+<ul>
+<li><a href="http://support.ntp.org/bin/view/Servers/WebHome#Browsing_the_Lists">NTP.org</a></li>
+<li><a href="http://www.pool.ntp.org/">NTP Pool Project</a></li>
+<li><a href="http://tf.nist.gov/tf-cgi/servers.cgi">NIST Internet Time Servers</a></li>
+</ul>
+<p>There are <a href="http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.1.">a few things</a> to keep in mind when selecting your upstream servers.</p>
+<ol>
+<li>Do not use any time servers which you do not have permission to use! The severs you select should be:</li>
+</ol>
+<ul>
+<li>Public time servers made available by your service provider or OS vendor to their customers</li>
+<li>And/or, other private time servers for which you have been given explicit permission and instructions on proper use</li>
+<li>And/or, the time servers designated by the pool.ntp.org project</li>
+<li>And/or, on one of the public lists of time servers</li>
+</ul>
+<ol start="2">
+<li>Make sure your selected servers are diverse and not maintained by or synchronized with the same organizations.</li>
+<li>Make sure your selected servers are moderately close to your network location. This is not super critical, but try to avoid servers half way around the world.</li>
+</ol>
+<p>There may be other things specific to your implementation, but this will give you a good start. For more information, check out the <a href="http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.1.">official NTP guidelines</a> for server selection.</p>
+<p>It is <a href="http://support.ntp.org/bin/view/Support/SelectingOffsiteNTPServers#Section_5.3.3.">recommended</a> that you choose at least five upstream servers to allow your system to protect against up to two <em>falsetickers</em>, servers that are not reporting the correct time. Depending on your needs, you may want to consider using more.</p>
+<p>For this guide, I've selected seven stratum one servers from around the United States to create a stratum two server for my network. When I selected my servers, I took care to only pick servers that are <strong>OpenAccess</strong> and did not require <strong>NotificationMessage</strong>. Be careful when selecting your own servers as many require a NotificationMessage but neglected to change their policy to RestrictedAccess as <a href="http://support.ntp.org/bin/view/Servers/NotificationMessage">specifically requested</a> by ntp.org (Grumble, grumble).</p>
+<ul>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000498">ntp.your.org</a></li>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000280">time-b.timefreq.bldrdoc.gov</a></li>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000290">rackety.udel.edu</a></li>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000011">clock.fmt.he.net</a></li>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000787">gpstime.la-archdiocese.net</a></li>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000378">nist1.columbiacountyga.gov</a></li>
+<li><a href="http://support.ntp.org/bin/view/Servers/PublicTimeServer000974">gclock02.dupa01.burst.net</a></li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>This guide will work with NTP on CentOS. Other Linux distributions will have slight differences but should not be to difficult to configure using this guide.
+First, install the Network Time Protocol.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>yum install ntp -y
+</span></code></pre>
+<p>You will likely want NTP to start on boot. CentOS 7 uses SystemD to manage services. Use the following command to enable starting on boot.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>systemctl enable ntpd
+</span></code></pre>
+<p>If you are running an older version of CentOS you will need to use chkconfig to do this.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>chkconfig ntpd on
+</span></code></pre>
+<p>Now our NTP service will run every time the server boots. At this point we're ready to start configuring the server. We won't start the service yet, we'll wait until we have a basic configuration to test first.</p>
+<h2 id="server-configuration">Server Configuration</h2>
+<p>Now that you have selected your upstream servers and have installed NTP on your own server, you are ready to start configuring NTP to synchronize. We will first make a backup of your original NTP configuration file so we can look through it later. For now though we will delete the original (But not the backup!), and then create our own config file to work with.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>cp /etc/ntp.conf /etc/ntp.conf.bak
+</span><span>rm /etc/ntp.conf
+</span><span>nano /etc/ntp.conf
+</span></code></pre>
+<p>If you want to return to the original file, just replace the actual file with your backup to start over by running the following command.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>cp /etc/ntp.conf.bak /etc/ntp.conf`
+</span></code></pre>
+<p>Here is an example ntp.conf file that I'll be using to explain the basic concepts of the configuration.</p>
+<pre style="background-color:#1e1e1e;color:#dcdcdc;"><code><span># Drift file.
+</span><span>driftfile /var/lib/ntp/drift
+</span><span># Permit
+</span><span>restrict default limited kod nomodify notrap nopeer
+</span><span>restrict -6 default limited kod nomodify notrap nopeer
+</span><span># Servers
+</span><span>server ntp.your.org iburst
+</span><span>server time-b.timefreq.bldrdoc.gov iburst
+</span><span>server rackety.udel.edu iburst
+</span><span>server clock.fmt.he.net iburst
+</span><span>server gpstime.la-archdiocese.net iburst
+</span><span>server nist1.columbiacountyga.gov iburst
+</span><span>server gclock02.dupa01.burst.net iburst
+</span><span>disable monitor
+</span></code></pre>
+<p>Now lets break down each of these pieces and figure out what they do.
+First, the <strong>drift file</strong>. The drift file stores information about your system clock's drift tendency. Most system clocks keep time reasonably well but still require synchronization in order to remain accurate. The drift file keeps track of how much your system clock tends to drift from actual time. Then, if you lose your connection to your synchronization servers, it can correct itself based on the drift data it has collected. This give you a bit of slack to work with if your connections ever go down.</p>
+<p>The <strong>restrict</strong> lines restricts what external machines can do to our server. The **server **lines define the addresses we will attempt to synchronize with. First we declare the server name and then add the <strong>iburst</strong> parameter. The <a href="http://doc.ntp.org/4.1.1/confopt.htm">iburst parameter</a> has the service send a burst of eight packets instead of only one when the server is unreachable to help speed up the time to acquire a connection.</p>
+<p>The <strong>disable monitor</strong> line <a href="http://support.ntp.org/bin/view/Main/SecurityNotice#DRDoS_Amplification_Attack_using">fixes a vulnerability</a> from January 2014 on older versions of NTP.</p>
+<p>We can now save our config file and start the service!</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>systemctl start ntpd
+</span></code></pre>
+<p>or</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>service ntpd start
+</span></code></pre>
+<p>Now that the NTP service is running, we need to make sure our firewall is configured to allow incoming NTP traffic so our clients can synchronize with our server.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>firewall-cmd --permanent --add-service=ntp
+</span><span>systemctl restart firewalld
+</span></code></pre>
+<p>or</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>iptables -A INPUT -p tcp --dport 123 -j ACCEPT
+</span><span>/sbin/service iptables save
+</span></code></pre>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>service iptables restart
+</span></code></pre>
+<p>Once the server is running we can use the command <code>ntpq -p</code> to list our servers and view details about our connections to them. We can also use <code>ntpstat</code> to see our current synchronization status. For details on what this data means, check the <a href="http://doc.ntp.org/4.2.4/ntpq.html">NTP documentation page for the ntpq command</a>.</p>
+<h2 id="client-configuration">Client Configuration</h2>
+<p>The client configuration is much simpler than the server configuration was. First, repeat the installation steps for the NTP service. Next, repeat the configuration steps but when you create your new ntp.conf file we will do some things differently.</p>
+<pre style="background-color:#1e1e1e;color:#dcdcdc;"><code><span># Drift file.
+</span><span>driftfile /var/lib/ntp/drift
+</span><span># Permit
+</span><span>restrict default limited kod nomodify notrap nopeer
+</span><span>restrict -6 default limited kod nomodify notrap nopeer
+</span><span># Servers
+</span><span>server time.mydomain.com iburst
+</span></code></pre>
+<p>Since our source is known, and likely internal, we can get away with a bit less security. Also, since we don't need anything to connect to the clients on an incoming port, we don't need to modify our firewall rules as long as outgoing traffic is unrestricted (As it is by default).
+Finally, use the <code>ntpq -p</code> and <code>ntpstat</code> commands to verify your NTP service is synchronizing with your server.</p>
+<p>Congratulations! You have just finished configuring your basic NTP server and clients! There are several more things we could do to improve security and redundancy but this is where this particular guide will end.</p>
+</p>
+</main>
+    <footer>
+      This site was created by <a href="/">Keith Wade</a> using
+      <a href="https://www.getzola.org/" target="_blank">Zola</a> and
+      <a href="https://simplecss.org/" target="_blank">Simple.css</a>.
+    </footer>
+  </body>
+</html>

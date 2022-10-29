@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Cuddly Weasel" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keithwade.com/2016-01-21-cuddly-weasel/" />
+<meta property="og:description" content="A calculated adventure in DOM manipulation." />
+
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+    <link rel="stylesheet" href="https://keithwade.com/site.css?h=c87c9c1fdcc6238b7304fcddc77f04712d4a3f8ffa6b5765e45edc3b2a6960e3" />
+    <link rel="icon" href="/favicon.png" />
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img
+          src="/assets/keawade.jpeg"
+          alt="Keith Wade avatar"
+          class="keawade-avatar"
+          width="500"
+          height="500"
+        />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        <a href="/about">About Me</a>
+        <a class="external" href="https://github.com/keawade" target="_blank"
+          >GitHub
+        </a>
+        <a
+          class="external"
+          href="https://twitter.com/TheKeithWade"
+          target="_blank"
+          >Twitter</a
+        >
+        <a
+          class="external"
+          href="https://linkedin.com/in/keawade"
+          target="_blank"
+          >LinkedIn</a
+        >
+      </nav>
+    </header>
+    <main>
+<h1>Cuddly Weasel</h1>
+<p class="date">January 21, 2016</p>
+<p><p>Last fall I had a bit of fun building a calculator app, <a href="https://keawade.github.io/cuddly-weasel/">cuddly-weasel</a>, using only DOM manipulation and CSS. I thought I would take some time here to highlight some of the more interesting things I ran into in the course of this project.</p>
+<span id="continue-reading"></span>
+<p>The <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction">Data Object Model</a>, or DOM, is a programming interface for HTML and XML documents. The DOM provides a way to store a HTML or XML document in an object-oriented representation that can be manipulated with a scripting language like JavaScript.</p>
+<p>While <a href="https://www.codecademy.com/skills/make-an-interactive-website/topics/jquery-dom-manipulation/jquery-dom">DOM manipulation</a> is useful, it generally isn't recommended to do your entire front end with DOM manipulation as it is much simpler to build the outline in HTML or a templating engine like <del><a href="http://jade-lang.com/">Jade</a></del> <em>Edit: Jade has been renamed to <a href="http://pugjs.org/">Pug</a></em> or <a href="http://handlebarsjs.com/">Handlebars</a> and then modify that existing code. However, it is possible to generate a page using very little markup and building the page with DOM manipulation and this is exactly what I did for this project.</p>
+<h1 id="cuddly-weasel">Cuddly Weasel</h1>
+<p>The complete <a href="https://keawade.github.io/cuddly-weasel/">app is available here</a> and the <a href="https://github.com/keawade/cuddly-weasel">source code is available on GitHub</a>. The rest of this article will highlight some of the more interesting implementations and manipulations in the application.</p>
+<h2 id="name">Name</h2>
+<p>This project was one of the first projects that I used GitHub's built in project name generator for. I knew what I was building but didn't care for the dull name of just &quot;Calculator&quot; so I cycled through several names until settling upon <code>cuddly-weasel</code>. If I were building this app for anything other than my own personal use and practice, I would probably need to put in more effort. As it stands, though, I just need a unique name for my project and this one is a fun one.</p>
+<p><a href="https://keawade.github.io/cuddly-weasel/"><img src="/assets/cuddly-weasel.png" alt="Rendered app" /></a></p>
+<h2 id="design-considerations">Design Considerations</h2>
+<p>Like the name, the visual design for this project is arbitrary. I didn't have any real goal in mind with this design, I just built some elements and then started throwing CSS at it to see what stuck.</p>
+<h3 id="colors-and-font">Colors and Font</h3>
+<p>I went with the <a href="http://ethanschoonover.com/solarized">Solarized</a> color palette for simplicity. It allowed me to have a solid palette without having to make it up as I worked. The theme toggle was built for fun since Solarized already had a light theme with colors that directly correspond to each other. All I needed was an alternate set of colors in the CSS and it was done.</p>
+<p>For the font I used <a href="https://www.google.com/fonts/specimen/Inconsolata">Inconsolata</a> from <a href="https://www.google.com/fonts">Google Fonts</a>. I chose this font was because I wanted a monospace font and I also wanted to make sure that all users would see the same font and have the same experience.</p>
+<h3 id="layout">Layout</h3>
+<p>Originally, I only had the top four rows of buttons with the core mechanics for the calculator which mirrored simple calculators one might find at a Walmart. As I kept adding more buttons, I never made any big changes to the design and just let <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">Flexbox</a> continue my original layout with the new buttons.</p>
+<h2 id="code">Code</h2>
+<p>My app is an interface that uses the <a href="http://mathjs.org/">mathjs</a> library to do all the actual calculations. This means that users can use mathjs features that I haven't implemented buttons for by manually typing the <a href="http://mathjs.org/docs/index.html">expressions</a> into the input box.</p>
+<h3 id="buttons">Buttons</h3>
+<p>Each button element has an event listener listening for a click event. When that event occurs, it calls the <code>handleButton(event)</code> function.</p>
+<pre data-lang="javascript" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#569cd6;">function </span><span>handleButton(event) {
+</span><span>  </span><span style="color:#569cd6;">var </span><span>box = document.getElementById(</span><span style="color:#d69d85;">&#39;cal-box&#39;</span><span>);
+</span><span>
+</span><span>  </span><span style="color:#569cd6;">if </span><span>(</span><span style="color:#569cd6;">!</span><span>(box === document.activeElement)) {
+</span><span>    </span><span style="color:#608b4e;">// Solve
+</span><span>    </span><span style="color:#569cd6;">if</span><span>(autoclear){
+</span><span>      </span><span style="color:#569cd6;">if</span><span>(lastNum == </span><span style="color:#d69d85;">&#39;=&#39;</span><span>) {
+</span><span>        box.value = </span><span style="color:#d69d85;">&#39;&#39;</span><span>;
+</span><span>      }
+</span><span>    }
+</span><span>    </span><span style="color:#569cd6;">if </span><span>(event.target.id == </span><span style="color:#d69d85;">&#39;=&#39;</span><span>) {
+</span><span>      </span><span style="color:#569cd6;">var </span><span>temp = box.value.replace(</span><span style="color:#d69d85;">/ln</span><span style="color:#e3bbab;">\(</span><span style="color:#d69d85;">/</span><span style="color:#569cd6;">g</span><span>, </span><span style="color:#d69d85;">&#39;log(&#39;</span><span>);
+</span><span>      answer = math.eval(temp);
+</span><span>      </span><span style="color:#569cd6;">if </span><span>(</span><span style="color:#569cd6;">!</span><span>isNaN(answer)) {
+</span><span>        box.value = answer;
+</span><span>        </span><span style="color:#569cd6;">if</span><span>(autoclear){
+</span><span>          lastNum = </span><span style="color:#d69d85;">&#39;=&#39;</span><span>;
+</span><span>        } </span><span style="color:#569cd6;">else </span><span>{
+</span><span>          lastNum = answer;
+</span><span>        }
+</span><span>      }
+</span><span>    </span><span style="color:#608b4e;">// Clear
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(event.target.id == </span><span style="color:#d69d85;">&#39;clr&#39;</span><span>) {
+</span><span>      box.value = </span><span style="color:#d69d85;">&#39;&#39;</span><span>;
+</span><span>      lastNum = </span><span style="color:#d69d85;">&#39;new&#39;</span><span>;
+</span><span>    </span><span style="color:#608b4e;">// Backspace
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(event.target.id == </span><span style="color:#d69d85;">&#39;&lt;-&#39;</span><span>) {
+</span><span>      box.value = box.value.substring(</span><span style="color:#b5cea8;">0</span><span>, box.value.length - </span><span style="color:#b5cea8;">1</span><span>);
+</span><span>      lastNum = box.value.charAt(box.value.length - </span><span style="color:#b5cea8;">1</span><span>);
+</span><span>    </span><span style="color:#608b4e;">// Numbers
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(</span><span style="color:#d69d85;">/</span><span style="color:#b4cea8;">[0-9]</span><span style="color:#d69d85;">/</span><span>.test(event.target.id)) {
+</span><span>      box.value = box.value + event.target.id;
+</span><span>      lastNum = event.target.id;
+</span><span>    </span><span style="color:#608b4e;">// Symbols
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(</span><span style="color:#d69d85;">/</span><span style="color:#b4cea8;">[-/*+.]</span><span style="color:#d69d85;">/</span><span>.test(event.target.id)) {
+</span><span>      </span><span style="color:#569cd6;">if</span><span>(</span><span style="color:#569cd6;">!</span><span>(</span><span style="color:#d69d85;">/new</span><span style="color:#569cd6;">|</span><span style="color:#b4cea8;">[-/*+.]</span><span style="color:#d69d85;">/</span><span>.test(lastNum))){
+</span><span>        box.value = box.value + event.target.id;
+</span><span>        lastNum = event.target.id;
+</span><span>      }
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(event.target.id == </span><span style="color:#d69d85;">&#39;^&#39;</span><span>){
+</span><span>      </span><span style="color:#569cd6;">if </span><span>(</span><span style="color:#d69d85;">/</span><span style="color:#b4cea8;">[0-9]</span><span style="color:#569cd6;">|</span><span style="color:#e3bbab;">\)</span><span style="color:#d69d85;">/</span><span>.test(lastNum)) {
+</span><span>        box.value = box.value + </span><span style="color:#d69d85;">&#39;^(&#39;</span><span>;
+</span><span>      }
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(</span><span style="color:#d69d85;">/</span><span style="color:#b4cea8;">[</span><span style="color:#e3bbab;">\(\)</span><span style="color:#b4cea8;">]</span><span style="color:#d69d85;">/</span><span>.test(event.target.id)) {
+</span><span>      box.value = box.value + event.target.id;
+</span><span>      lastNum = event.target.id;
+</span><span>    </span><span style="color:#608b4e;">// Trig Functions
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(</span><span style="color:#d69d85;">/sin</span><span style="color:#569cd6;">|</span><span style="color:#d69d85;">cos</span><span style="color:#569cd6;">|</span><span style="color:#d69d85;">tan</span><span style="color:#569cd6;">|</span><span style="color:#d69d85;">cot</span><span style="color:#569cd6;">|</span><span style="color:#d69d85;">sqrt</span><span style="color:#569cd6;">|</span><span style="color:#d69d85;">e</span><span style="color:#e3bbab;">\^</span><span style="color:#569cd6;">|</span><span style="color:#d69d85;">ln/</span><span>.test(event.target.id)) {
+</span><span>      box.value = box.value + event.target.id + </span><span style="color:#d69d85;">&#39;(&#39;
+</span><span>      lastNum = </span><span style="color:#d69d85;">&#39;(&#39;</span><span>;
+</span><span>    } </span><span style="color:#569cd6;">else if </span><span>(</span><span style="color:#d69d85;">/pi/</span><span>.test(event.target.id)){
+</span><span>      box.value = box.value + </span><span style="color:#d69d85;">&#39;(pi)&#39;</span><span>;
+</span><span>      lastNum = </span><span style="color:#d69d85;">&#39;)&#39;</span><span>;
+</span><span>    }
+</span><span>    this.blur();
+</span><span>  }
+</span><span>}
+</span></code></pre>
+<p>As you can see, my code uses a line of else-if statements combined with some simple <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">regular expressions</a> to quickly run through the potential inputs from the button's click event.</p>
+<p>The code also keeps track of what the last character was to determine whether or not the current key press is valid. For example, if the partial expression <code>1+1-</code> has been entered, the app will not allow a key press event to enter an operator since the last character was also an operator.</p>
+<p>At the end of the list of possible inputs, I've called <code>this.blur()</code> to remove focus on the clicked element caused by the default click event. This way, if the user presses their return key, it won't just trigger this click again but will only trigger the keypress event as it is supposed too.</p>
+<h3 id="keyboard-input">Keyboard Input</h3>
+<p>The keyboard input was interesting. I started by implementing an event listener to listen for keypress events and evaluate them.</p>
+<pre data-lang="javascript" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span>document.addEventListener(</span><span style="color:#d69d85;">&#39;keypress&#39;</span><span>, </span><span style="color:#569cd6;">function</span><span>(key) {
+</span><span>  </span><span style="color:#569cd6;">var </span><span>keyString = String.fromCharCode(key.charCode);
+</span><span>  </span><span style="color:#569cd6;">if </span><span>(key.keyCode == </span><span style="color:#b5cea8;">13</span><span>) {
+</span><span>    document.getElementById(</span><span style="color:#d69d85;">&#39;=&#39;</span><span>).click();
+</span><span>  } </span><span style="color:#569cd6;">else if </span><span>(</span><span style="color:#d69d85;">/</span><span style="color:#b4cea8;">[0-9]</span><span style="color:#569cd6;">|</span><span style="color:#b4cea8;">[-/*+=.^()]</span><span style="color:#d69d85;">/</span><span>.test(keyString)) {
+</span><span>    document.getElementById(keyString).click();
+</span><span>  } </span><span style="color:#569cd6;">else if </span><span>(key.keyCode == </span><span style="color:#b5cea8;">8</span><span>) {
+</span><span>    </span><span style="color:#569cd6;">var </span><span>box = document.getElementById(</span><span style="color:#d69d85;">&#39;cal-box&#39;</span><span>)
+</span><span>    </span><span style="color:#569cd6;">if </span><span>(box === document.activeElement) {
+</span><span>      </span><span style="color:#608b4e;">//
+</span><span>    } </span><span style="color:#569cd6;">else </span><span>{
+</span><span>      </span><span style="color:#569cd6;">if </span><span>(box.value == </span><span style="color:#d69d85;">&#39;&#39;</span><span>) {
+</span><span>        </span><span style="color:#608b4e;">// Do nothing
+</span><span>      } </span><span style="color:#569cd6;">else </span><span>{
+</span><span>        document.getElementById(</span><span style="color:#d69d85;">&#39;&lt;-&#39;</span><span>).click();
+</span><span>      }
+</span><span>    }
+</span><span>  } </span><span style="color:#608b4e;">// keyCode 46 is Delete
+</span><span>}, </span><span style="color:#569cd6;">false</span><span>);
+</span></code></pre>
+<p>Here, the listener waits for a keypress and then does a quick set of evaluations. First, it checks if the keypress is a </p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/Events/keypress">Keypress event details</a></p>
+<p>Functions, functions, functions.</p>
+</p>
+</main>
+    <footer>
+      This site was created by <a href="/">Keith Wade</a> using
+      <a href="https://www.getzola.org/" target="_blank">Zola</a> and
+      <a href="https://simplecss.org/" target="_blank">Simple.css</a>.
+    </footer>
+  </body>
+</html>

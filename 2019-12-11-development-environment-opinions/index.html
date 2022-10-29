@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Development Environment Opinions" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keithwade.com/2019-12-11-development-environment-opinions/" />
+<meta property="og:description" content="An opinionated list of software I like enough to recommend." />
+
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+    <link rel="stylesheet" href="https://keithwade.com/site.css?h=c87c9c1fdcc6238b7304fcddc77f04712d4a3f8ffa6b5765e45edc3b2a6960e3" />
+    <link rel="icon" href="/favicon.png" />
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img
+          src="/assets/keawade.jpeg"
+          alt="Keith Wade avatar"
+          class="keawade-avatar"
+          width="500"
+          height="500"
+        />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        <a href="/about">About Me</a>
+        <a class="external" href="https://github.com/keawade" target="_blank"
+          >GitHub
+        </a>
+        <a
+          class="external"
+          href="https://twitter.com/TheKeithWade"
+          target="_blank"
+          >Twitter</a
+        >
+        <a
+          class="external"
+          href="https://linkedin.com/in/keawade"
+          target="_blank"
+          >LinkedIn</a
+        >
+      </nav>
+    </header>
+    <main>
+<h1>Development Environment Opinions</h1>
+<p class="date">December 11, 2019</p>
+<p><p>This is a collection of software I've used that I have found useful or neat. I've included install instructions for macOS but if you're on linux, finding other ways to install this software shouldn't be difficult.</p>
+<span id="continue-reading"></span><h2 id="homebrew">Homebrew</h2>
+<p><a href="https://brew.sh/">https://brew.sh/</a></p>
+<p>Homebrew is a package manager for macOS. It has some annoyances but has the largest package base and community around it.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install brew
+</span><span>/usr/bin/ruby -e </span><span style="color:#d69d85;">&quot;$(</span><span>curl -fsSL</span><span style="color:#d69d85;"> https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+</span></code></pre>
+<h2 id="fish">fish</h2>
+<p><a href="https://fishshell.com/">https://fishshell.com/</a></p>
+<p>The <code>fish</code> shell provides a modern take on the shell and has some great documentation.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install fish
+</span><span>brew install fish
+</span><span style="color:#608b4e;"># Add fish to the list of available shells
+</span><span>echo /usr/local/bin/fish </span><span style="color:#569cd6;">| </span><span>sudo tee -a /etc/shells
+</span><span style="color:#608b4e;"># Set your shell to fish
+</span><span>chsh -s /usr/local/bin/fish
+</span></code></pre>
+<h2 id="node-version-manager">Node Version Manager</h2>
+<p><a href="https://github.com/nvm-sh/nvm#node-version-manager---">https://github.com/nvm-sh/nvm</a></p>
+<p>POSIX-compliant bash script to manage multiple active node.js versions.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install nvm
+</span><span style="color:#608b4e;"># Note: Don&#39;t install this via brew as it doesn&#39;t work as of the time of writing.
+</span><span>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh </span><span style="color:#569cd6;">| </span><span>bash
+</span><span>
+</span><span style="color:#608b4e;"># Install fast-nvm-fish
+</span><span style="color:#608b4e;"># Only needed for fish
+</span><span>curl -sSL https://raw.githubusercontent.com/brigand/fast-nvm-fish/master/nvm.fish &gt; ~/.config/fish/functions/nvm.fish
+</span><span>
+</span><span style="color:#608b4e;"># Install node and npm via nvm
+</span><span>nvm install 18
+</span><span>nvm use 18
+</span></code></pre>
+<p>You may also need to add a line to your configs:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
+</span><span>nvm use 18
+</span></code></pre>
+<h2 id="coreutils">coreutils</h2>
+<p><a href="https://www.gnu.org/software/coreutils/coreutils.html">https://www.gnu.org/software/coreutils/coreutils.html</a></p>
+<p>The <code>coreutils</code> brew formulae contains GNU file, shell, and text utilities. The default utils provided by macOS have some shortcomings and idiosyncrasies that don't exist in the canonical GNU utilities.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install coreutils
+</span><span>brew install coreutils
+</span></code></pre>
+<p>You will need to update your <code>PATH</code> and <code>MANPATH</code> variables to tell macOS to use the new utils over the macOS utils:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish
+</span><span>set PATH /usr/local/opt/coreutils/libexec/gnubin $PATH
+</span><span>set MANPATH /usr/local/opt/coreutils/libexec/gnuman $MANPATH
+</span><span>
+</span><span style="color:#608b4e;"># ~/.zshrc or  ~/.bashrc
+</span><span style="color:#569cd6;">export </span><span>PATH=</span><span style="background-color:#282828;color:#d69d85;">&quot;$(</span><span style="background-color:#282828;color:#dcdcdc;">brew --prefix</span><span style="background-color:#282828;color:#d69d85;"> coreutils)/libexec/gnubin:/usr/local/bin:$</span><span style="background-color:#282828;color:#dcdcdc;">PATH</span><span style="background-color:#282828;color:#d69d85;">&quot;</span><span>
+</span></code></pre>
+<h2 id="thefuck">thefuck</h2>
+<p><a href="https://github.com/nvbn/thefuck#the-fuck-----">https://github.com/nvbn/thefuck</a></p>
+<p><code>thefuck</code> is one of the most useful command line utilities I have found.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install thefuck
+</span><span>brew install thefuck
+</span></code></pre>
+<p>You will need to configure it before use as well:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish
+</span><span>thefuck --alias </span><span style="color:#569cd6;">| </span><span>source
+</span><span style="color:#608b4e;"># ~/.zshrc or  ~/.bashrc
+</span><span>eval </span><span style="color:#d69d85;">&quot;$(</span><span>thefuck --alias</span><span style="color:#d69d85;">)&quot;
+</span></code></pre>
+<p>I would also recommend adding an alias ;)</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Be more polite
+</span><span>alias f=</span><span style="background-color:#282828;color:#d69d85;">&#39;fuck&#39;</span><span>
+</span></code></pre>
+<h2 id="starship">starship</h2>
+<p><a href="https://github.com/starship/starship">https://github.com/starship/starship</a></p>
+<p>Starship is a minimal, fast, and extremely customizable prompt for any shell.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>brew install starship
+</span></code></pre>
+<p>You will need to configure your shell to use starship:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish
+</span><span>starship init fish </span><span style="color:#569cd6;">| </span><span>source
+</span><span style="color:#608b4e;"># ~/.zshrc
+</span><span>eval </span><span style="color:#d69d85;">&quot;$(</span><span>starship</span><span style="color:#d69d85;"> init zsh)&quot;
+</span><span style="color:#608b4e;"># ~/.bashrc
+</span><span>eval </span><span style="color:#d69d85;">&quot;$(</span><span>starship</span><span style="color:#d69d85;"> init bash)&quot;
+</span></code></pre>
+<h2 id="vscodium">VSCodium</h2>
+<p><a href="https://github.com/VSCodium/vscodium#vscodium">https://github.com/VSCodium/vscodium</a></p>
+<p>VSCodium is a build of VSCode that strips out all of Microsoft's telemetry.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install vscodium
+</span><span>brew cask install vscodium
+</span><span>
+</span><span style="color:#608b4e;"># Can still be launched from cli like this:
+</span><span>code ~/foo.txt
+</span></code></pre>
+<h2 id="firacode">FiraCode</h2>
+<p><a href="https://github.com/tonsky/FiraCode#fira-code-monospaced-font-with-programming-ligatures">https://github.com/tonsky/FiraCode</a></p>
+<p>FiraCode is a nice monospace font with ligatures.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install FiraCode
+</span><span>brew tap homebrew/cask-fonts
+</span><span>brew cask install font-fira-code
+</span></code></pre>
+<p>You will also need to configure Visual Studio Code:</p>
+<pre data-lang="json" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-json "><code class="language-json" data-lang="json"><span style="color:#608b4e;">// settings.json
+</span><span>{
+</span><span>    </span><span style="color:#608b4e;">// Use the font
+</span><span>    </span><span style="color:#d69d85;">&quot;editor.fontFamily&quot;</span><span>: </span><span style="color:#d69d85;">&quot;Fira Code&quot;</span><span>,
+</span><span>    </span><span style="color:#608b4e;">// Use the font ligatures
+</span><span>    </span><span style="color:#d69d85;">&quot;editor.fontLigatures&quot;</span><span>: </span><span style="color:#569cd6;">true</span><span>,
+</span><span>}
+</span></code></pre>
+<h2 id="exa">exa</h2>
+<p><a href="https://github.com/ogham/exa#exa-">https://github.com/ogham/exa</a></p>
+<p><code>exa</code> attempts to be a more featureful, more user-friendly version of <code>ls</code>.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span>brew install exa
+</span></code></pre>
+<p>You can replace <code>ls</code> with <code>exa</code> with an alias in your config file:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
+</span><span>alias ls=</span><span style="background-color:#282828;color:#d69d85;">&#39;exa&#39;</span><span>
+</span></code></pre>
+<h2 id="bat">bat</h2>
+<p><a href="https://github.com/sharkdp/bat">https://github.com/sharkdp/bat</a></p>
+<p>A <code>cat</code> clone with syntax highlighting and Git integration.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install bat
+</span><span>brew install bat
+</span></code></pre>
+<p>Again, we can replace <code>cat</code> with <code>bat</code> with an alias:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
+</span><span>alias cat=</span><span style="background-color:#282828;color:#d69d85;">&#39;bat&#39;</span><span>
+</span></code></pre>
+<h2 id="fd">fd</h2>
+<p><a href="https://github.com/sharkdp/fd#fd">https://github.com/sharkdp/fd</a></p>
+<p><code>fd</code> is a simple, fast and user-friendly alternative to <a href="https://www.gnu.org/software/findutils/"><code>find</code></a>.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install fd
+</span><span>brew install fd
+</span></code></pre>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># ~/.config/fish/config.fish or ~/.zshrc or ~/.bashrc
+</span><span>alias find=</span><span style="background-color:#282828;color:#d69d85;">&#39;fd&#39;</span><span>
+</span></code></pre>
+<h2 id="tldr">tldr</h2>
+<p><a href="https://github.com/dbrgn/tealdeer#tealdeer">https://github.com/dbrgn/tealdeer</a></p>
+<p>A collection of simplified and community-driven man pages.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install tldr
+</span><span>brew install tealdeer
+</span><span>
+</span><span style="color:#608b4e;"># Use like man
+</span><span>tldr node
+</span></code></pre>
+<h2 id="htop">htop</h2>
+<p><a href="https://hisham.hm/htop/">https://hisham.hm/htop/</a></p>
+<p>A terminal based process/task manager for unix systems.</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install htop
+</span><span>brew install htop
+</span></code></pre>
+<h2 id="git">git</h2>
+<p>Git comes on macOS by default but it isn't updated very frequently. You can install the latest git with brew:</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install git
+</span><span>brew install git
+</span></code></pre>
+<h2 id="mark-text">Mark Text</h2>
+<p>Mark Text is a markdown based notes application. I like having my markdown notes separate from my VSCode instances.</p>
+<p>I used Mark Text to write this article. :D</p>
+<pre data-lang="sh" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#608b4e;"># Install Mark Text
+</span><span>brew cask install mark-text
+</span></code></pre>
+</p>
+</main>
+    <footer>
+      This site was created by <a href="/">Keith Wade</a> using
+      <a href="https://www.getzola.org/" target="_blank">Zola</a> and
+      <a href="https://simplecss.org/" target="_blank">Simple.css</a>.
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Configuring a Hyper-V Cluster" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keithwade.com/2015-07-04-configuring-a-hyper-v-cluster/" />
+<meta property="og:description" content="A step by step guide to configuring a basic Hyper-V Cluster on Windows Server 2012." />
+
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+    <link rel="stylesheet" href="https://keithwade.com/site.css?h=c87c9c1fdcc6238b7304fcddc77f04712d4a3f8ffa6b5765e45edc3b2a6960e3" />
+    <link rel="icon" href="/favicon.png" />
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img
+          src="/assets/keawade.jpeg"
+          alt="Keith Wade avatar"
+          class="keawade-avatar"
+          width="500"
+          height="500"
+        />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        <a href="/about">About Me</a>
+        <a class="external" href="https://github.com/keawade" target="_blank"
+          >GitHub
+        </a>
+        <a
+          class="external"
+          href="https://twitter.com/TheKeithWade"
+          target="_blank"
+          >Twitter</a
+        >
+        <a
+          class="external"
+          href="https://linkedin.com/in/keawade"
+          target="_blank"
+          >LinkedIn</a
+        >
+      </nav>
+    </header>
+    <main>
+<h1>Configuring a Hyper-V Cluster</h1>
+<p class="date">July 04, 2015</p>
+<p><p>Hyper-V can be a particularly useful tool for consolidating computing resources. However, while consolidating machines into VMs can lower your hardware overhead costs, this introduces a single failure point for all your machines. If the Hyper-V server goes down, all your VMs will go down as well.</p>
+<span id="continue-reading"></span>
+<p>To overcome this issue, we can use Hyper-V's Failover and Load-balancing tools to build a Hyper-V cluster. These tools will provide failover for our machines so that, in the event of a critical failure on one of our Hyper-V nodes, the VMs running on that node will come back up on another node within seconds.</p>
+<h2 id="install-os">Install OS</h2>
+<p>Begin by installing Windows Server 2012 R2 Datacenter on each of your nodes.</p>
+<blockquote>
+<p>If you are not planning on creating more than two Server 2012 Standard virtual machines, you can use Server 2012 Standard edition. However, if you need more Server 2012 Standard instances or if you need Server 2012 Datacenter instances, you will need to use Server 2012 Datacenter for your cluster nodes.</p>
+</blockquote>
+<blockquote>
+<p>This is because of the way Microsoft handles their server licenses <a href="http://www.altaro.com/hyper-v/virtual-machine-licensing-hyper-v/">(More details)</a>.</p>
+</blockquote>
+<p>We don't need anything fancy here. Just install the OS normally and apply all updates.</p>
+<h2 id="network-overview">Network Overview</h2>
+<p>At a minimum, we need three separate networks: Data, Heartbeat, and iSCSI. The Data network will handle client connections and Internet connectivity. The Heartbeat network is an internal network exclusive to the cluster used for Live Migrations of virtual machines and cluster communications between nodes. The iSCSI network connects each of our nodes to our remote storage device.</p>
+<blockquote>
+<p>For the purposes of this guide, the remote storage will be located on a <a href="http://www.nimblestorage.com/products-technology/products-specs/">NimbleStorage</a> SAN. Nimble recommends using Multipath I/O instead of network teaming for their iSCSI connections so that is what this guide will be doing. Check with your remote storage manufacturer and use their recommended best practices.</p>
+</blockquote>
+<h2 id="configure-network-connections">Configure Network Connections</h2>
+<p>For this example, each of our cluster nodes has six Network Interface Cards (NICs) to provide redundancy for each network connection. We are going to use the NIC Teaming manager to manage our Load Balancing and Failover (LBFO) for
+our duplicate NICs.</p>
+<blockquote>
+<p>The NIC Teaming manager can be opened by running <em>lbfoadmin</em> from the Start menu or by clicking the link next to NIC Teaming in <em>Server Manager &gt; Local Server</em>.</p>
+</blockquote>
+<p>Lets team our Data and Heartbeat connections. Our iSCSI connections will use Multipath I/O instead. <a href="/2015/07/06/Load_Balancing_and_Failover_on_Server_2012/">Instructions NIC teaming can be found here.</a></p>
+<blockquote>
+<p>The six NICs on my servers are in three pairs of two NICs each. To increase redundancy, I split my teams across the pairs so if any one pair were to go down, the other two would be able to handle the traffic until the first pair
+could be replaced.</p>
+</blockquote>
+<p>Now that our teams have been created, we need to configure the addresses of each connection. The following table shows an example configuration. Note that the Data, Heartbeat, and iSCSI networks are on separate subnets. Modify this as
+necessary for your own network environment.</p>
+<table><thead><tr><th></th><th>NICs</th><th>Node1</th><th>Node2</th><th>Node3</th><th>Subnet</th></tr></thead><tbody>
+<tr><td>Data</td><td>1, 6</td><td>192.168.0.11</td><td>192.168.0.12</td><td>192.168.0.13</td><td>/24</td></tr>
+<tr><td>Heartbeat</td><td>2, 3</td><td>192.168.1.11</td><td>192.168.1.12</td><td>192.168.1.13</td><td>/24</td></tr>
+<tr><td>iSCSI</td><td>4</td><td>192.168.2.11</td><td>192.168.2.12</td><td>192.168.2.13</td><td>/24</td></tr>
+<tr><td>iSCSI</td><td>5</td><td>192.168.2.21</td><td>192.168.2.22</td><td>192.168.2.23</td><td>/24</td></tr>
+</tbody></table>
+<h2 id="miscellaneous">Miscellaneous</h2>
+<p>Enable Remote Desktop connections to each of your nodes so we can manage them more easily later. We also need to add each node to our domain. If your remote storage solution uses Multipath I/O, install that now using this <a href="https://technet.microsoft.com/en-us/library/hh852172.aspx">PowerShell command</a>:</p>
+<pre data-lang="powershell" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-powershell "><code class="language-powershell" data-lang="powershell"><span>Enable-WindowsOptionalFeature –Online –FeatureName MultiPathIO
+</span></code></pre>
+<blockquote>
+<p>If you are using a NimbleStorage SAN, you should install their Nimble Connection utility now. Be sure to select the deselected option when prompted for components to install.</p>
+</blockquote>
+<blockquote>
+<p>I don't think the nodes <em>must</em> be members of a domain but it does make several steps in the install simpler.</p>
+</blockquote>
+<h2 id="install-hyper-v">Install Hyper-V</h2>
+<p>To install the Hyper-V service, run the following <a href="https://technet.microsoft.com/en-us/library/jj205467%28v=wps.630%29.aspx">PowerShell command</a> on each node:</p>
+<pre data-lang="powershell" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-powershell "><code class="language-powershell" data-lang="powershell"><span>Install-WindowsFeature –Name Hyper-V -IncludeManagementTools -Restart
+</span></code></pre>
+<blockquote>
+<p>This command will install the Hyper-V service with its management tools and then restart the server.</p>
+</blockquote>
+<h2 id="configure-virtual-switch">Configure Virtual Switch</h2>
+<p>We need to create our Hyper-V Virtual Switches. For a smooth cluster installation, make sure each of these switches is identical on each node. A way to do this without much hassle is to run the same <a href="https://technet.microsoft.com/en-us/library/hh848455%28v=wps.630%29.aspx">PowerShell commands</a> on each node instead of manually configuring each switch. Run the following command on each node. If you are accessing your node via RDP your connection will be interrupted for a few seconds.</p>
+<pre data-lang="powershell" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-powershell "><code class="language-powershell" data-lang="powershell"><span>New-VMSwitch “</span><span style="color:#569cd6;">Data</span><span>” –NetAdapterName “</span><span style="color:#569cd6;">Data</span><span>” –AllowManagementOS:</span><span style="color:#569cd6;">$true
+</span></code></pre>
+<blockquote>
+<p>This command will create a new virtual switch named Data that is connected to the network adapter on your server node named Data. It will create a new virtual NIC on your node called vData that your local node will use since
+the physical NIC is now tied directly to the virtual switch.</p>
+</blockquote>
+<h2 id="install-failover-clustering">Install Failover Clustering</h2>
+<p>We are nearly ready to cluster our node servers! On each node, run the following <a href="https://technet.microsoft.com/en-us/library/jj205467%28v=wps.630%29.aspx">PowerShell command</a> to install the Failover Clustering service with its management tools:</p>
+<pre data-lang="powershell" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-powershell "><code class="language-powershell" data-lang="powershell"><span>Install-WindowsFeature –Name Failover-Clustering –IncludeManagementTools
+</span></code></pre>
+<p>Before we actually cluster our nodes, let's test our configuration. Run the following <a href="https://technet.microsoft.com/en-us/library/ee461026.aspx">PowerShell command</a> and check the report for any failures.</p>
+<pre data-lang="powershell" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-powershell "><code class="language-powershell" data-lang="powershell"><span>Test-Cluster –Node Node1</span><span style="color:#569cd6;">,</span><span>Node2</span><span style="color:#569cd6;">,</span><span>Node3 -ReportName </span><span style="color:#d69d85;">&quot;C:\TestClusterReport&quot;
+</span></code></pre>
+<blockquote>
+<p>You are likely to get warnings concerning your cluster's storage. This is fine. We will configure the cluster's shared storage soon.</p>
+</blockquote>
+<p>After reviewing the report and addressing any problems, we are ready to cluster our nodes! Run the following <a href="https://technet.microsoft.com/en-us/library/ee460973.aspx">PowerShell command</a> to create the cluster:</p>
+<pre data-lang="powershell" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-powershell "><code class="language-powershell" data-lang="powershell"><span>New-Cluster –Name Cluster1 –Node Node1</span><span style="color:#569cd6;">,</span><span>Node2</span><span style="color:#569cd6;">,</span><span>Node3 –StaticAddress </span><span style="color:#b5cea8;">192.168</span><span>.</span><span style="color:#b5cea8;">0.10
+</span></code></pre>
+<h2 id="configure-cluster-shared-volumes">Configure Cluster Shared Volumes</h2>
+<p>At this point, you should refer to your remote storage manufacturer's best practice documentation for Hyper-V to configure your Cluster Shared Volumes (CSV).</p>
+<blockquote>
+<p>I will describe the steps necessary for a NimbleStorage SAN. If you are using a different remote storage system, you can skip most of this section and refer to your manufacturer's documentation instead.</p>
+</blockquote>
+<blockquote>
+<p>I will describe the steps necessary to connect to an existing volume but not how to create that volume on the SAN. Please refer to <a href="https://infosight.nimblestorage.com/InfoSight/login">their documentation</a> instead.</p>
+</blockquote>
+<p>On each node, open the Nimble Connection Manager and exclude all addresses except the iSCSI addresses. Make sure each node's Initiator Name is added to the SAN's initiator group. Enter your Nimble's Discovery IP and switch to the Nimble Volumes tab. Select the desired volume and click connect.</p>
+<p>On only one of your nodes, open Disk Management and bring the new disk online. Initialize the disk and format with NTFS. You do not need to select a drive letter. In the Failover Cluster Manager, right click on Disks and select Add Disk. Select the available disks you want to add to the cluster's shared storage and click OK. Finally, under the disks item in the Failover Cluster Manager, right click on the volume(s) you just added and select Add to Cluster Shared Volume.</p>
+<blockquote>
+<p>Your new Cluster Shared Volume is now available on each server at &quot;C:\clustershared\Volume01\&quot;.</p>
+</blockquote>
+<blockquote>
+<p>It is recommended to edit the properties of your Cluster Shared Volumes to change their names from Volume01, Volume02, etc to match the names of the volumes on your SAN.</p>
+</blockquote>
+<blockquote>
+<p>For detailed information about Cluster Shared Volumes, check out this <a href="http://blogs.msdn.com/b/clustering/archive/2013/12/02/10473247.aspx">MSDN article</a>.</p>
+</blockquote>
+<h2 id="ready-for-roles">Ready for Roles</h2>
+<p>We are done installing and configuring our Hyper-V cluster! At this point, we are free to add VMs to the cluster as roles.</p>
+</p>
+</main>
+    <footer>
+      This site was created by <a href="/">Keith Wade</a> using
+      <a href="https://www.getzola.org/" target="_blank">Zola</a> and
+      <a href="https://simplecss.org/" target="_blank">Simple.css</a>.
+    </footer>
+  </body>
+</html>

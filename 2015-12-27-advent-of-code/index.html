@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Advent of Code: Not Quite Lisp" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keithwade.com/2015-12-27-advent-of-code/" />
+<meta property="og:description" content="Advent of Code 2015 day 1 writeup." />
+
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+    <link rel="stylesheet" href="https://keithwade.com/site.css?h=c87c9c1fdcc6238b7304fcddc77f04712d4a3f8ffa6b5765e45edc3b2a6960e3" />
+    <link rel="icon" href="/favicon.png" />
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img
+          src="/assets/keawade.jpeg"
+          alt="Keith Wade avatar"
+          class="keawade-avatar"
+          width="500"
+          height="500"
+        />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        <a href="/about">About Me</a>
+        <a class="external" href="https://github.com/keawade" target="_blank"
+          >GitHub
+        </a>
+        <a
+          class="external"
+          href="https://twitter.com/TheKeithWade"
+          target="_blank"
+          >Twitter</a
+        >
+        <a
+          class="external"
+          href="https://linkedin.com/in/keawade"
+          target="_blank"
+          >LinkedIn</a
+        >
+      </nav>
+    </header>
+    <main>
+<h1>Advent of Code: Not Quite Lisp</h1>
+<p class="date">December 27, 2015</p>
+<p><p><a href="http://was.tl/">Eric Wastl</a> has created a series of holiday themed programming exercises over at <a href="http://adventofcode.com/">Advent of Code</a> and I thought it would be fun to post my solutions to these exercises now that they have all been released. I'll be posting more of my solutions as I have time to write up my methodologies (and complete some of them).</p>
+<span id="continue-reading"></span>
+<p>The first set of puzzles involves Santa navigating an infinite high-rise building with and infinite basement. Santa is given instructions in the form of a string of parentheses which tell him to go up or down one floor.</p>
+<h1 id="part-1">Part 1</h1>
+<h2 id="problem">Problem</h2>
+<blockquote>
+<p>Santa is trying to deliver presents in a large apartment building, but he can't find the right floor - the directions he got are a little confusing. He starts on the ground floor (floor <code>0</code>) and then follows the instructions one character at a time.</p>
+<p>An opening parenthesis, <code>(</code>, means he should go up one floor, and a closing parenthesis, <code>)</code>, means he should go down one floor.</p>
+<p>The apartment building is very tall, and the basement is very deep; he will never find the top or bottom floors.</p>
+</blockquote>
+<h2 id="methodology">Methodology</h2>
+<p>Both of these solutions follow the same basic formula. First, I read in the input that I've saved in <code>source/day1source.txt</code> and assign it to a variable. Next, I create a variable to hold the value of the current floor. I then use a loop to loop through each character in the string. For each character I check if the instruction is to go up one floor and if it is, I increment the <code>floor</code> variable by 1, otherwise I decrement the <code>floor</code> variable by 1. When the loop completes going through all the characters, I print out the final <code>floor</code> variable value.</p>
+<h2 id="solutions">Solutions</h2>
+<h3 id="node-js">Node.js</h3>
+<pre data-lang="javascript" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#569cd6;">var </span><span>fs = require(</span><span style="color:#d69d85;">&#39;fs&#39;</span><span>)
+</span><span>
+</span><span style="color:#569cd6;">var </span><span>source = fs.readFileSync(</span><span style="color:#d69d85;">&#39;../source/day1source.txt&#39;</span><span>).toString()
+</span><span style="color:#569cd6;">var </span><span>end = source.length
+</span><span style="color:#569cd6;">var </span><span>floor = </span><span style="color:#b5cea8;">1
+</span><span style="color:#569cd6;">for </span><span>(</span><span style="color:#569cd6;">var </span><span>i = </span><span style="color:#b5cea8;">0</span><span>; i </span><span style="color:#569cd6;">&lt; </span><span>end; i</span><span style="color:#569cd6;">++</span><span>) {
+</span><span>  </span><span style="color:#569cd6;">if </span><span>(source.charAt(i) === </span><span style="color:#d69d85;">&#39;(&#39;</span><span>) {
+</span><span>    floor</span><span style="color:#569cd6;">++
+</span><span>  } </span><span style="color:#569cd6;">else </span><span>{
+</span><span>    floor</span><span style="color:#569cd6;">--
+</span><span>  }
+</span><span>}
+</span><span>console.log(</span><span style="color:#d69d85;">&#39;Santa ends up on floor &#39; </span><span>+ floor)
+</span></code></pre>
+<h3 id="python">Python</h3>
+<pre data-lang="python" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-python "><code class="language-python" data-lang="python"><span>filename = </span><span style="color:#d69d85;">&#39;../source/day1source.txt&#39;
+</span><span>
+</span><span style="color:#569cd6;">with </span><span>open(filename) </span><span style="color:#569cd6;">as </span><span>f:
+</span><span>    source = [line.rstrip(</span><span style="color:#d69d85;">&#39;</span><span style="color:#e3bbab;">\n</span><span style="color:#d69d85;">&#39;</span><span>) </span><span style="color:#569cd6;">for </span><span>line </span><span style="color:#569cd6;">in </span><span>open(filename)]
+</span><span>
+</span><span>floor = </span><span style="color:#b5cea8;">0
+</span><span>
+</span><span style="color:#569cd6;">for </span><span>line </span><span style="color:#569cd6;">in </span><span>source:
+</span><span>    </span><span style="color:#569cd6;">for </span><span>char </span><span style="color:#569cd6;">in </span><span>line:
+</span><span>        </span><span style="color:#569cd6;">if </span><span>char == </span><span style="color:#d69d85;">&#39;(&#39;</span><span>:
+</span><span>            floor = floor + </span><span style="color:#b5cea8;">1
+</span><span>        </span><span style="color:#569cd6;">else</span><span>:
+</span><span>            floor = floor - </span><span style="color:#b5cea8;">1
+</span><span>
+</span><span style="color:#569cd6;">print </span><span style="color:#d69d85;">&quot;Santa ends up on floor&quot;</span><span>, floor
+</span></code></pre>
+<h1 id="part-2">Part 2</h1>
+<h2 id="problem-1">Problem</h2>
+<blockquote>
+<p>Now, given the same instructions, find the position of the first character that causes him to enter the basement (floor <code>-1</code>). The first character in the instructions has position <code>1</code>, the second character has position <code>2</code>, and so on.</p>
+</blockquote>
+<h2 id="methodology-1">Methodology</h2>
+<p>To solve this, I modified my code to detect when the <code>floor</code> variable equals <code>-1</code> and prints out the current position in the string.</p>
+<h2 id="solutions-1">Solutions</h2>
+<h3 id="node-js-1">Node.js</h3>
+<pre data-lang="javascript" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-javascript "><code class="language-javascript" data-lang="javascript"><span style="color:#569cd6;">var </span><span>fs = require(</span><span style="color:#d69d85;">&#39;fs&#39;</span><span>)
+</span><span>
+</span><span style="color:#569cd6;">var </span><span>source = fs.readFileSync(</span><span style="color:#d69d85;">&#39;../source/day1source.txt&#39;</span><span>).toString()
+</span><span style="color:#569cd6;">var </span><span>end = source.length
+</span><span style="color:#569cd6;">var </span><span>floor = </span><span style="color:#b5cea8;">1
+</span><span style="color:#569cd6;">for </span><span>(</span><span style="color:#569cd6;">var </span><span>i = </span><span style="color:#b5cea8;">0</span><span>; i </span><span style="color:#569cd6;">&lt; </span><span>end; i</span><span style="color:#569cd6;">++</span><span>) {
+</span><span>  </span><span style="color:#569cd6;">if </span><span>(source.charAt(i) === </span><span style="color:#d69d85;">&#39;(&#39;</span><span>) {
+</span><span>    floor</span><span style="color:#569cd6;">++
+</span><span>  } </span><span style="color:#569cd6;">else </span><span>{
+</span><span>    floor</span><span style="color:#569cd6;">--
+</span><span>  }
+</span><span>  </span><span style="color:#569cd6;">if </span><span>(floor === -</span><span style="color:#b5cea8;">1</span><span>) {
+</span><span>    console.log(</span><span style="color:#d69d85;">&#39;The character &#39; </span><span>+ source.charAt(i) + </span><span style="color:#d69d85;">&#39; at position &#39; </span><span>+ i + </span><span style="color:#d69d85;">&#39; sent santa to the basement.&#39;</span><span>)
+</span><span>  }
+</span><span>}
+</span></code></pre>
+<h3 id="python-1">Python</h3>
+<pre data-lang="python" style="background-color:#1e1e1e;color:#dcdcdc;" class="language-python "><code class="language-python" data-lang="python"><span>filename = </span><span style="color:#d69d85;">&#39;../source/day1source.txt&#39;
+</span><span>
+</span><span style="color:#569cd6;">with </span><span>open(filename) </span><span style="color:#569cd6;">as </span><span>f:
+</span><span>    source = [line.rstrip(</span><span style="color:#d69d85;">&#39;</span><span style="color:#e3bbab;">\n</span><span style="color:#d69d85;">&#39;</span><span>) </span><span style="color:#569cd6;">for </span><span>line </span><span style="color:#569cd6;">in </span><span>open(filename)]
+</span><span>
+</span><span>floor = </span><span style="color:#b5cea8;">0
+</span><span>count = </span><span style="color:#b5cea8;">0
+</span><span>
+</span><span style="color:#569cd6;">for </span><span>line </span><span style="color:#569cd6;">in </span><span>source:
+</span><span>    </span><span style="color:#569cd6;">for </span><span>char </span><span style="color:#569cd6;">in </span><span>line:
+</span><span>        </span><span style="color:#569cd6;">if </span><span>char == </span><span style="color:#d69d85;">&#39;(&#39;</span><span>:
+</span><span>            floor = floor + </span><span style="color:#b5cea8;">1
+</span><span>        </span><span style="color:#569cd6;">else</span><span>:
+</span><span>            floor = floor - </span><span style="color:#b5cea8;">1
+</span><span>        count = count + </span><span style="color:#b5cea8;">1
+</span><span>        </span><span style="color:#569cd6;">if </span><span>floor == -</span><span style="color:#b5cea8;">1</span><span>:
+</span><span>            </span><span style="color:#569cd6;">print </span><span style="color:#d69d85;">&quot;Santa enters the basement on instruction&quot;</span><span>, count
+</span><span>            </span><span style="color:#569cd6;">break
+</span></code></pre>
+</p>
+</main>
+    <footer>
+      This site was created by <a href="/">Keith Wade</a> using
+      <a href="https://www.getzola.org/" target="_blank">Zola</a> and
+      <a href="https://simplecss.org/" target="_blank">Simple.css</a>.
+    </footer>
+  </body>
+</html>
