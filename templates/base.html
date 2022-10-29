@@ -4,6 +4,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {% block ogdata %} {% endblock %}
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
     <title>Keith Wade</title>
     <link rel="stylesheet" href="{{ get_url(path="/site.css", cachebust=true) |
     safe }}" />

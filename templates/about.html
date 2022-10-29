@@ -1,4 +1,9 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block ogdata %}
+<meta property="og:title" content="{{ section.title }}" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://keithwade.com/about/" />
+<meta property="og:description" content="I enjoy solving problems." />
+{% endblock ogdata %} {% block content %}
 <h1>{{ section.title }}</h1>
 <p>{{ section.content | safe }}</p>
 {% endblock content %}

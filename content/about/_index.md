@@ -1,5 +1,6 @@
 +++
 title = "About Me"
+description = ""
 template = "about.html"
 +++
 

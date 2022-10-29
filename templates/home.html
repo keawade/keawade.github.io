@@ -1,4 +1,9 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block ogdata %}
+<meta property="og:title" content="Keith Wade" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://keithwade.com/" />
+<meta property="og:description" content="The personal website of Keith Wade." />
+{% endblock ogdata %} {% block content %}
 <h1>{{ section.title }}</h1>
 <div role="list">
   {% for page in section.pages %}
