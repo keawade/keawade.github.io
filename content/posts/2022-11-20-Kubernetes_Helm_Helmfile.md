@@ -1,6 +1,6 @@
 ---
 title: "Practical Kubernetes, Helm, and Helmfile"
-date: 2022-11-18
+date: 2022-11-20
 slug: "2022-11-20-Practical_Kubernetes"
 summary: "A guided tour of the basics of Kubernetes, Helm, and Helmfile."
 ---
