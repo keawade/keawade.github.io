@@ -1,0 +1,12 @@
+{
+  "overrides": [
+    {
+      "files": ["content/posts/2022-11-20-Kubernetes_Helm_Helmfile.md"],
+      "options": {
+        "bracketSpacing": false
+      }
+    }
+  ],
+  "proseWrap": "always",
+  "printWidth": 100
+}
