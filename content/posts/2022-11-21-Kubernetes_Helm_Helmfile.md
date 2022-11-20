@@ -5,10 +5,10 @@ slug: "2022-11-21-Practical_Kubernetes_Helm_and_Helmfile"
 summary: "A guided tour of the basics of Kubernetes, Helm, and Helmfile."
 ---
 
-As I learned the basics of Kubernetes, Helm, and Helmfile, I was disappointed in free the resources
-available for learning. All the technical information was available out there but it was spread
-across dozens of documentation pages in three projects and I didn't find any good summaries of the
-basic concepts.
+As I was learning the basics of Kubernetes, Helm, and Helmfile, I was disappointed in free the
+resources available for learning. All the technical information was available out there but it was
+spread across dozens of documentation pages in three projects and I didn't find any good summaries
+of the basic concepts.
 
 This article will walk you through the process of deploying a simple Node application in Kubernetes,
 packaging that Kubernetes configuration as a Helm Chart, and then orchestrating Helm Chart
