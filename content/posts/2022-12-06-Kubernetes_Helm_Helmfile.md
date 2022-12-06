@@ -1,7 +1,7 @@
 ---
 title: "Practical Kubernetes, Helm, and Helmfile"
-date: 2022-11-21
-slug: "2022-11-21-Practical_Kubernetes_Helm_and_Helmfile"
+date: 2022-12-06
+slug: "2022-12-06-Practical_Kubernetes_Helm_and_Helmfile"
 summary: "A guided tour of the basics of Kubernetes, Helm, and Helmfile."
 ---
 
@@ -1252,7 +1252,7 @@ spec:
           imagePullPolicy: Never
           ports:
             - name: http-web-svc
-              containerPort: {{.Values.demoExpressApp.port}}
+              containerPort: { { .Values.demoExpressApp.port } }
           env:
             - name: PORT
               value: "{{.Values.demoExpressApp.port}}"
@@ -1279,7 +1279,7 @@ spec:
   type: LoadBalancer
   ports:
     - name: app-http
-      port: {{.Values.demoExpressApp.port}}
+      port: { { .Values.demoExpressApp.port } }
       protocol: TCP
       targetPort: http-web-svc
 ```
@@ -1322,7 +1322,7 @@ metadata:
 # Switched to stringData instead of data so we don't have to convert the value
 # to base64 first. Now that conversion will be handled for us.
 stringData:
-  databaseConnectionString: {{template "demoExpressApp.databaseConnectionString" .}}
+  databaseConnectionString: { { template "demoExpressApp.databaseConnectionString" . } }
 ```
 
 Let's also update the `./templates/NOTES.txt` file while we're at it.
