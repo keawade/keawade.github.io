@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% block content %}
+<h1>{{ section.title }}</h1>
+<div role="list">
+  {% for page in section.pages %}
+    <section role="listitem">
+      <a class="section-link" href="{{ page.permalink | safe }}">
+        <h2>{{ page.title }}</h2>
+        <p class="date">{{ page.date | date(format="%B %d, %Y")}}</p>
+        <p class="excerpt">{{ page.description }}</p>
+      </a>
+      <div class="summary">{{ page.summary | safe }}</div>
+      <a href="{{ page.permalink | safe }}#continue-reading">Continue reading.</a>
+    </section>
+  {% endfor %}
+</div>
+{% endblock content %}
