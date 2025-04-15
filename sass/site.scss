@@ -1,0 +1,58 @@
+html {
+  font-family: Sans-Serif;
+}
+
+body {
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+main {
+  width: calc(100% - 2rem);
+  max-width: 50rem;
+  padding: 1rem;
+
+  pre {
+    overflow: auto;
+  }
+
+  code {
+    overflow: auto;
+  }
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  nav {
+    cursor: default;
+
+    a {
+      margin: 1rem;
+    }
+  }
+
+  .keawade-avatar {
+    max-width: 10rem;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+}
+
+footer {
+  text-align: center;
+}
+
+a[href^="mailto:"]::before {
+  content: none
+}

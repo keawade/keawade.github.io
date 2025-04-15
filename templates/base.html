@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-webtui-theme="catppuccin">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
@@ -10,8 +10,11 @@
     <meta property="og:locale" content="en_US" />
 
     <title>Keith Wade</title>
+    <link rel="stylesheet" href="{{ get_url(path="/water-dark.css", cachebust=true) | safe }}" />
     <link rel="stylesheet" href="{{ get_url(path="/site.css", cachebust=true) | safe }}" />
     <link rel="icon" href="/favicon.png" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
   </head>
 
   <body>
@@ -22,15 +25,19 @@
         <h2>Keith Wade</h2>
       </a>
       <nav>
-        <a href="/about">About Me</a>
-        <a class="external" href="https://github.com/keawade" target="_blank">GitHub</a>
-        <a class="external" href="https://hachyderm.io/@keawade" rel="me" target="_blank">Mastodon</a>
-        <a class="external" href="https://linkedin.com/in/keawade" target="_blank">LinkedIn</a>
+        |<a href="/">Home</a>|
+        <a href="/about">About</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/links">Links</a>|
       </nav>
     </header>
     <main>{% block content %} {% endblock %}</main>
     <footer>
-      This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.
+      {% if page.title %}
+      <p>{{ page.title }} © {{ page.date | date(format="%Y") }} by Keith Wade is licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      {% endif %}
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
     </footer>
   </body>
 </html>
