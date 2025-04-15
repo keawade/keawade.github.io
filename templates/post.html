@@ -7,4 +7,11 @@
 <h1>{{ page.title }}</h1>
 <p class="date">{{ page.date | date(format="%B %d, %Y")}}</p>
 <p>{{ page.content | safe }}</p>
+<p class="license-notice">
+  {{ page.title }} © {{ page.date | date(format="%Y") }} by Keith Wade is
+  licensed under
+  <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+    >CC BY-NC-ND 4.0</a
+  >
+</p>
 {% endblock content %}

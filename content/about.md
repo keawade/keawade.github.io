@@ -1,7 +1,8 @@
 ---
 title: About me
 description: All about me, baybee!
-template: page.html
+template: post.html
+date: 2025-04-14
 ---
 
 # About me
