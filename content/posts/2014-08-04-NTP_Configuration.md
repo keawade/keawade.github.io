@@ -2,7 +2,7 @@
 title: "NTP Configuration"
 date: 2014-08-04
 slug: 2014-08-04-NTP_Configuration
-summary: A brief guide to the Network Time Protocol and its configuration.
+description: A brief guide to the Network Time Protocol and its configuration.
 aliases:
   - /2014-08-04-NTP_Configuration
 ---

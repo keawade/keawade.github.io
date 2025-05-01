@@ -1,6 +1,6 @@
 ---
 title: About me
-description: All about me, baybee!
+summary: All about me, baybee!
 template: page.html
 date: 2025-04-14
 ---

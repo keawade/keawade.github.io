@@ -2,7 +2,7 @@
 title: PokéData Vue
 date: 2017-01-22
 slug: 2017-01-22-Pokedata_Vue
-summary: Learning Vue + Vuex with Pokémon.
+description: Learning Vue + Vuex with Pokémon.
 aliases:
   - /2017-01-22-Pokedata_Vue
 ---

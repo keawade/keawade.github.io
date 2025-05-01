@@ -2,7 +2,7 @@
 title: "Advent of Code: I Was Told There Would Be No Math"
 date: 2015-12-28
 slug: 2015-12-28-Advent_of_Code
-summary: Advent of Code 2015 day 2 writeup.
+description: Advent of Code 2015 day 2 writeup.
 aliases:
   - /2015-12-28-Advent_of_Code
 ---

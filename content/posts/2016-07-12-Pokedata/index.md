@@ -2,7 +2,7 @@
 title: PokéData
 date: 2016-07-12
 slug: 2016-07-12-Pokedata
-summary: Learning React + Redux with Pokémon.
+description: Learning React + Redux with Pokémon.
 aliases:
   - /2016-07-12-Pokedata
 ---

@@ -2,7 +2,7 @@
 title: PokéData Improved
 date: 2016-09-06
 slug: 2016-09-06-Pokedata_Improved
-summary: Building a more sane Pokémon app with React.
+description: Building a more sane Pokémon app with React.
 aliases:
   - /2016-09-06-Pokedata_Improved
 ---
