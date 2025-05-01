@@ -7,7 +7,7 @@ Howdy! 👋
 This my website! ![Surprised Pikachu meme emoji](/assets/surprised-pikachu.png)
 Click those nav links up there to find my blog posts and things.
 
-You can find me around the web at these locations:
+You can also find me around the web at these locations:
 
 - ![Mastodon logo](/assets/mastodon.png) Mastodon —
   <a href="https://hachyderm.io/@keawade" rel="me" target="_blank">hachyderm.io/@keawade</a>
