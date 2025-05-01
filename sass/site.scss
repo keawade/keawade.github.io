@@ -25,7 +25,6 @@ main {
   }
 }
 
-
 img.emoji {
   display: inline-block;
   height: 1em;
@@ -37,6 +36,12 @@ article img:not(.emoji) {
   display: block;
   border-radius: 0.5rem;
   margin: 0 auto;
+}
+
+meme::before, meme::after{
+  content: "😜";
+  vertical-align: super;
+  font-size: 50%;
 }
 
 header {

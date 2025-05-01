@@ -14,20 +14,22 @@ here are my _new and improved_ development environment opinions!
 
 ## Operating system
 
-I love Linux. If I could wave a magic wand and update corporate IT policies I
-would use [Fedora Silverblue][fedora-silverblue] for my professional work. It's
-stable, performant, and atomic.
+I love Linux. It does what I tell it to do and respects me as a user.
+
+If I could wave a magic wand and update corporate IT policies I would use
+[Fedora Silverblue][fedora-silverblue] for my professional work. It's stable,
+performant, and atomic.
 
 In the meantime macOS has been good enough for development. It's generally
-stable and performant but they've been taking notes from [Microsoft's theory of
-consent][ms-consent] over the years which is really annoying.
+stable and performant but they've been taking notes from Microsoft's theory of
+consent over the years which is really annoying.
 
-![Screenshot of a Mastodon poll. The poll reads "Do you think Microsoft understands what consent is?" with response options of "Yes" and "Remind me in 3 days".](./microsoft-consent.png)
+[![Screenshot of a Mastodon poll. The poll reads "Do you think Microsoft understands what consent is?" with response options of "Yes" and "Remind me in 3 days".](./microsoft-consent.png)][ms-consent]
 
 <meme>Windows [is right out][monty-python-right-out].</meme> Okay, I guess I
 could work with it professionally but it would be a bit of a bummer.
 
-## Ghostty
+## Ghostty 👻
 
 <https://ghostty.org/>
 
@@ -60,7 +62,7 @@ Here is a short list of some of my favorite plugins:
 - [STCursorword](https://github.com/sontungexpt/stcursorword) for cusor word
   highlighting which is a small and very subjective thing but I like it
 
-## fish
+## fish 🐟
 
 <https://fishshell.com/>
 
@@ -76,7 +78,7 @@ much never looked back.
 I use the [`fisher` plugin manager from Jorge Bucaran][fish-fisher]. Check out
 [my dotfiles for a list of plugins I use][dotfiles-fish-plugins].
 
-## Starship
+## Starship 🚀
 
 <https://starship.rs/>
 
