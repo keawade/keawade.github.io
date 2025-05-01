@@ -1,9 +1,8 @@
 ---
 title: New and Improved Development Environment Opinions ✨
-date: 2025-04-15
-slug: 2025-04-15-Development_Environment_Opinions
+date: 2025-05-01
+slug: 2025-05-01-Development_Environment_Opinions
 summary: An opinionated list of software I like enough to recommend.
-draft: true
 ---
 
 It's been a few years since I wrote my previous post, [Development Environment
