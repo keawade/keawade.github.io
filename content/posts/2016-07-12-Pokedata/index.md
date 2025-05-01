@@ -16,7 +16,7 @@ become slightly more useful.
 
 <!-- more -->
 
-[![PokéData](/img/pokedata.png)](https://keawade.github.io/pokedata-old)
+[![Screenshot of a simple PokéDex web application called PokéData.](./pokedata.png)](https://keawade.github.io/pokedata-old)
 
 This app allows you to search nearly all of the Pokémon and view it's strengths,
 weaknesses, and immunities inherit to it's types. This was useful for me as I

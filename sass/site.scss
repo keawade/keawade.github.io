@@ -23,15 +23,20 @@ main {
   code {
     overflow: auto;
   }
+}
 
-  li, p {
-    img {
-      display: inline-block;
-      height: 1em;
-      width: 1em;
-      transform: translateY(0.13em);
-    }
-  }
+
+img.emoji {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  transform: translateY(0.13em);
+}
+
+article img:not(.emoji) {
+  display: block;
+  border-radius: 0.5rem;
+  margin: 0 auto;
 }
 
 header {

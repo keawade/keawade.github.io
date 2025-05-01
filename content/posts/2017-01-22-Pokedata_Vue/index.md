@@ -17,7 +17,7 @@ building my recurring PokeData with Vue as well.
 
 <!-- more -->
 
-[![PokéData](/img/pokedata-vue.png)](http://keawade.github.io/pokedata-vue/)
+[![Screenshot of a simple PokéDex web application called PokéData.](./pokedata-vue.png)](http://keawade.github.io/pokedata-vue/)
 
 The main thing that struck me was how quickly I was able to build this app with
 Vue. Total dev time on this project was approximately 3 to 4 hours. Vue seems to

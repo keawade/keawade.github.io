@@ -22,23 +22,43 @@ In the meantime macOS has been good enough for development. It's generally
 stable and performant but they've been taking notes from [Microsoft's theory of
 consent][ms-consent] over the years which is really annoying.
 
-Windows [is right out][monty-python-right-out].
+![Screenshot of a Mastodon poll. The poll reads "Do you think Microsoft understands what consent is?" with response options of "Yes" and "Remind me in 3 days".](./microsoft-consent.png)
+
+<meme>Windows [is right out][monty-python-right-out].</meme> Okay, I guess I
+could work with it professionally but it would be a bit of a bummer.
 
 ## Ghostty
 
 <https://ghostty.org/>
 
 Terminal emulators just keep getting better and better. Ghostty is the latest
-and greatest currently. Also love that it's available cross platforms so I don't
-have to maintain as much macOS vs Linux stuff in my dotfiles.
+and greatest in my opinion. Also love that it's available cross platforms so I
+don't have to maintain as much macOS vs Linux stuff in my dotfiles.
 
-## Homebrew
+## tmux
 
-<https://brew.sh/>
+<https://github.com/tmux/tmux>
 
-Homebrew is a package manager for macOS. I have some quibbles with it and there
-are more modern ones around nowadays but it works, has all the things I need,
-and I don't have to think about it now.
+## Neovim
+
+<https://neovim.io/>
+
+<meme>I use vim, btw.</meme>
+
+Performant, customizable, open source.
+
+Here is a short list of some of my favorite plugins:
+
+- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) for
+  arbitrary file navigation
+- [harpoon](https://github.com/ThePrimeagen/harpoon/tree/harpoon2) for fast
+  targeted navigation
+- [oil.nvim](github.com/stevearc/oil.nvim) for a simple but visually pleasant
+  file explorer
+- [Which Key](https://github.com/folke/which-key.nvim) for helping my zug brain
+  learn new things I add and remember old things I don't use often
+- [STCursorword](https://github.com/sontungexpt/stcursorword) for cusor word
+  highlighting which is a small and very subjective thing but I like it
 
 ## fish
 
@@ -56,11 +76,18 @@ much never looked back.
 I use the [`fisher` plugin manager from Jorge Bucaran][fish-fisher]. Check out
 [my dotfiles for a list of plugins I use][dotfiles-fish-plugins].
 
-## Neovim
+## Starship
 
-<https://neovim.io/>
+<https://starship.rs/>
 
-Performant, customizable, open source.
+Fancy shell prompt. Fast! Colorful! <meme>Written in Rust (by the way)!</meme>
+
+## eza
+
+<https://eza.rocks/>
+
+Fancy `ls` replacement. Fast! Colorful! <meme>Written in Rust (by the
+way)!</meme>
 
 [previous-post]: /posts/2019-12-11-development-environment-opinions
 [fedora-silverblue]: https://fedoraproject.org/atomic-desktops/silverblue/
@@ -69,4 +96,4 @@ Performant, customizable, open source.
 [monty-python-right-out]: https://youtu.be/xOrgLj9lOwk?si=f1v9Mf0xsICMsGRR&t=82
 [fish-fisher]: https://github.com/jorgebucaran/fisher
 [dotfiles-fish-plugins]:
-  https://github.com/keawade/dotfiles/blob/main/.config/fish/fish_plugins
+  https://codeberg.org/keawade/dotfiles/src/branch/main/.config/fish/fish_plugins

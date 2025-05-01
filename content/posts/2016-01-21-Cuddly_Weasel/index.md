@@ -48,7 +48,7 @@ personal use and practice, I would probably need to put in more effort. As it
 stands, though, I just need a unique name for my project and this one is a fun
 one.
 
-[![Rendered app](/img/cuddly-weasel.png)](https://keawade.github.io/cuddly-weasel/)
+[![Screenshot of a calculator web application.](./cuddly-weasel.png)](https://keawade.github.io/cuddly-weasel/)
 
 ## Design Considerations
 

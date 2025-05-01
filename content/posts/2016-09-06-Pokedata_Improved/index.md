@@ -16,7 +16,7 @@ using [React](https://facebook.github.io/react/) without
 
 <!-- more -->
 
-[![PokéData](/img/pokedata-improved.png)](https://keawade.github.io/pokedata/)
+[![Screenshot of a simple PokéDex web application called PokéData.](./pokedata-improved.png)](https://keawade.github.io/pokedata/)
 
 Removing Redux was an easy choice for this app since it wasn't necessary in the
 slightest and just complicated the app for no reason. The
