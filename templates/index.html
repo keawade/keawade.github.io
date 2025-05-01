@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block ogdata %}
+<meta property="og:title" content="Keith Wade" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ current_url }}" />
+<meta property="og:description" content="Personal website of Keith Wade." />
+{% endblock ogdata %}
+
 {% block content %}
 {{section.content | safe}}
 {% endblock content %}

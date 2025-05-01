@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block ogdata %}
+<meta property="og:title" content="{{ section.title }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ current_url }}" />
+{% endblock ogdata %}
+
 {% block content %}
 <h1>{{ section.title }}</h1>
 <div role="list">
