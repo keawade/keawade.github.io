@@ -23,6 +23,15 @@ main {
   code {
     overflow: auto;
   }
+
+  li, p {
+    img {
+      display: inline-block;
+      height: 1em;
+      width: 1em;
+      transform: translateY(0.13em);
+    }
+  }
 }
 
 header {

@@ -19,15 +19,6 @@ results. I am always seeking opportunities to contribute my energy and experienc
 passionate engineers building amazing tools and products.
 </corpo>
 
-## Me around the web
-
-- Mastodon — <a href="https://hachyderm.io/@keawade" rel="me" target="_blank">hachyderm.io/@keawade</a>
-- Codeberg — <a href="https://codeberg.org/keawade" target="_blank">keawade</a>
-- Sourcehut — <a href="https://sr.ht/~keawade/" target="_blank">keawade</a>
-- GitHub — <a href="https://github.com/keawade" target="_blank">keawade</a>
-- LinkedIn — <a href="https://www.linkedin.com/in/keawade/" target="_blank">keawade</a>
-- Email — [hello@keithwade.com](mailto:hello@keithwade.com)
-
 ## Recommendations from colleagues
 
 > Hire Keith! I learned a ton from him when we worked together, and he will make your team and product
