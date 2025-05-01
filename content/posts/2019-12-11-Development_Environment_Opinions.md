@@ -7,9 +7,9 @@ aliases:
   - /2019-12-11-Development_Environment_Opinions
 ---
 
-This is a collection of software I've used that I have found useful or neat. I've included install
-instructions for macOS but if you're on linux, finding other ways to install this software shouldn't
-be difficult.
+This is a collection of software I've used that I have found useful or neat.
+I've included install instructions for macOS but if you're on linux, finding
+other ways to install this software shouldn't be difficult.
 
 <!-- more -->
 
@@ -17,8 +17,8 @@ be difficult.
 
 [https://brew.sh/](https://brew.sh/)
 
-Homebrew is a package manager for macOS. It has some annoyances but has the largest package base and
-community around it.
+Homebrew is a package manager for macOS. It has some annoyances but has the
+largest package base and community around it.
 
 ```sh
 # Install brew
@@ -29,7 +29,8 @@ community around it.
 
 [https://fishshell.com/](https://fishshell.com/)
 
-The `fish` shell provides a modern take on the shell and has some great documentation.
+The `fish` shell provides a modern take on the shell and has some great
+documentation.
 
 ```sh
 # Install fish
@@ -71,17 +72,17 @@ nvm use 18
 
 [https://www.gnu.org/software/coreutils/coreutils.html](https://www.gnu.org/software/coreutils/coreutils.html)
 
-The `coreutils` brew formulae contains GNU file, shell, and text utilities. The default utils
-provided by macOS have some shortcomings and idiosyncrasies that don't exist in the canonical GNU
-utilities.
+The `coreutils` brew formulae contains GNU file, shell, and text utilities. The
+default utils provided by macOS have some shortcomings and idiosyncrasies that
+don't exist in the canonical GNU utilities.
 
 ```sh
 # Install coreutils
 brew install coreutils
 ```
 
-You will need to update your `PATH` and `MANPATH` variables to tell macOS to use the new utils over
-the macOS utils:
+You will need to update your `PATH` and `MANPATH` variables to tell macOS to use
+the new utils over the macOS utils:
 
 ```sh
 # ~/.config/fish/config.fish
@@ -257,8 +258,8 @@ brew install htop
 
 ## git
 
-Git comes on macOS by default but it isn't updated very frequently. You can install the latest git
-with brew:
+Git comes on macOS by default but it isn't updated very frequently. You can
+install the latest git with brew:
 
 ```sh
 # Install git
@@ -267,8 +268,8 @@ brew install git
 
 ## Mark Text
 
-Mark Text is a markdown based notes application. I like having my markdown notes separate from my
-VSCode instances.
+Mark Text is a markdown based notes application. I like having my markdown notes
+separate from my VSCode instances.
 
 I used Mark Text to write this article. :D
 
