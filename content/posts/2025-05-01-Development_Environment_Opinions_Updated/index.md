@@ -40,6 +40,10 @@ don't have to maintain as much macOS vs Linux stuff in my dotfiles.
 
 <https://github.com/tmux/tmux>
 
+Terminal multiplexer. Lets you open multiple terminal shells within a terminal
+shell. Sounds a bit weird if you're not familiar with it but it's effectively
+like tabs in a terminal emulator but better in every way.
+
 ## Neovim
 
 <https://neovim.io/>
