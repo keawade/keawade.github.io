@@ -2,7 +2,7 @@
 title: About me
 summary: All about me, baybee!
 template: page.html
-date: 2025-04-14
+date: 2026-01-19
 ---
 
 # About me
@@ -13,11 +13,13 @@ excellent software developer who would be a great add for their team.
 ## Professional summary
 
 <corpo wassup="let's be real, if you're reading this you ain't mad lol">
-Howdy! 👋 I am a highly motivated and passionate engineer with over eight years of professional experience developing great
-user experiences across the complete development life cycle of a product. I can handles complex project
-management and I use my effective communication skills to align and coordinate engineers to efficiently deliver
-results. I am always seeking opportunities to contribute my energy and experience to a high-performing team of similarly
-passionate engineers building amazing tools and products.
+Howdy! 👋 I am a highly motivated and passionate engineer with a decade of
+professional experience developing great user experiences across the complete
+development life cycle of a product. I can handles complex project management
+and I use my effective communication skills to align and coordinate engineers to
+efficiently deliver results. I am always seeking opportunities to contribute my
+energy and experience to a high-performing team of similarly passionate
+engineers building amazing tools and products.
 </corpo>
 
 ## Recommendations from colleagues
@@ -47,6 +49,10 @@ passionate engineers building amazing tools and products.
 > — [Ben Watkins](https://www.linkedin.com/in/keawade#recommendations)
 
 ## Work history
+
+### Centene Corporation 2025-Present
+
+**Lead Application Development Engineer**
 
 ### b.well Connected Health 2024-2025
 
