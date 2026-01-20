@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="catppuccin">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="New and Improved Development Environment Opinions ✨" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="&#x2F;posts&#x2F;2025-05-01-development-environment-opinions&#x2F;" />
+<meta property="og:description" content="An opinionated list of software I like enough to recommend." />
+<meta name="fediverse:creator" content="@keawade@hachyderm.io">
+
+   
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+
+    <link rel="stylesheet" href="/water-dark.css?h=ecd5bba45b1312dfdf9a" />
+    <link rel="stylesheet" href="/site.css?h=948cbadd99a4a845fa41" />
+    
+    <link rel="icon" href="/favicon.ico" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img src="/assets/keawade.jpeg" alt="Keith Wade avatar" class="keawade-avatar" width="500" height="500" />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        |<a href="/">Home</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/about">About</a>|
+      </nav>
+    </header>
+    <main>
+<h1>New and Improved Development Environment Opinions ✨</h1>
+<p class="date">May 01, 2025</p>
+<article>
+<p>It's been a few years since I wrote my previous post, <a href="/posts/2019-12-11-development-environment-opinions">Development Environment
+Opinions</a>, and I've found new things, refined my tastes, etc. So
+here are my <em>new and improved</em> development environment opinions!</p>
+<span id="continue-reading"></span><h2 id="operating-system">Operating system</h2>
+<p>I love Linux. It does what I tell it to do and respects me as a user.</p>
+<p>If I could wave a magic wand and update corporate IT policies I would use
+<a rel="external" href="https://fedoraproject.org/atomic-desktops/silverblue/">Fedora Silverblue</a> for my professional work. It's stable,
+performant, and atomic.</p>
+<p>In the meantime macOS has been good enough for development. It's generally
+stable and performant but they've been taking notes from Microsoft's theory of
+consent over the years which is really annoying.</p>
+<p><a rel="external" href="https://hachyderm.io/@AnarchoCatgirlism@kitsunes.gay/114260042656271952"><img src="/posts/2025-05-01-development-environment-opinions/./microsoft-consent.png" alt="Screenshot of a Mastodon poll. The poll reads &quot;Do you think Microsoft understands what consent is?&quot; with response options of &quot;Yes&quot; and &quot;Remind me in 3 days&quot;." /></a></p>
+<p><meme>Windows <a rel="external" href="https://youtu.be/xOrgLj9lOwk?si=f1v9Mf0xsICMsGRR&amp;t=82">is right out</a>.</meme> Okay, I guess I
+could work with it professionally but it would be a bit of a bummer.</p>
+<h2 id="ghostty-ghost">Ghostty 👻</h2>
+<p><a rel="external" href="https://ghostty.org/">https://ghostty.org/</a></p>
+<p>Terminal emulators just keep getting better and better. Ghostty is the latest
+and greatest in my opinion. Also love that it's available cross platforms so I
+don't have to maintain as much macOS vs Linux stuff in my dotfiles.</p>
+<h2 id="tmux">tmux</h2>
+<p><a rel="external" href="https://github.com/tmux/tmux">https://github.com/tmux/tmux</a></p>
+<p>Terminal multiplexer. Lets you open multiple terminal shells within a terminal
+shell. Sounds a bit weird if you're not familiar with it but it's effectively
+like tabs in a terminal emulator but better in every way.</p>
+<h2 id="neovim">Neovim</h2>
+<p><a rel="external" href="https://neovim.io/">https://neovim.io/</a></p>
+<p><meme>I use vim, btw.</meme></p>
+<p>Performant, customizable, open source.</p>
+<p>Here is a short list of some of my favorite plugins:</p>
+<ul>
+<li><a rel="external" href="https://github.com/nvim-telescope/telescope.nvim">telescope.nvim</a> for
+arbitrary file navigation</li>
+<li><a rel="external" href="https://github.com/ThePrimeagen/harpoon/tree/harpoon2">harpoon</a> for fast
+targeted navigation</li>
+<li><a href="/posts/2025-05-01-development-environment-opinions/github.com/stevearc/oil.nvim">oil.nvim</a> for a simple but visually pleasant
+file explorer</li>
+<li><a rel="external" href="https://github.com/folke/which-key.nvim">Which Key</a> for helping my zug brain
+learn new things I add and remember old things I don't use often</li>
+<li><a rel="external" href="https://github.com/sontungexpt/stcursorword">STCursorword</a> for cusor word
+highlighting which is a small and very subjective thing but I like it</li>
+</ul>
+<h2 id="fish-fish">fish 🐟</h2>
+<p><a rel="external" href="https://fishshell.com/">https://fishshell.com/</a></p>
+<p>Fish does most of the basic things I have come to expect from a terminal right
+out of the box.</p>
+<p>I used <code>bash</code> and then <code>zsh</code> for years while accruing an ever growing list of
+plugins for basic functionality that ended up slowing the start time. When I
+looked into improving my setup's performance I noticed several of my primary
+plugins were reimplementing functionality from <code>fish</code>. I tried <code>fish</code> and pretty
+much never looked back.</p>
+<p>I use the <a rel="external" href="https://github.com/jorgebucaran/fisher"><code>fisher</code> plugin manager from Jorge Bucaran</a>. Check out
+<a rel="external" href="https://codeberg.org/keawade/dotfiles/src/branch/main/.config/fish/fish_plugins">my dotfiles for a list of plugins I use</a>.</p>
+<h2 id="starship-rocket">Starship 🚀</h2>
+<p><a rel="external" href="https://starship.rs/">https://starship.rs/</a></p>
+<p>Fancy shell prompt. Fast! Colorful! <meme>Written in Rust (by the way)!</meme></p>
+<h2 id="eza">eza</h2>
+<p><a rel="external" href="https://eza.rocks/">https://eza.rocks/</a></p>
+<p>Fancy <code>ls</code> replacement. Fast! Colorful! <meme>Written in Rust (by the
+way)!</meme></p>
+
+</article>
+</main>
+    <footer>
+      
+      <p>New and Improved Development Environment Opinions ✨ © 2025 Keith Wade <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+    </footer>
+  </body>
+</html>

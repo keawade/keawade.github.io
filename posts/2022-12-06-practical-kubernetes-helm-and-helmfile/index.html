@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="catppuccin">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Practical Kubernetes, Helm, and Helmfile" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="&#x2F;posts&#x2F;2022-12-06-practical-kubernetes-helm-and-helmfile&#x2F;" />
+<meta property="og:description" content="A guided tour of the basics of Kubernetes, Helm, and Helmfile." />
+<meta name="fediverse:creator" content="@keawade@hachyderm.io">
+
+   
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+
+    <link rel="stylesheet" href="/water-dark.css?h=ecd5bba45b1312dfdf9a" />
+    <link rel="stylesheet" href="/site.css?h=948cbadd99a4a845fa41" />
+    
+    <link rel="icon" href="/favicon.ico" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img src="/assets/keawade.jpeg" alt="Keith Wade avatar" class="keawade-avatar" width="500" height="500" />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        |<a href="/">Home</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/about">About</a>|
+      </nav>
+    </header>
+    <main>
+<h1>Practical Kubernetes, Helm, and Helmfile</h1>
+<p class="date">December 06, 2022</p>
+<article>
+<p>As I was learning the basics of Kubernetes, Helm, and Helmfile, I was
+disappointed in the resources available for learning. All the technical
+information was available out there but it was spread across dozens of
+documentation pages in three projects and I didn't find any good summaries of
+the basic concepts.</p>
+<p>This article will walk you through the process of deploying a simple Node
+application in Kubernetes, packaging that Kubernetes configuration as a Helm
+Chart, and then orchestrating Helm Chart installations for local development
+environments with Helmfile. As we go along I will define all the relevant terms
+and concepts, quoting from documentation sources where possible, while linking
+back to the official documentation for those terms and concepts so you can
+explore those topics further on your own. When we're done you should have a
+working example and many threads to pull on for future learning.</p>
+<p>All the code in this article can be found on my GitHub at
+<a rel="external" href="https://github.com/keawade/kube-helm-helmfile-demo">keawade/kube-helm-helmfile-demo</a>.</p>
+<span id="continue-reading"></span><h2 id="prerequisites">Prerequisites</h2>
+<p>We'll need a couple tools to go through the full demo: Docker, Kubernetes,
+<a rel="external" href="https://helm.sh/docs/intro/install/">Helm</a>, and <a rel="external" href="https://github.com/helmfile/helmfile#installation">Helmfile</a>.</p>
+<p>If you don't already have Docker and a Kubernetes distribution installed then I
+recommend using <a rel="external" href="https://docs.rancherdesktop.io/getting-started/installation/">Rancher Desktop</a> as it is free or
+<a rel="external" href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> (Be sure to <a rel="external" href="https://docs.docker.com/desktop/kubernetes/#enable-kubernetes">enable
+Kubernetes</a>) which is free for personal use
+and education.</p>
+<p>I've written a simple database-backed Node + Express app that we'll use for the
+rest of this demonstration. If you don't have Node or PostgreSQL installed in
+your environment, don't worry, you won't need to install them as we'll be doing
+all of that in Docker containers.</p>
+<p>Once you have the prerequisite software installed you can clone the repo and
+build the image:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">git</span><span style="color: #9ECBFF;"> clone https://github.com/keawade/kube-helm-helmfile-demo.git</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">cd</span><span style="color: #9ECBFF;"> kube-helm-helmfile-demo</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">docker</span><span style="color: #9ECBFF;"> build ./demo-express-app</span><span style="color: #79B8FF;"> -t</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span></code></pre>
+<p>Let's make sure the image can be run while we're at it.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">docker</span><span style="color: #9ECBFF;"> run</span><span style="color: #79B8FF;"> -d --name</span><span style="color: #9ECBFF;"> demo-express-app</span><span style="color: #79B8FF;"> -p</span><span style="color: #9ECBFF;"> 3000:3000 demo-express-app:1</span></span></code></pre>
+<p>Now let's <code>curl</code> our application to see if it's working.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span></code></pre>
+<p>It works! Our application is up and able to accept requests!</p>
+<p>Let's try hitting our application's <code>/hello</code> endpoint now.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Failed to connect to database.&quot;}⏎</span></span></code></pre>
+<p>Yep, this application has a database dependency that we're missing. Don't worry
+though, we'll pull in a public PostgreSQL database image later and connect it to
+our application so you won't need to install anything else locally. For now,
+this error is expected. so since we've got our image built and running, though
+not fully functional yet, let's clean up and move on to running our image in
+Kubernetes.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">docker</span><span style="color: #9ECBFF;"> stop demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">docker</span><span style="color: #9ECBFF;"> rm demo-express-app</span></span></code></pre><h2 id="kubernetes">Kubernetes</h2>
+<p>We've got our image running as a container in Docker but now we want to get it
+running in Kubernetes so we can leverage it's orchestration capabilities. First,
+let's talk a bit about what Kubernetes is and define the concepts we'll be
+working with.</p>
+<blockquote>
+<p><a rel="external" href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/">Kubernetes</a> is a portable, extensible, open source platform for
+managing containerized workloads and services that facilitates both
+declarative configuration and automation. We use Kubernetes to orchestrate
+containers for local and remote environments.</p>
+</blockquote>
+<h3 id="pods">Pods</h3>
+<blockquote>
+<p><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/">Pods</a> are the smallest deployable units of computing that
+you can create and manage in Kubernetes.</p>
+<p>A Pod (as in a pod of whales or pea pod) is a group of one or more
+<a rel="external" href="https://kubernetes.io/docs/concepts/containers/">containers</a>, with shared storage and network resources,
+and a specification for how to run the containers. A Pod's contents are always
+co-located and co-scheduled, and run in a shared context. A Pod models an
+application-specific "logical host": it contains one or more application
+containers which are relatively tightly coupled. In non-cloud contexts,
+applications executed on the same physical or virtual machine are analogous to
+cloud applications executed on the same logical host.</p>
+<p>As well as application containers, a Pod can contain <a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">init
+containers</a> that run during Pod startup. You can
+also inject <a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/">ephemeral containers</a> for
+debugging if your orchestrator offers this.</p>
+</blockquote>
+<p>Pods are generally not created directly and are instead created via workload
+resources like Deployments or StatefulSets. To get a feel for what Pods are,
+though, we'll go ahead and define a Pod directly and run it in Kubernetes.</p>
+<p>First, we'll create a YAML file and define a Kubernetes Pod using the image we
+built earlier.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Pod</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # It is considered a best practice to add these name and version labels to</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # resources as it makes working with these resources easier down the line.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  containers</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      # We never want to pull this image because it&#39;s only available locally.</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      # For remote images you will want to remove this or change it&#39;s value.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # We could declare multiple containers here.</span></span></code></pre>
+<p>Now we can use the <code>kubectl apply</code> command to deploy the resources defined in
+that YAML file.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl apply -f k8s-demos/1-pod.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span></code></pre>
+<p>Kubernetes has created our Pod! Let's use <code>kubectl get</code> and <code>kubectl logs</code> to
+inspect the created Pod resource and its logs.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get pods</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          6s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl logs demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listening</span><span style="color: #9ECBFF;"> on port 3000.</span></span></code></pre>
+<p>Excellent! Now, we still don't have a database so for now let's just <code>curl</code> our
+<code>/healthcheck</code> endpoint again.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">curl:</span><span> (7) Failed to connect to localhost port 3000 after 0 ms: Connection refused</span></span></code></pre>
+<p>We've successfully deployed our application in a Kubernetes pod but we aren't
+able to hit our application yet because we haven't defined a way to access our
+pod either externally or from other pods.</p>
+<p>Let's clean up the deployed resources and move on to adding a Service definition
+to bind ports from inside our cluster to our localhost.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete -f k8s-demos/1-pod.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span></code></pre><h3 id="services">Services</h3>
+<blockquote>
+<p>In Kubernetes, a <a rel="external" href="https://kubernetes.io/docs/concepts/services-networking/service/">Service</a> is an abstraction which defines
+a logical set of Pods and a policy by which to access them. The set of Pods
+targeted by a Service is usually determined by a
+<a rel="external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">selector</a>.</p>
+<p>For example, consider a stateless image-processing backend which is running
+with 3 replicas. Those replicas are fungible—frontends and do not care which
+backend they use. While the actual Pods that compose the backend set may
+change, the frontend clients should not need to be aware of that, nor should
+they need to keep track of the set of backends themselves.</p>
+<p>The Service abstraction enables this decoupling.</p>
+</blockquote>
+<p>To define a Service, let's add a second YAML document to our yaml file. If
+you're not already aware, YAML files can contain multiple documents separated by
+a line containing <code>---</code>. Let's use that to add a Service resource definition to
+the bottom of our existing YAML file. We'll also need to add <code>ports</code> definitions
+to our Pod to give our Service ports on our Pod to map to our localhost. Check
+out the updated example below and read its annotations for more details.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Pod</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  containers</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      # Expose our application&#39;s listening port so the service can map it</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      # externally</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      ports</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          containerPort</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Here&#39;s our --- separator defining a new YAML document in this file</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # Here we see one reason that adding the name and version labels is considered</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # a best practice. With the labels already in place, it is trivial to map a</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # service configuration to our pod with a selector.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # The LoadBalancer service type will allow us, in a local environment, to</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # access the exposed port on our localhost. Exposing ports to external traffic</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # in remote environments is much more complicated and is out of scope for this</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # demo.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Map the container&#39;s application port externally so other pods can access</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # it</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> app-http</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      # The external port we want to map out to</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      # The container&#39;s internal port we want to map</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span></code></pre>
+<p>Again, we'll deploy our resources with <code>kubectl apply</code>, inspect them with
+<code>kubectl get</code>, and then try to <code>curl</code> our <code>/healthcheck</code> endpoint. Afterwards,
+let's also check our logs just to see all the parts in motion.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>&gt; kubectl apply -f k8s-demos/2-service.yaml</span></span>
+<span class="giallo-l"><span>pod/demo-express-app-v1 created</span></span>
+<span class="giallo-l"><span>service/demo-express-app-v1 created</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; kubectl get pods</span></span>
+<span class="giallo-l"><span>NAME                  READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span>demo-express-app-v1   1/1     Running   0          3s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; kubectl get services</span></span>
+<span class="giallo-l"><span>NAME                  TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE</span></span>
+<span class="giallo-l"><span>demo-express-app-v1   LoadBalancer   10.99.202.95   localhost     3000:32418/TCP   7s</span></span>
+<span class="giallo-l"><span>kubernetes            ClusterIP      10.96.0.1      &lt;none&gt;        443/TCP          93m</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{&quot;message&quot;:&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; kubectl logs demo-express-app-v1</span></span>
+<span class="giallo-l"><span>Listening on port 3000.</span></span>
+<span class="giallo-l"><span>Reporting that the application is live</span></span>
+<span class="giallo-l"><span>GET /healthcheck 200 2.539 ms - 44</span></span></code></pre>
+<p>There we go! We've successfully run our image in Kubernetes and exposed it to
+our localhost via a LoadBalancer Service!</p>
+<p>While this works, it isn't ideal. Sure, we've got our image running as a
+container in a Pod but with the way we've done it so far we don't have good
+tools for scaling our Pod up to more than one instance like we would ideally do
+in a production environment. Let's refactor our Pod declaration into a
+Deployment so we can work with this in a more idiomatic way.</p>
+<p>But, before we move on to the next section, let's clean up again.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete -f k8s-demos/2-service.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span></code></pre><h3 id="deployments">Deployments</h3>
+<p>A <a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployment</a> is a workload resource that provides
+declarative updates for <a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/">Pods</a> and
+<a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/">ReplicaSets</a>.</p>
+<blockquote>
+<p>You describe a desired state in a Deployment, and the Deployment
+<a rel="external" href="https://kubernetes.io/docs/concepts/architecture/controller/">Controller</a> changes the actual state to the desired
+state at a controlled rate.</p>
+</blockquote>
+<p>The Kubernetes Deployment Controller will dynamically spin up instances of the
+defined resources and scale them as defined by your Deployment configuration.
+These resources are stateless and can be interchanged arbitrarily. If a Pod
+specified by a Deployment crashes or is shutdown then Kubernetes will replace
+that Pod with a new instance.</p>
+<p>Let's refactor our Pod declaration as a Deployment with multiple Pods</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> apps/v1</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Note that we&#39;re using a Deployment kind now instead of a Pod</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Deployment</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # Define a strategy to use for applying updates to the resources managed by</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # this Deployment resource. This isn&#39;t very important for our demos but</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # becomes important if you want to build on these examples later.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  strategy</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    rollingUpdate</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxUnavailable</span><span>:</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxSurge</span><span>:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # Define a number of pod replicas to maintain. This configuration can get much</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # more complex with conditional scaling but for our demos we&#39;ll just use a</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # hard coded value.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  replicas</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # We&#39;ll again use a selector to identify relevant resources. In this case</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # we&#39;re specifying what pods are managed by this Deployment.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    matchLabels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # Define a template to use to create pods. We&#39;re no longer managing specific</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # pod instances but are instead managing a collection of pods defined using</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # this template and the replicas configuration above.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  template</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      containers</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          ports</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              containerPort</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # No Service changes are needed as we&#39;re targeting pods via labels and</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # services are intended to abstract connection details for arbitrary numbers</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # of pods.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> app-http</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      protocol</span><span>:</span><span style="color: #9ECBFF;"> TCP</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span></code></pre>
+<p>Let's spin up our resources and go through our set of inspections and tests.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl apply -f k8s-demos/3-deployment.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">deployment.apps/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get deployments.apps</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  READY   UP-TO-DATE   AVAILABLE   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   3/3</span><span style="color: #79B8FF;">     3            3</span><span style="color: #9ECBFF;">           4s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get pods</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                                   READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-65f8b474c8-bqbmc</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          7s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-65f8b474c8-mnm8p</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          7s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-65f8b474c8-x9snn</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          7s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get services</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  TYPE           CLUSTER-IP     EXTERNAL-IP   PORT</span><span>(</span><span style="color: #B392F0;">S</span><span>)</span><span style="color: #9ECBFF;">          AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   LoadBalancer</span><span style="color: #79B8FF;">   10.96.58.113</span><span style="color: #9ECBFF;">   localhost     3000:30028/TCP   11s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">kubernetes</span><span style="color: #9ECBFF;">            ClusterIP</span><span style="color: #79B8FF;">      10.96.0.1</span><span style="color: #F97583;">      &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        443/TCP          113m</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl logs demo-express-app-v1-65f8b474c8-bqbmc</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listening</span><span style="color: #9ECBFF;"> on port 3000.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl logs demo-express-app-v1-65f8b474c8-mnm8p</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listening</span><span style="color: #9ECBFF;"> on port 3000.</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Reporting</span><span style="color: #9ECBFF;"> that the application is live</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">GET</span><span style="color: #9ECBFF;"> /healthcheck</span><span style="color: #79B8FF;"> 200 2.584</span><span style="color: #9ECBFF;"> ms -</span><span style="color: #79B8FF;"> 44</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl logs demo-express-app-v1-65f8b474c8-x9snn</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listening</span><span style="color: #9ECBFF;"> on port 3000.</span></span></code></pre>
+<p>See how we now have three Pods to match the number of replicas we configured in
+our Deployment? Also notice that our Pods have extra characters added to them to
+uniquely identify them. The first set of characters identifies the Deployment
+and the final set of characters identifies the Pod in that Deployment.</p>
+<p>Finally, notice how when we check the logs after <code>curl</code>ing our endpoint only one
+of the Pods logged that it responded to a request. That is because our
+LoadBalancer Service automatically picked a Pod to forward our request to so we
+could hit a stable address, in this case <code>http://localhost:3000</code>, and have it
+rerouted under the hood as needed without the consumer caring how the request is
+specifically handled. If we kept hitting our endpoint and checking our logs we
+would see all our other Pods get hit as well eventually.</p>
+<p>Now that we've refactored our Pod to a Deployment of Pods, let's clean up and
+start working on setting a database for our app.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete -f k8s-demos/3-deployment.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">deployment.apps</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span></code></pre><h3 id="adding-a-database">Adding a database</h3>
+<p>We'll use the publicly available <code>postgres:14</code> image from Docker Hub for our
+database. In a few steps we'll implement this more robustly but for now let's
+just slap together a quick Pod and Service definition for PostgreSQL so our app
+can access it.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> apps/v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Deployment</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  strategy</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    rollingUpdate</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxUnavailable</span><span>:</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxSurge</span><span>:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  replicas</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    matchLabels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  template</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      containers</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          ports</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              containerPort</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          env</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">            # Add our database connection string env var</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> DATABASE_CONNECTION_STRING</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              value</span><span>:</span><span style="color: #9ECBFF;"> postgres://demo:demo@postgresql.default.svc.cluster.local:5432/demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Our existing app Service stays the same</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> app-http</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      protocol</span><span>:</span><span style="color: #9ECBFF;"> TCP</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># We&#39;re just using a Pod for now as its quick and easy. We&#39;ll come back in a few</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># steps to implement a more robust solution.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Pod</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  containers</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      image</span><span>:</span><span style="color: #9ECBFF;"> postgres:14</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      ports</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          containerPort</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      env</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_USER</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_PASSWORD</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_DB</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Expose the default PostgreSQL port for use by other containers</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span></code></pre>
+<p>Okay, this file is getting pretty large. Don't worry, we'll have a solution for
+that with Helm in a few steps. For now, let's take our updated definition out
+for a spin.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl apply -f k8s-demos/4-postgres.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">deployment.apps/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod/postgresql</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service/postgresql</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get deployments.apps</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  READY   UP-TO-DATE   AVAILABLE   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   3/3</span><span style="color: #79B8FF;">     3            3</span><span style="color: #9ECBFF;">           3s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get pods</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                                   READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-5d8cd74558-9ts89</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          5s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-5d8cd74558-bhkqb</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          5s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-5d8cd74558-lfmms</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          5s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">                             1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          5s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get services</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  TYPE           CLUSTER-IP       EXTERNAL-IP   PORT</span><span>(</span><span style="color: #B392F0;">S</span><span>)</span><span style="color: #9ECBFF;">          AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   LoadBalancer</span><span style="color: #79B8FF;">   10.107.60.157</span><span style="color: #9ECBFF;">    localhost     3000:30923/TCP   8s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">kubernetes</span><span style="color: #9ECBFF;">            ClusterIP</span><span style="color: #79B8FF;">      10.96.0.1</span><span style="color: #F97583;">        &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        443/TCP          152m</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">            LoadBalancer</span><span style="color: #79B8FF;">   10.101.148.105</span><span style="color: #9ECBFF;">   localhost     5432:32620/TCP   8s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/history</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;data&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #9ECBFF;">[{</span><span>&quot;</span><span style="color: #B392F0;">name&quot;:&quot;world&quot;,&quot;timestamp&quot;:&quot;2022-11-19T00:34:51.921Z&quot;}]}⏎</span></span></code></pre>
+<p>It's working! We can now hit the <code>/hello</code> endpoint, get a response, and then hit
+the <code>/history</code> endpoint and see our previous request was recorded and we can
+retrieve that record.</p>
+<p>We're ready to take what we've learned and apply it to create a Helm chart but,
+first, let's take a look at ConfigMaps as it will make our lives easier once we
+get into the Helm chart.</p>
+<p>As always, let's clean up before moving on.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete -f k8s-demos/4-postgres.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">deployment.apps</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; deleted</span></span></code></pre><h3 id="configmaps">ConfigMaps</h3>
+<blockquote>
+<p>A <a rel="external" href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMap</a> is an API object used to store
+non-confidential data in key-value pairs. <a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/">Pods</a> can consume
+ConfigMaps as environment variables, command-line arguments, or as
+configuration files in a <a rel="external" href="https://kubernetes.io/docs/concepts/storage/volumes/">volume</a>.</p>
+<p>A ConfigMap allows you to decouple environment-specific configuration from
+your container images, so that your applications are easily portable.</p>
+</blockquote>
+<p>This could be used for our database connection string value but since that
+string contains our database user's password, we should use a Secret instead.</p>
+<blockquote>
+<p>A <a rel="external" href="https://kubernetes.io/docs/concepts/configuration/secret/">Secret</a> is an object that contains a small amount of
+sensitive data such as a password, a token, or a key. Such information might
+otherwise be put in a <a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/">Pod</a> specification or in a container
+image. Using a Secret means that you don't need to include confidential data
+in your application code.</p>
+<p>Because Secrets can be created independently of the Pods that use them, there
+is less risk of the Secret (and its data) being exposed during the workflow of
+creating, viewing, and editing Pods. Kubernetes, and applications that run in
+your cluster, can also take additional precautions with Secrets, such as
+avoiding writing secret data to nonvolatile storage.</p>
+<p>Secrets are similar to <a rel="external" href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMaps</a> but are specifically
+intended to hold confidential data.</p>
+</blockquote>
+<p>That sounds great but it is important to note that Secrets are not silver
+bullets.</p>
+<blockquote>
+<p>Kubernetes Secrets are, by default, stored unencrypted in the API server's
+underlying data store (etcd). Anyone with API access can retrieve or modify a
+Secret, and so can anyone with access to etcd. Additionally, anyone who is
+authorized to create a Pod in a namespace can use that access to read any
+Secret in that namespace; this includes indirect access such as the ability to
+create a Deployment.</p>
+</blockquote>
+<p>To fully leverage the security benefits of Secrets we would need to take several
+more steps to encrypt those secrets, configure user access rules for the
+secrets, restrict container access to secrets, and consider using external
+Secret store providers. That's advanced enough to be out of scope for this
+article so we won't sweat those details here. Just be aware that in remote
+environments you should consider these things carefully.</p>
+<p>The main practical difference between ConfigMaps and Secrets for us is that
+Secrets need their values defined as base64 encoded strings. We can get this on
+a unix-based system by echoing our value through the base64 command.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> echo </span><span style="color: #9ECBFF;">&#39;postgres://demo:demo@postgresql.default.svc.cluster.local:5432/demo-express-app&#39;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -w 0</span></span>
+<span class="giallo-l"><span>cG9zdGdyZXM6Ly9kZW1vOmRlbW9AcG9zdGdyZXNxbC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzIvZGVtby1leHByZXNzLWFwcAo</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">⏎</span></span></code></pre>
+<p>Now let's define our Secret with that encoded value. Remember, as far as the
+basic configuration is concerned, Secrets have a lot of overlap with ConfigMaps
+so most of what we do here is also applicable to Configmaps as well.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># Define our Secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # Define a name we can reference this Secret by later</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-secret</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Define our content. This is a YAML object so we could specify multiple</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># key-value pairs if we wanted to. Keep in mind that it&#39;s usually wise to use</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># multiple Secrets or ConfigMaps for separation of concerns so your provided</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># configurations can be defined independently of each other.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">data</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  databaseConnectionString</span><span>:</span><span style="color: #9ECBFF;"> cG9zdGdyZXM6Ly9kZW1vOmRlbW9AcG9zdGdyZXNxbC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzIvZGVtby1leHByZXNzLWFwcAo=</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> apps/v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Deployment</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  strategy</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    rollingUpdate</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxUnavailable</span><span>:</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxSurge</span><span>:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  replicas</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    matchLabels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  template</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      containers</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          ports</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              containerPort</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          env</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> DATABASE_CONNECTION_STRING</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">              # Change the source of our database connection string from being</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">              # defined inline to being supplied from a Secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              valueFrom</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                # If we wanted to map in a ConfigMap instead we would use the</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                # configMapKeyRef key here instead.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                secretKeyRef</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                  key</span><span>:</span><span style="color: #9ECBFF;"> databaseConnectionString</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> app-http</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      protocol</span><span>:</span><span style="color: #9ECBFF;"> TCP</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Pod</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  containers</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      image</span><span>:</span><span style="color: #9ECBFF;"> postgres:14</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      ports</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          containerPort</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      env</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_USER</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">          # It would make sense to also supply this via a Secret rather than</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">          # hardcoding it in our configuration but since we&#39;ll be moving away</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">          # from this Pod definition soon we&#39;ll leave it as is for now.</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_PASSWORD</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_DB</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span></code></pre>
+<p>Let's apply this configuration and do our usual round of inspections.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl apply -f k8s-demos/5-secret.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">secret/demo-express-app-secret</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">deployment.apps/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service/demo-express-app-v1</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod/postgresql</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service/postgresql</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get deployments.apps</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  READY   UP-TO-DATE   AVAILABLE   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   3/3</span><span style="color: #79B8FF;">     3            3</span><span style="color: #9ECBFF;">           6s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get pods</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                                   READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-589d6748c6-fztsf</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          10s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-589d6748c6-m7vng</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          10s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-589d6748c6-xgwgj</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          10s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">                             1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          10s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get services</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  TYPE           CLUSTER-IP      EXTERNAL-IP   PORT</span><span>(</span><span style="color: #B392F0;">S</span><span>)</span><span style="color: #9ECBFF;">          AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   LoadBalancer</span><span style="color: #79B8FF;">   10.101.219.53</span><span style="color: #9ECBFF;">   localhost     3000:31668/TCP   13s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">kubernetes</span><span style="color: #9ECBFF;">            ClusterIP</span><span style="color: #79B8FF;">      10.96.0.1</span><span style="color: #F97583;">       &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        443/TCP          18h</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">            LoadBalancer</span><span style="color: #79B8FF;">   10.99.74.251</span><span style="color: #9ECBFF;">    localhost     5432:30344/TCP   13s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get secrets</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                      TYPE     DATA   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-secret</span><span style="color: #9ECBFF;">   Opaque</span><span style="color: #79B8FF;">   1</span><span style="color: #9ECBFF;">      17s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span></code></pre>
+<p>It still works! We've successfully shifted our database connection string into a
+Secret/ConfigMap and referenced it from our Pods.</p>
+<p>Now that we've got our system running Kubernetes lets clean up our cluster and
+then take a look at how we can augment this setup by using Helm to manage our
+configuration.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete -f k8s-demos/5-secret.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">secret</span><span style="color: #9ECBFF;"> &quot;demo-express-app-secret&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">deployment.apps</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;demo-express-app-v1&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; deleted</span></span></code></pre><h2 id="helm">Helm</h2>
+<p>You've probably noticed by now that using <code>kubectl apply</code> can get rather
+unwieldy. It works well enough but as the number of configurations necessary for
+an application grows, the more awkward it is to put together in a single massive
+file and yeet it into our cluster with <code>kubectl apply</code>. And so far we're only
+talking about a single application with a single supporting database instance.
+What happens as we start adding more applications?</p>
+<p>Also, that database instance isn't particularly robust. Yes, we're using the
+official PostgreSQL image but we just slapped it in a Pod and called it a day.
+Ideally we would configure a Deployment instead but how should we configure
+that? I don't know about you but I'm not a PostgreSQL expert and don't really
+know where to start when it comes to configuring a PostgreSQL cluster locally,
+much less for a production environment. It would be nice if we could get a
+production-ready configuration of a PostgreSQL Kubernetes deployment, wouldn't
+it?</p>
+<p>This is where <a rel="external" href="https://helm.sh/">Helm</a> comes in. We can package our collection of
+application configurations as a <a rel="external" href="https://helm.sh/docs/topics/charts/">Helm chart</a> for easier
+installation, upgrades, and uninstallation in our clusters. Because Helm charts
+are a packaging solution we can also pull in charts from the community instead
+of rolling our own implementations for every part of our stack.</p>
+<h3 id="helm-chart">Helm chart</h3>
+<p>Helm charts consist of a <code>Chart.yaml</code> file and a collection of templates. The
+templates are Golang-templated YAML files. They can contain any subset of the
+big YAML file we've been building though it is a common practice to split each
+YAML document out into its own file.</p>
+<p>For example, here is the file structure we'll end up with for our application's
+Helm chart.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>k8s-demos/6-chart/</span></span>
+<span class="giallo-l"><span>├── Chart.yaml</span></span>
+<span class="giallo-l"><span>├── k8s-just-postgres.yaml # This isn&#39;t part of our chart and we&#39;ll get rid of it soon</span></span>
+<span class="giallo-l"><span>└── templates</span></span>
+<span class="giallo-l"><span>    ├── deployment.yaml</span></span>
+<span class="giallo-l"><span>    ├── secret.yaml</span></span>
+<span class="giallo-l"><span>    └── service.yaml</span></span></code></pre>
+<p>Lets package our application as a Helm chart. For now, we'll keep using
+<code>kubectl apply</code> for our PostgreSQL Pod and Service, though.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./6-chart/Chart.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v2</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">description</span><span>:</span><span style="color: #9ECBFF;"> Demo Node + Express application</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">type</span><span>:</span><span style="color: #9ECBFF;"> application</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Version of the Helm chart</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1.0.0&quot;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Version of the application managed by the Helm chart</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">appVersion</span><span>:</span><span style="color: #9ECBFF;"> &quot;1.0.0&quot;</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./6-chart/templates/deployment.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> apps/v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Deployment</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  strategy</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    rollingUpdate</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxUnavailable</span><span>:</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxSurge</span><span>:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  replicas</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    matchLabels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  template</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      containers</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          ports</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              containerPort</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          env</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> DATABASE_CONNECTION_STRING</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              valueFrom</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                secretKeyRef</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                  key</span><span>:</span><span style="color: #9ECBFF;"> databaseConnectionString</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./6-chart/templates/secret.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">data</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  databaseConnectionString</span><span>:</span><span style="color: #9ECBFF;"> cG9zdGdyZXM6Ly9kZW1vOmRlbW9AcG9zdGdyZXNxbC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzIvZGVtby1leHByZXNzLWFwcAo=</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./6-chart/templates/service.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> app-http</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      protocol</span><span>:</span><span style="color: #9ECBFF;"> TCP</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span></code></pre>
+<p>As I mentioned above, we'll keep a raw Kubernetes config around for now for our
+PostgreSQL configuration.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./6-chart/k8s-just-postgres.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Pod</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  containers</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      image</span><span>:</span><span style="color: #9ECBFF;"> postgres:14</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      ports</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          containerPort</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      env</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_USER</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_PASSWORD</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> POSTGRES_DB</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          value</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">---</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> postgresql-port</span></span></code></pre>
+<p>Let's spin it up. First, we'll apply the PostgreSQL configuration.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl apply -f k8s-demos/6-chart/k8s-just-postgres.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod/postgresql</span><span style="color: #9ECBFF;"> created</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service/postgresql</span><span style="color: #9ECBFF;"> created</span></span></code></pre>
+<p>Then we'll install our newly created Helm chart. We can do this with the
+<code>helm install</code> command which takes an installation name and chart (name or path)
+as arguments.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install demo-express-app ./k8s-demos/6-chart/</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 12:13:39</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span></code></pre>
+<p>Well that was easy. Let's inspect our Kubernetes environment and see what
+happened.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get deployments.apps</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  READY   UP-TO-DATE   AVAILABLE   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   3/3</span><span style="color: #79B8FF;">     3            3</span><span style="color: #9ECBFF;">           6s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get pods</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                                   READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-589d6748c6-2mf2q</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          11s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-589d6748c6-5nxcg</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          11s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1-589d6748c6-wd2mf</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          11s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">                             1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          15s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get services</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                  TYPE           CLUSTER-IP       EXTERNAL-IP   PORT</span><span>(</span><span style="color: #B392F0;">S</span><span>)</span><span style="color: #9ECBFF;">          AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-v1</span><span style="color: #9ECBFF;">   LoadBalancer</span><span style="color: #79B8FF;">   10.100.223.243</span><span style="color: #9ECBFF;">   localhost     3000:30964/TCP   17s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">kubernetes</span><span style="color: #9ECBFF;">            ClusterIP</span><span style="color: #79B8FF;">      10.96.0.1</span><span style="color: #F97583;">        &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        443/TCP          19h</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">            LoadBalancer</span><span style="color: #79B8FF;">   10.104.122.202</span><span style="color: #9ECBFF;">   localhost     5432:31996/TCP   21s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get secrets</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                                     TYPE                 DATA   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app-secret</span><span style="color: #9ECBFF;">                  Opaque</span><span style="color: #79B8FF;">               1</span><span style="color: #9ECBFF;">      20s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">sh.helm.release.v1.demo-express-app.v1</span><span style="color: #9ECBFF;">   helm.sh/release.v1</span><span style="color: #79B8FF;">   1</span><span style="color: #9ECBFF;">      20s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span></code></pre>
+<p>Nice, as expected, we've got all of the same resources and our service still
+functions! Let's clean up our cluster and take a look at refactoring our
+PostgreSQL configuration to be more robust.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;demo-express-app&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete -f k8s-demos/6-chart/k8s-just-postgres.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pod</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; deleted</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">service</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; deleted</span></span></code></pre><h3 id="leverage-public-chart">Leverage public chart</h3>
+<p>We know there are public charts including production-ready charts out there so
+lets go searching. A brief search turns up <a rel="external" href="https://github.com/helm/charts/tree/master/stable/postgresql">a chart from the folks at
+Helm</a> but... It has been deprecated in favor of <a rel="external" href="https://github.com/bitnami/charts/tree/main/bitnami/postgresql">a Bitnami
+chart</a>. In fact the entire repo of Helm provided charts
+has been archived. This is currently somewhat common but it looks like the
+community is consolidating around Bitnami's charts repo so you'll likely be back
+here frequently if you keep working with Helm charts.</p>
+<p>Lets use the Bitnami PostgreSQL chart.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">&quot;bitnami&quot;</span><span style="color: #9ECBFF;"> has been added to your repositories</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install postgresql bitnami/postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 12:31:59</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> NAME: postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 12.1.2</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">APP</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 15.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">**</span><span> Please be patient </span><span style="color: #F97583;">while</span><span style="color: #B392F0;"> the</span><span style="color: #9ECBFF;"> chart is being deployed</span><span style="color: #79B8FF;"> **</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">PostgreSQL</span><span style="color: #9ECBFF;"> can be accessed via port</span><span style="color: #79B8FF;"> 5432</span><span style="color: #9ECBFF;"> on the following DNS names from within your cluster:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    postgresql.default.svc.cluster.local</span><span style="color: #9ECBFF;"> - Read/Write connection</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> get the password for &quot;postgres&quot; run:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    export</span><span> POSTGRES_PASSWORD</span><span style="color: #F97583;">=</span><span>$(</span><span style="color: #B392F0;">kubectl</span><span style="color: #9ECBFF;"> get secret</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default postgresql</span><span style="color: #79B8FF;"> -o</span><span style="color: #9ECBFF;"> jsonpath=&quot;{.data.postgres-password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> connect to your database run the following command:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    kubectl</span><span style="color: #9ECBFF;"> run postgresql-client</span><span style="color: #79B8FF;"> --rm --tty -i --restart=</span><span style="color: #9ECBFF;">&#39;Never&#39;</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default</span><span style="color: #79B8FF;"> --image</span><span style="color: #9ECBFF;"> docker.io/bitnami/postgresql:15.1.0-debian-11-r0</span><span style="color: #79B8FF;"> --env=</span><span style="color: #9ECBFF;">&quot;PGPASSWORD=</span><span>$POSTGRES_PASSWORD</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;"> \</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">      --command --</span><span style="color: #9ECBFF;"> psql</span><span style="color: #79B8FF;"> --host</span><span style="color: #9ECBFF;"> postgresql</span><span style="color: #79B8FF;"> -U</span><span style="color: #9ECBFF;"> postgres</span><span style="color: #79B8FF;"> -d</span><span style="color: #9ECBFF;"> postgres</span><span style="color: #79B8FF;"> -p 5432</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    &gt;</span><span style="color: #B392F0;"> NOTE:</span><span style="color: #9ECBFF;"> If you access the container using bash, make sure that you execute &quot;/opt/bitnami/scripts/postgresql/entrypoint.sh /bin/bash&quot; in order to avoid the error &quot;psql: local user with ID 1001} does not exist&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> connect to your database from outside the cluster execute the following commands:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    kubectl</span><span style="color: #9ECBFF;"> port-forward</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default svc/postgresql 5432:5432</span><span> &amp;</span></span>
+<span class="giallo-l"><span>    PGPASSWORD</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;</span><span>$POSTGRES_PASSWORD</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #B392F0;"> psql</span><span style="color: #79B8FF;"> --host 127.0.0.1 -U</span><span style="color: #9ECBFF;"> postgres</span><span style="color: #79B8FF;"> -d</span><span style="color: #9ECBFF;"> postgres</span><span style="color: #79B8FF;"> -p 5432</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get pods</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                     READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql-0</span><span style="color: #9ECBFF;">   1/1     Running</span><span style="color: #79B8FF;">   0</span><span style="color: #9ECBFF;">          7s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get services</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT</span><span>(</span><span style="color: #B392F0;">S</span><span>)</span><span style="color: #9ECBFF;">    AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">kubernetes</span><span style="color: #9ECBFF;">                ClusterIP</span><span style="color: #79B8FF;">   10.96.0.1</span><span style="color: #F97583;">      &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        443/TCP    19h</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">      ClusterIP</span><span style="color: #79B8FF;">   10.96.10.119</span><span style="color: #F97583;">   &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        5432/TCP   10s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql-hl</span><span style="color: #9ECBFF;">   ClusterIP   None</span><span style="color: #F97583;">           &lt;</span><span style="color: #9ECBFF;">non</span><span>e</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">        5432/TCP   10s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get statefulsets.apps</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">                   READY   AGE</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">   1/1     21s</span></span></code></pre>
+<p>Alright, we've got a PostgreSQL instance running with a much more robust
+configuration than our quick Pod config ever had. Let's use that command they
+suggest to get our PostgreSQL instance password.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get secret --namespace default postgresql -o jsonpath</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;{.data.postgres-password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">k6b8h2kpiV⏎</span></span></code></pre>
+<p>Notice how we can pull this secret out without any authentication or
+restrictions? This is an example of why you'll want to further secure your
+Secrets like we discussed earlier.</p>
+<p>Okay so we could drop this password into our existing database connection string
+secret and go, right? Well, sort of. Yes, we could use this but the password
+will change each time we start up our PostgreSQL instance which makes that route
+untenable for us.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl get secret --namespace default postgresql -o jsonpath</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;{.data.postgres-password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">dAU8O9js4i⏎</span></span></code></pre>
+<p>So we need to tell our PostgreSQL instance what password to use. We can use Helm
+chart <a rel="external" href="https://helm.sh/docs/chart_template_guide/values_files/">Values</a> to do so if the chart we're consuming supports
+them which the <a rel="external" href="https://github.com/bitnami/charts/tree/main/bitnami/postgresql#parameters">PostgreSQL chart does</a> Let's
+reinstall our PostgreSQL chart and set the user, password, and database to the
+same values we used previously.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install postgresql bitnami/postgresql --set auth.username</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">demo,auth.</span><span>password</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">demo,auth.</span><span>database</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 13:24:40</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> NAME: postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 12.1.2</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">APP</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 15.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">**</span><span> Please be patient </span><span style="color: #F97583;">while</span><span style="color: #B392F0;"> the</span><span style="color: #9ECBFF;"> chart is being deployed</span><span style="color: #79B8FF;"> **</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">PostgreSQL</span><span style="color: #9ECBFF;"> can be accessed via port</span><span style="color: #79B8FF;"> 5432</span><span style="color: #9ECBFF;"> on the following DNS names from within your cluster:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    postgresql.default.svc.cluster.local</span><span style="color: #9ECBFF;"> - Read/Write connection</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> get the password for &quot;postgres&quot; run:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    export</span><span> POSTGRES_ADMIN_PASSWORD</span><span style="color: #F97583;">=</span><span>$(</span><span style="color: #B392F0;">kubectl</span><span style="color: #9ECBFF;"> get secret</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default postgresql</span><span style="color: #79B8FF;"> -o</span><span style="color: #9ECBFF;"> jsonpath=&quot;{.data.postgres-password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> get the password for &quot;demo&quot; run:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    export</span><span> POSTGRES_PASSWORD</span><span style="color: #F97583;">=</span><span>$(</span><span style="color: #B392F0;">kubectl</span><span style="color: #9ECBFF;"> get secret</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default postgresql</span><span style="color: #79B8FF;"> -o</span><span style="color: #9ECBFF;"> jsonpath=&quot;{.data.password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> connect to your database run the following command:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    kubectl</span><span style="color: #9ECBFF;"> run postgresql-client</span><span style="color: #79B8FF;"> --rm --tty -i --restart=</span><span style="color: #9ECBFF;">&#39;Never&#39;</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default</span><span style="color: #79B8FF;"> --image</span><span style="color: #9ECBFF;"> docker.io/bitnami/postgresql:15.1.0-debian-11-r0</span><span style="color: #79B8FF;"> --env=</span><span style="color: #9ECBFF;">&quot;PGPASSWORD=</span><span>$POSTGRES_PASSWORD</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;"> \</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">      --command --</span><span style="color: #9ECBFF;"> psql</span><span style="color: #79B8FF;"> --host</span><span style="color: #9ECBFF;"> postgresql</span><span style="color: #79B8FF;"> -U</span><span style="color: #9ECBFF;"> demo</span><span style="color: #79B8FF;"> -d</span><span style="color: #9ECBFF;"> demo-express-app</span><span style="color: #79B8FF;"> -p 5432</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    &gt;</span><span style="color: #B392F0;"> NOTE:</span><span style="color: #9ECBFF;"> If you access the container using bash, make sure that you execute &quot;/opt/bitnami/scripts/postgresql/entrypoint.sh /bin/bash&quot; in order to avoid the error &quot;psql: local user with ID 1001} does not exist&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> connect to your database from outside the cluster execute the following commands:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    kubectl</span><span style="color: #9ECBFF;"> port-forward</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default svc/postgresql 5432:5432</span><span> &amp;</span></span>
+<span class="giallo-l"><span>    PGPASSWORD</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;</span><span>$POSTGRES_PASSWORD</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #B392F0;"> psql</span><span style="color: #79B8FF;"> --host 127.0.0.1 -U</span><span style="color: #9ECBFF;"> demo</span><span style="color: #79B8FF;"> -d</span><span style="color: #9ECBFF;"> demo-express-app</span><span style="color: #79B8FF;"> -p 5432</span></span></code></pre>
+<p>Our chart is currently hard coded to look for a PostgreSQL instance at the
+address <code>postgresql.default.svc.cluster.local</code> with the user <code>demo</code>, the
+password <code>demo</code>, and database <code>demo-express-app</code>. This is pretty restrictive in
+comparison to how flexible the Bitnami PostgreSQL chart is. In the next section
+we'll work on improving that but for now lets at least warn consumers of our
+chart by adding a <code>NOTES.txt</code> file to our template.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>This chart has a hard coded dependency on an existing PostgreSQL instance.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>One way of creating that instance is to use the bitnami/postgresql chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    helm repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span>    helm install postgresql bitnami/postgresql --set auth.username=demo,auth.password=demo,auth.database=demo-express-app</span></span></code></pre>
+<p>Now lets install our chart again.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install demo-express-app ./k8s-demos/7-bitnami-postgres/</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 13:31:29</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">This</span><span style="color: #9ECBFF;"> chart has a hard coded dependency on an existing PostgreSQL instance.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">One</span><span style="color: #9ECBFF;"> way of creating that instance is to use the bitnami/postgresql chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> install postgresql bitnami/postgresql</span><span style="color: #79B8FF;"> --set</span><span style="color: #9ECBFF;"> auth.username=demo,auth.password=demo,auth.database=demo-express-app</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span></code></pre>
+<p>And it's still working! We were able to successfully depend on an external chart
+instead of our quick and dirty Kubernetes Pod configuration.</p>
+<p>Let's shut it down again and take a look at adding values to our own chart to
+allow consumers to dynamically modify key configurations.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;demo-express-app&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; uninstalled</span></span></code></pre><h3 id="chart-values">Chart values</h3>
+<p>First, we'll create a <code>./values.yaml</code> file in our chart's folder which will be
+the source of our chart's default values.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./8-values/values.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">demoExpressApp</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  port</span><span>:</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  database</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    username</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    password</span><span>:</span><span style="color: #9ECBFF;"> demo</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    address</span><span>:</span><span style="color: #9ECBFF;"> postgresql.default.svc.cluster.local</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    port</span><span>:</span><span style="color: #79B8FF;"> 5432</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span></code></pre>
+<p>Now that we have some values defined we can interpolate them into our chart's
+YAML files. Helm charts use Go templating on all files in the <code>templates/</code>
+directory so we can interpolate values. Let's start by changing the port our
+Node application listens on and dynamically expose that port through our
+Service.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./8-values/templates/deployment.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> apps/v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Deployment</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  strategy</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    rollingUpdate</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxUnavailable</span><span>:</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      maxSurge</span><span>:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  replicas</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    matchLabels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">  template</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">        app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      containers</span><span>:</span></span>
+<span class="giallo-l"><span>        -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          image</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app:1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          imagePullPolicy</span><span>:</span><span style="color: #9ECBFF;"> Never</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          ports</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              containerPort</span><span>: { {</span><span style="color: #9ECBFF;"> .Values.demoExpressApp.port</span><span> } }</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          env</span><span>:</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> PORT</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              value</span><span>:</span><span style="color: #9ECBFF;"> &quot;{{.Values.demoExpressApp.port}}&quot;</span></span>
+<span class="giallo-l"><span>            -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> DATABASE_CONNECTION_STRING</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">              valueFrom</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                secretKeyRef</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">                  key</span><span>:</span><span style="color: #9ECBFF;"> databaseConnectionString</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./8-values/templates/service.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Service</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  labels</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">spec</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  selector</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    app.kubernetes.io/version</span><span>:</span><span style="color: #9ECBFF;"> &quot;1&quot;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  type</span><span>:</span><span style="color: #9ECBFF;"> LoadBalancer</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  ports</span><span>:</span></span>
+<span class="giallo-l"><span>    -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> app-http</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      port</span><span>: { {</span><span style="color: #9ECBFF;"> .Values.demoExpressApp.port</span><span> } }</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      protocol</span><span>:</span><span style="color: #9ECBFF;"> TCP</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">      targetPort</span><span>:</span><span style="color: #9ECBFF;"> http-web-svc</span></span></code></pre>
+<p>Basically every location where we had previously hardcoded the port <code>3000</code> we
+have now templated in <code>.Values.demoExpressApp.port</code>. Notice we've also added a
+<code>PORT</code> environment variable. Our app is already written to look for that
+environment variable to change what port it will listen for HTTP requests on so
+this coupled with our other templating changes will allow us to change our port
+to any arbitrary value.</p>
+<p>We can do this with our database connection string as well with something like
+this but piecing together the username, password, address, port, and name can be
+a little tedious, especially if you have to do it multiple times. We don't need
+to reuse this in particular but its complexity offers a good opportunity to try
+out custom templates. We can define custom templates with the
+<code>define "&lt;template-name&gt;"</code> template function in any file. However it's
+considered a good practice to do this explicitly in <code>*.tpl</code> files to make it
+easier to identify what files produce Kubernetes config output and what files
+are just helper templates. Let's create a template now.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./8-values/templates/templates.tpl</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Name spacing templates is important because templates are _global_ and you can</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># have collisions with other templates. This is particularly relevant if you</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># pull in child charts with their own templates.</span></span>
+<span class="giallo-l"><span>{{- </span><span style="color: #9ECBFF;">define &quot;demoExpressApp.databaseConnectionString&quot;</span><span> }}</span></span>
+<span class="giallo-l"><span>{{- </span><span style="color: #9ECBFF;">with .Values.demoExpressApp.database</span><span> }}</span></span>
+<span class="giallo-l"><span>{{- </span><span style="color: #9ECBFF;">print &quot;postgres://&quot; .username &quot;:&quot; .password &quot;@&quot; .address &quot;:&quot; .port &quot;/&quot; .name</span><span> }}</span></span>
+<span class="giallo-l"><span>{{- </span><span style="color: #9ECBFF;">end</span><span> }}</span></span>
+<span class="giallo-l"><span>{{- </span><span style="color: #9ECBFF;">end -</span><span>}}</span></span></code></pre>
+<p>Now we can use that template with the <code>template "&lt;template-name&gt;"</code> template
+function. Here it is being used in the Secret definition.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./8-values/templates/secret.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">apiVersion</span><span>:</span><span style="color: #9ECBFF;"> v1</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">kind</span><span>:</span><span style="color: #9ECBFF;"> Secret</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">metadata</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app-secret</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Switched to stringData instead of data so we don&#39;t have to convert the value</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># to base64 first. Now that conversion will be handled for us.</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">stringData</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  databaseConnectionString</span><span>:</span></span>
+<span class="giallo-l"><span>    { {</span><span style="color: #9ECBFF;"> template &quot;demoExpressApp.databaseConnectionString&quot; .</span><span> } }</span></span></code></pre>
+<p>Let's also update the <code>./templates/NOTES.txt</code> file while we're at it.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>Installed demo-express-app chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>App listening on port {{ .Values.demoExpressApp.port }}.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>App will look for database at &quot;{{- print &quot;postgres://&quot; .Values.demoExpressApp.database.address &quot;:&quot; .Values.demoExpressApp.database.port &quot;/&quot; .Values.demoExpressApp.database.name -}}&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>One way of creating that PostgreSQL instance is to use the bitnami/postgresql chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    helm repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span>    helm install postgresql bitnami/postgresql --set auth.username={{.Values.demoExpressApp.database.username}},auth.password=&lt;password&gt;,auth.database={{.Values.demoExpressApp.database.name}}</span></span></code></pre>
+<p>Now that we've updated our chart to use our values file, let's make sure nothing
+broke.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install postgresql bitnami/postgresql --set auth.username</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">demo,auth.</span><span>password</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">demo,auth.</span><span>database</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 18:22:55</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> NAME: postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 12.1.2</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">APP</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 15.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Notes</span><span style="color: #9ECBFF;"> trimmed, you get the idea.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install demo-express-app ./k8s-demos/8-values/</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 18:23:00</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Installed</span><span style="color: #9ECBFF;"> demo-express-app chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">App</span><span style="color: #9ECBFF;"> listening on port 3000.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">App</span><span style="color: #9ECBFF;"> will look for database at &quot;postgres://postgresql.default.svc.cluster.local:5432/demo-express-app&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">One</span><span style="color: #9ECBFF;"> way of creating that PostgreSQL instance is to use the bitnami/postgresql chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> install postgresql bitnami/postgresql</span><span style="color: #79B8FF;"> --set</span><span style="color: #9ECBFF;"> auth.username=demo,auth.password=</span><span style="color: #F97583;">&lt;</span><span style="color: #9ECBFF;">passwor</span><span>d</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">,auth.database=demo-express-app</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:3000/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span></code></pre>
+<p>Everything appears in order. Let's test out that templating by reinstalling our
+app with a different port.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;demo-express-app&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm install demo-express-app ./k8s-demos/8-values/ --set demoExpressApp.port</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">4242</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 18:26:41</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Installed</span><span style="color: #9ECBFF;"> demo-express-app chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">App</span><span style="color: #9ECBFF;"> listening on port 4242.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">App</span><span style="color: #9ECBFF;"> will look for database at &quot;postgres://postgresql.default.svc.cluster.local:5432/demo-express-app&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">One</span><span style="color: #9ECBFF;"> way of creating that PostgreSQL instance is to use the bitnami/postgresql chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> install postgresql bitnami/postgresql</span><span style="color: #79B8FF;"> --set</span><span style="color: #9ECBFF;"> auth.username=demo,auth.password=</span><span style="color: #F97583;">&lt;</span><span style="color: #9ECBFF;">passwor</span><span>d</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">,auth.database=demo-express-app</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:4242/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:4242/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span></code></pre>
+<p>The port changed! Now anyone using our chart can customize their port and
+database connection details by filling in their own values.</p>
+<p>Let's clean it up for now and finally check out Helmfile.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;demo-express-app&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helm uninstall postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; uninstalled</span></span></code></pre><h2 id="helmfile">Helmfile</h2>
+<p>Managing charts with <code>helm install</code> works well enough for production
+environments where you're usually only making changes to one application at a
+time from CI/CD workflows and it also works reasonably well for spinning up
+charts for local development as long as you don't have to manage too many charts
+simultaneously but when you get to larger quantities of charts it gets a bit
+unwieldy. Sometimes installation order matters to get a smooth and fast startup
+without Kubernetes Pods crashing and being recycled until their dependencies are
+available. These are all things that Helmfile can help us with.</p>
+<p><a rel="external" href="https://github.com/helmfile/helmfile#about">Helmfile</a> is a declarative spec for deploying helm charts. It lets
+you keep a directory of chart value files, maintain changes in version control,
+apply CI/CD to configuration changes, and sync to avoid skew in environments.
+I've found Helmfile particularly useful for managing local development clusters.</p>
+<p>All we need to get started is a <code>helmfile.yaml</code> file. Here's an example with
+overrides for all the values we've been working with so far.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #6A737D;"># ./9-helmfile/helmfile.yaml</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">repositories</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # Need to define a source repository for our Bitnami chart. This lets us</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # declaratively define chart sources instead of having to manually configure</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  # them via the helm command.</span></span>
+<span class="giallo-l"><span>  -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> bitnami</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    url</span><span>:</span><span style="color: #9ECBFF;"> https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">releases</span><span>:</span></span>
+<span class="giallo-l"><span>  -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # We&#39;ll reference the chart we created earlier</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    chart</span><span>:</span><span style="color: #9ECBFF;"> ../8-values</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Provide values overrides</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    values</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #85E89D;"> demoExpressApp</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          port</span><span>:</span><span style="color: #79B8FF;"> 4242</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          database</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">            username</span><span>:</span><span style="color: #9ECBFF;"> cool-user</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">            password</span><span>:</span><span style="color: #9ECBFF;"> hunter2</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">            name</span><span>:</span><span style="color: #9ECBFF;"> its-a-cool-database</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Tell Helmfile to finish setting up PostgreSQL before deploying our app&#39;s</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # chart</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    needs</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  -</span><span style="color: #85E89D;"> name</span><span>:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Pull the `postgresql` chart from the `bitnami` repository we defined above</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    chart</span><span>:</span><span style="color: #9ECBFF;"> bitnami/postgresql</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Provide values overrides</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    values</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #85E89D;"> auth</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          username</span><span>:</span><span style="color: #9ECBFF;"> cool-user</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          password</span><span>:</span><span style="color: #9ECBFF;"> hunter2</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">          database</span><span>:</span><span style="color: #9ECBFF;"> its-a-cool-database</span></span></code></pre>
+<p>To spin this up we only need to run the <code>helmfile sync</code> command in the directory
+with the <code>helmfile.yaml</code> file or <code>helmfile sync --file &lt;path&gt;</code> from anywhere
+else.</p>
+<p>Also, before we can start our cluster with a new PostgreSQL user and password,
+we'll <a rel="external" href="https://github.com/bitnami/charts/tree/main/bitnami/postgresql#uninstalling-the-chart">need to clear out our old PersistentVolumeClaim so we can create a new
+one</a>.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kubectl delete persistentvolumeclaims data-postgresql-0</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">persistentvolumeclaim</span><span style="color: #9ECBFF;"> &quot;data-postgresql-0&quot; deleted</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helmfile sync --file k8s-demos/9-helmfile/helmfile.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Adding</span><span style="color: #9ECBFF;"> repo bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">&quot;bitnami&quot;</span><span style="color: #9ECBFF;"> has been added to your repositories</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Building</span><span style="color: #9ECBFF;"> dependency release=demo-express-app, chart=../8-values</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Upgrading</span><span style="color: #9ECBFF;"> release=postgresql, chart=bitnami/postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Release</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; does not exist. Installing it now.</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 19:05:38</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> NAME: postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">CHART</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 12.1.2</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">APP</span><span style="color: #9ECBFF;"> VERSION:</span><span style="color: #79B8FF;"> 15.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">**</span><span> Please be patient </span><span style="color: #F97583;">while</span><span style="color: #B392F0;"> the</span><span style="color: #9ECBFF;"> chart is being deployed</span><span style="color: #79B8FF;"> **</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">PostgreSQL</span><span style="color: #9ECBFF;"> can be accessed via port</span><span style="color: #79B8FF;"> 5432</span><span style="color: #9ECBFF;"> on the following DNS names from within your cluster:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    postgresql.default.svc.cluster.local</span><span style="color: #9ECBFF;"> - Read/Write connection</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> get the password for &quot;postgres&quot; run:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    export</span><span> POSTGRES_ADMIN_PASSWORD</span><span style="color: #F97583;">=</span><span>$(</span><span style="color: #B392F0;">kubectl</span><span style="color: #9ECBFF;"> get secret</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default postgresql</span><span style="color: #79B8FF;"> -o</span><span style="color: #9ECBFF;"> jsonpath=&quot;{.data.postgres-password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> get the password for &quot;cool-user&quot; run:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    export</span><span> POSTGRES_PASSWORD</span><span style="color: #F97583;">=</span><span>$(</span><span style="color: #B392F0;">kubectl</span><span style="color: #9ECBFF;"> get secret</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default postgresql</span><span style="color: #79B8FF;"> -o</span><span style="color: #9ECBFF;"> jsonpath=&quot;{.data.password}&quot;</span><span style="color: #F97583;"> |</span><span style="color: #B392F0;"> base64</span><span style="color: #79B8FF;"> -d</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> connect to your database run the following command:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    kubectl</span><span style="color: #9ECBFF;"> run postgresql-client</span><span style="color: #79B8FF;"> --rm --tty -i --restart=</span><span style="color: #9ECBFF;">&#39;Never&#39;</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default</span><span style="color: #79B8FF;"> --image</span><span style="color: #9ECBFF;"> docker.io/bitnami/postgresql:15.1.0-debian-11-r0</span><span style="color: #79B8FF;"> --env=</span><span style="color: #9ECBFF;">&quot;PGPASSWORD=</span><span>$POSTGRES_PASSWORD</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;"> \</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">      --command --</span><span style="color: #9ECBFF;"> psql</span><span style="color: #79B8FF;"> --host</span><span style="color: #9ECBFF;"> postgresql</span><span style="color: #79B8FF;"> -U</span><span style="color: #9ECBFF;"> cool-user</span><span style="color: #79B8FF;"> -d</span><span style="color: #9ECBFF;"> its-a-cool-database</span><span style="color: #79B8FF;"> -p 5432</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    &gt;</span><span style="color: #B392F0;"> NOTE:</span><span style="color: #9ECBFF;"> If you access the container using bash, make sure that you execute &quot;/opt/bitnami/scripts/postgresql/entrypoint.sh /bin/bash&quot; in order to avoid the error &quot;psql: local user with ID 1001} does not exist&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">To</span><span style="color: #9ECBFF;"> connect to your database from outside the cluster execute the following commands:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    kubectl</span><span style="color: #9ECBFF;"> port-forward</span><span style="color: #79B8FF;"> --namespace</span><span style="color: #9ECBFF;"> default svc/postgresql 5432:5432</span><span> &amp;</span></span>
+<span class="giallo-l"><span>    PGPASSWORD</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;</span><span>$POSTGRES_PASSWORD</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #B392F0;"> psql</span><span style="color: #79B8FF;"> --host 127.0.0.1 -U</span><span style="color: #9ECBFF;"> cool-user</span><span style="color: #79B8FF;"> -d</span><span style="color: #9ECBFF;"> its-a-cool-database</span><span style="color: #79B8FF;"> -p 5432</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listing</span><span style="color: #9ECBFF;"> releases matching ^postgresql</span><span>$</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">      default</span><span style="color: #79B8FF;">         1</span><span style="color: #9ECBFF;">               2022-11-19 19:05:38.872091543</span><span style="color: #79B8FF;"> -0500</span><span style="color: #9ECBFF;"> EST deployed        postgresql-12.1.2</span><span style="color: #79B8FF;">       15.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Upgrading</span><span style="color: #9ECBFF;"> release=demo-express-app, chart=../8-values</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Release</span><span style="color: #9ECBFF;"> &quot;demo-express-app&quot; does not exist. Installing it now.</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME:</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">LAST</span><span style="color: #9ECBFF;"> DEPLOYED: Sat Nov</span><span style="color: #79B8FF;"> 19</span><span style="color: #9ECBFF;"> 19:05:40</span><span style="color: #79B8FF;"> 2022</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAMESPACE:</span><span style="color: #9ECBFF;"> default</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">STATUS:</span><span style="color: #9ECBFF;"> deployed</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">REVISION:</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">TEST</span><span style="color: #9ECBFF;"> SUITE: None</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NOTES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Installed</span><span style="color: #9ECBFF;"> demo-express-app chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">App</span><span style="color: #9ECBFF;"> listening on port 4242.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">App</span><span style="color: #9ECBFF;"> will look for database at &quot;postgres://postgresql.default.svc.cluster.local:5432/its-a-cool-database&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">One</span><span style="color: #9ECBFF;"> way of creating that PostgreSQL instance is to use the bitnami/postgresql chart.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> repo add bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    helm</span><span style="color: #9ECBFF;"> install postgresql bitnami/postgresql</span><span style="color: #79B8FF;"> --set</span><span style="color: #9ECBFF;"> auth.username=cool-user,auth.password=</span><span style="color: #F97583;">&lt;</span><span style="color: #9ECBFF;">passwor</span><span>d</span><span style="color: #F97583;">&gt;</span><span style="color: #9ECBFF;">,auth.database=its-a-cool-database</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listing</span><span style="color: #9ECBFF;"> releases matching ^demo-express-app</span><span>$</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app</span><span style="color: #9ECBFF;">        default</span><span style="color: #79B8FF;">         1</span><span style="color: #9ECBFF;">               2022-11-19 19:05:40.528007224</span><span style="color: #79B8FF;"> -0500</span><span style="color: #9ECBFF;"> EST deployed        demo-express-app-1.1.0</span><span style="color: #79B8FF;">  1.0.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">UPDATED</span><span style="color: #9ECBFF;"> RELEASES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span><span style="color: #9ECBFF;">               CHART                VERSION</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">         bitnami/postgresql</span><span style="color: #79B8FF;">    12.1.2</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app</span><span style="color: #9ECBFF;">   ../8-values</span><span style="color: #79B8FF;">            1.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:4242/healthcheck</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Application is accepting requests.&quot;}⏎</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> curl http://localhost:4242/hello</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #B392F0;">&quot;message&quot;</span><span style="color: #79B8FF;">:</span><span style="color: #B392F0;">&quot;Hello, world!&quot;}⏎</span></span></code></pre>
+<p>And just like that we've got a single Helmfile config orchestrating our entire
+application stack!</p>
+<p>Let's clean it up one last time.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> helmfile destroy --file k8s-demos/9-helmfile/helmfile.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Adding</span><span style="color: #9ECBFF;"> repo bitnami https://charts.bitnami.com/bitnami</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">&quot;bitnami&quot;</span><span style="color: #9ECBFF;"> has been added to your repositories</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Building</span><span style="color: #9ECBFF;"> dependency release=demo-express-app, chart=../8-values</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listing</span><span style="color: #9ECBFF;"> releases matching ^postgresql</span><span>$</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span><span style="color: #9ECBFF;">      default</span><span style="color: #79B8FF;">         1</span><span style="color: #9ECBFF;">               2022-11-19 19:05:38.872091543</span><span style="color: #79B8FF;"> -0500</span><span style="color: #9ECBFF;"> EST deployed        postgresql-12.1.2</span><span style="color: #79B8FF;">       15.1.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Listing</span><span style="color: #9ECBFF;"> releases matching ^demo-express-app</span><span>$</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app</span><span style="color: #9ECBFF;">        default</span><span style="color: #79B8FF;">         1</span><span style="color: #9ECBFF;">               2022-11-19 19:05:40.528007224</span><span style="color: #79B8FF;"> -0500</span><span style="color: #9ECBFF;"> EST deployed        demo-express-app-1.1.0</span><span style="color: #79B8FF;">  1.0.0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Deleting</span><span style="color: #9ECBFF;"> demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;demo-express-app&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Deleting</span><span style="color: #9ECBFF;"> postgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">release</span><span style="color: #9ECBFF;"> &quot;postgresql&quot; uninstalled</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">DELETED</span><span style="color: #9ECBFF;"> RELEASES:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">NAME</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">demo-express-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">postgresql</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;</span><span> kc delete persistentvolumeclaims data-postgresql-0</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">persistentvolumeclaim</span><span style="color: #9ECBFF;"> &quot;data-postgresql-0&quot; deleted</span></span></code></pre>
+<p>You have now built up configurations from scratch for a basic application in
+Kubernetes, Helm, and Helmfile. Hopefully this gives you ideas for how you can
+adapt these concepts for your own use.</p>
+<h2 id="further-reading">Further reading</h2>
+<p>That said, this article barely scratched the surface of what is possible and we
+cut some corners along the way. Check out these links for further learning about
+the concepts we've covered and best practices around these tools.</p>
+<ul>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/">Pods</a>
+<ul>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">Init containers</a></li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/">Ephemeral containers</a></li>
+</ul>
+</li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/">Workload resources</a>
+<ul>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployment</a></li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/workloads/controllers/job/">Jobs</a></li>
+</ul>
+</li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/storage/">Storage</a>
+<ul>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/storage/volumes/">Volumes</a></li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/">Persistent volumes</a></li>
+</ul>
+</li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/services-networking/">Networking</a>
+<ul>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/services-networking/service/">Service</a></li>
+<li><a rel="external" href="https://kubernetes.io/docs/concepts/services-networking/ingress/">Ingress</a></li>
+</ul>
+</li>
+<li>Helm
+<ul>
+<li><a rel="external" href="https://helm.sh/docs/chart_best_practices/conventions/">Best practices</a></li>
+<li><a rel="external" href="https://helm.sh/docs/topics/chart_repository/">Chart repositories</a></li>
+</ul>
+</li>
+<li>Helmfile
+<ul>
+<li><a rel="external" href="https://helmfile.readthedocs.io/en/latest/#templating">Templating</a></li>
+<li><a rel="external" href="https://helmfile.readthedocs.io/en/latest/writing-helmfile/">Best practices</a></li>
+</ul>
+</li>
+</ul>
+
+</article>
+</main>
+    <footer>
+      
+      <p>Practical Kubernetes, Helm, and Helmfile © 2022 Keith Wade <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+    </footer>
+  </body>
+</html>

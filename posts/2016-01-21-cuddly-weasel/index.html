@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="catppuccin">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Cuddly Weasel" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="&#x2F;posts&#x2F;2016-01-21-cuddly-weasel&#x2F;" />
+<meta property="og:description" content="A calculated adventure in DOM manipulation." />
+<meta name="fediverse:creator" content="@keawade@hachyderm.io">
+
+   
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+
+    <link rel="stylesheet" href="/water-dark.css?h=ecd5bba45b1312dfdf9a" />
+    <link rel="stylesheet" href="/site.css?h=948cbadd99a4a845fa41" />
+    
+    <link rel="icon" href="/favicon.ico" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img src="/assets/keawade.jpeg" alt="Keith Wade avatar" class="keawade-avatar" width="500" height="500" />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        |<a href="/">Home</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/about">About</a>|
+      </nav>
+    </header>
+    <main>
+<h1>Cuddly Weasel</h1>
+<p class="date">January 21, 2016</p>
+<article>
+<p>Last fall I had a bit of fun building a calculator app,
+<a rel="external" href="https://keawade.github.io/cuddly-weasel/">cuddly-weasel</a>, using only DOM
+manipulation and CSS. I thought I would take some time here to highlight some of
+the more interesting things I ran into in the course of this project.</p>
+<span id="continue-reading"></span>
+<p>The
+<a rel="external" href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction">Data Object Model</a>,
+or DOM, is a programming interface for HTML and XML documents. The DOM provides
+a way to store a HTML or XML document in an object-oriented representation that
+can be manipulated with a scripting language like JavaScript.</p>
+<p>While
+<a rel="external" href="https://www.codecademy.com/skills/make-an-interactive-website/topics/jquery-dom-manipulation/jquery-dom">DOM manipulation</a>
+is useful, it generally isn't recommended to do your entire front end with DOM
+manipulation as it is much simpler to build the outline in HTML or a templating
+engine like <del><a rel="external" href="http://jade-lang.com/">Jade</a></del> <em>Edit: Jade has been renamed to
+<a rel="external" href="http://pugjs.org/">Pug</a></em> or <a rel="external" href="http://handlebarsjs.com/">Handlebars</a> and then
+modify that existing code. However, it is possible to generate a page using very
+little markup and building the page with DOM manipulation and this is exactly
+what I did for this project.</p>
+<h1 id="cuddly-weasel">Cuddly Weasel</h1>
+<p>The complete <a rel="external" href="https://keawade.github.io/cuddly-weasel/">app is available here</a>
+and the
+<a rel="external" href="https://github.com/keawade/cuddly-weasel">source code is available on GitHub</a>.
+The rest of this article will highlight some of the more interesting
+implementations and manipulations in the application.</p>
+<h2 id="name">Name</h2>
+<p>This project was one of the first projects that I used GitHub's built in project
+name generator for. I knew what I was building but didn't care for the dull name
+of just "Calculator" so I cycled through several names until settling upon
+<code>cuddly-weasel</code>. If I were building this app for anything other than my own
+personal use and practice, I would probably need to put in more effort. As it
+stands, though, I just need a unique name for my project and this one is a fun
+one.</p>
+<p><a rel="external" href="https://keawade.github.io/cuddly-weasel/"><img src="/posts/2016-01-21-cuddly-weasel/./cuddly-weasel.png" alt="Screenshot of a calculator web application." /></a></p>
+<h2 id="design-considerations">Design Considerations</h2>
+<p>Like the name, the visual design for this project is arbitrary. I didn't have
+any real goal in mind with this design, I just built some elements and then
+started throwing CSS at it to see what stuck.</p>
+<h3 id="colors-and-font">Colors and Font</h3>
+<p>I went with the <a rel="external" href="http://ethanschoonover.com/solarized">Solarized</a> color palette
+for simplicity. It allowed me to have a solid palette without having to make it
+up as I worked. The theme toggle was built for fun since Solarized already had a
+light theme with colors that directly correspond to each other. All I needed was
+an alternate set of colors in the CSS and it was done.</p>
+<p>For the font I used
+<a rel="external" href="https://www.google.com/fonts/specimen/Inconsolata">Inconsolata</a> from
+<a rel="external" href="https://www.google.com/fonts">Google Fonts</a>. I chose this font was because I
+wanted a monospace font and I also wanted to make sure that all users would see
+the same font and have the same experience.</p>
+<h3 id="layout">Layout</h3>
+<p>Originally, I only had the top four rows of buttons with the core mechanics for
+the calculator which mirrored simple calculators one might find at a Walmart. As
+I kept adding more buttons, I never made any big changes to the design and just
+let <a rel="external" href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">Flexbox</a> continue
+my original layout with the new buttons.</p>
+<h2 id="code">Code</h2>
+<p>My app is an interface that uses the <a rel="external" href="http://mathjs.org/">mathjs</a> library to do
+all the actual calculations. This means that users can use mathjs features that
+I haven't implemented buttons for by manually typing the
+<a rel="external" href="http://mathjs.org/docs/index.html">expressions</a> into the input box.</p>
+<h3 id="buttons">Buttons</h3>
+<p>Each button element has an event listener listening for a click event. When that
+event occurs, it calls the <code>handleButton(event)</code> function.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="javascript"><span class="giallo-l"><span style="color: #F97583;">function</span><span style="color: #B392F0;"> handleButton</span><span>(</span><span style="color: #FFAB70;">event</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> box</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> document</span><span>.</span><span style="color: #B392F0;">getElementById</span><span>(</span><span style="color: #9ECBFF;">&#39;cal-box&#39;</span><span>);</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">  if</span><span> (</span><span style="color: #F97583;">!</span><span>(box:</span><span style="color: #F97583;">==</span><span> document.activeElement)) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // Solve</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span>(autoclear){</span></span>
+<span class="giallo-l"><span style="color: #F97583;">      if</span><span>(lastNum:</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;"> &#39;=&#39;</span><span>) {</span></span>
+<span class="giallo-l"><span>        box.value: </span><span style="color: #9ECBFF;">&#39;&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> (event.target.id:</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;"> &#39;=&#39;</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">      var</span><span> temp</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> box</span><span>.</span><span style="color: #B392F0;">value</span><span>.</span><span style="color: #B392F0;">replace</span><span>(/</span><span style="color: #B392F0;">ln</span><span>\(/</span><span style="color: #B392F0;">g</span><span>,</span><span style="color: #9ECBFF;"> &#39;log(&#39;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">      answer</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> math</span><span>.</span><span style="color: #B392F0;">eval</span><span>(</span><span style="color: #B392F0;">temp</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      if</span><span> (!</span><span style="color: #B392F0;">isNaN</span><span>(</span><span style="color: #B392F0;">answer</span><span>)) {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        box</span><span>.</span><span style="color: #FFAB70;">value</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> answer</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        if</span><span>(</span><span style="color: #FFAB70;">autoclear</span><span>){</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">          lastNum</span><span>:</span><span style="color: #9ECBFF;"> &#39;=&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span style="color: #B392F0;"> else</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">          lastNum</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> answer</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // Clear</span></span>
+<span class="giallo-l"><span>    } </span><span style="color: #B392F0;">else if</span><span> (</span><span style="color: #B392F0;">event</span><span>.</span><span style="color: #B392F0;">target</span><span>.</span><span style="color: #B392F0;">id</span><span style="color: #F97583;">:</span><span>= </span><span style="color: #9ECBFF;">&#39;clr&#39;</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      box</span><span>.</span><span style="color: #FFAB70;">value</span><span style="color: #F97583;">:</span><span style="color: #9ECBFF;"> &#39;&#39;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">      lastNum</span><span style="color: #F97583;">:</span><span style="color: #9ECBFF;"> &#39;new&#39;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // Backspace</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #B392F0;"> else if</span><span> (</span><span style="color: #B392F0;">event</span><span>.</span><span style="color: #B392F0;">target</span><span>.</span><span style="color: #B392F0;">id</span><span style="color: #F97583;">:</span><span>= </span><span style="color: #9ECBFF;">&#39;&lt;-&#39;</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      box</span><span>.</span><span style="color: #FFAB70;">value</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> box</span><span>.</span><span style="color: #B392F0;">value</span><span>.</span><span style="color: #B392F0;">substring</span><span>(0, box.value.length - 1);</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">      lastNum</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> box</span><span>.</span><span style="color: #B392F0;">value</span><span>.</span><span style="color: #B392F0;">charAt</span><span>(</span><span style="color: #B392F0;">box</span><span>.</span><span style="color: #B392F0;">value</span><span>.</span><span style="color: #B392F0;">length</span><span> - </span><span style="color: #79B8FF;">1</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // Numbers</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #B392F0;"> else if</span><span> (/[</span><span style="color: #79B8FF;">0</span><span>-</span><span style="color: #79B8FF;">9</span><span>]/.</span><span style="color: #B392F0;">test</span><span>(</span><span style="color: #B392F0;">event</span><span>.</span><span style="color: #B392F0;">target</span><span>.</span><span style="color: #B392F0;">id</span><span>)) {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      box</span><span>.</span><span style="color: #FFAB70;">value</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> box</span><span>.</span><span style="color: #B392F0;">value</span><span> + </span><span style="color: #B392F0;">event</span><span>.</span><span style="color: #B392F0;">target</span><span>.</span><span style="color: #B392F0;">id</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">      lastNum</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> event</span><span>.</span><span style="color: #B392F0;">target</span><span>.</span><span style="color: #B392F0;">id</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // Symbols</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #B392F0;"> else if</span><span> (/[-</span><span style="color: #6A737D;">/*+.]/.test(event.target.id)) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      if(!(/new|[-/*+.]/.test(lastNum))){</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        box.value: box.value + event.target.id;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        lastNum: event.target.id;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    } else if (event.target.id:= &#39;^&#39;){</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      if (/[0-9]|\)/.test(lastNum)) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        box.value: box.value + &#39;^(&#39;;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    } else if (/[\(\)]/.test(event.target.id)) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      box.value: box.value + event.target.id;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      lastNum: event.target.id;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // Trig Functions</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    } else if (/sin|cos|tan|cot|sqrt|e\^|ln/.test(event.target.id)) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      box.value: box.value + event.target.id + &#39;(&#39;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      lastNum: &#39;(&#39;;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    } else if (/pi/.test(event.target.id)){</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      box.value: box.value + &#39;(pi)&#39;;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      lastNum: &#39;)&#39;;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    this.blur();</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">  }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">}</span></span></code></pre>
+<p>As you can see, my code uses a line of else-if statements combined with some
+simple
+<a rel="external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">regular expressions</a>
+to quickly run through the potential inputs from the button's click event.</p>
+<p>The code also keeps track of what the last character was to determine whether or
+not the current key press is valid. For example, if the partial expression
+<code>1+1-</code> has been entered, the app will not allow a key press event to enter an
+operator since the last character was also an operator.</p>
+<p>At the end of the list of possible inputs, I've called <code>this.blur()</code> to remove
+focus on the clicked element caused by the default click event. This way, if the
+user presses their return key, it won't just trigger this click again but will
+only trigger the keypress event as it is supposed too.</p>
+<h3 id="keyboard-input">Keyboard Input</h3>
+<p>The keyboard input was interesting. I started by implementing an event listener
+to listen for keypress events and evaluate them.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="javascript"><span class="giallo-l"><span>document.</span><span style="color: #B392F0;">addEventListener</span><span>(</span><span style="color: #9ECBFF;">&#39;keypress&#39;</span><span>,</span><span style="color: #F97583;"> function</span><span>(</span><span style="color: #FFAB70;">key</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> keyString</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> String</span><span>.</span><span style="color: #B392F0;">fromCharCode</span><span>(</span><span style="color: #B392F0;">key</span><span>.</span><span style="color: #B392F0;">charCode</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  if</span><span> (key.keyCode:</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;"> 13</span><span>) {</span></span>
+<span class="giallo-l"><span>    document.</span><span style="color: #B392F0;">getElementById</span><span>(</span><span style="color: #9ECBFF;">&#39;=&#39;</span><span>).</span><span style="color: #B392F0;">click</span><span>();</span></span>
+<span class="giallo-l"><span>  }</span><span style="color: #F97583;"> else if</span><span> (</span><span style="color: #9ECBFF;">/</span><span style="color: #79B8FF;">[0-9]</span><span style="color: #F97583;">|</span><span style="color: #79B8FF;">[-/*+=.^()]</span><span style="color: #9ECBFF;">/</span><span>.</span><span style="color: #B392F0;">test</span><span>(keyString)) {</span></span>
+<span class="giallo-l"><span>    document.</span><span style="color: #B392F0;">getElementById</span><span>(keyString).</span><span style="color: #B392F0;">click</span><span>();</span></span>
+<span class="giallo-l"><span>  }</span><span style="color: #F97583;"> else if</span><span> (key.keyCode:</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;"> 8</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    var</span><span> box</span><span style="color: #F97583;">:</span><span style="color: #B392F0;"> document</span><span>.</span><span style="color: #B392F0;">getElementById</span><span>(</span><span style="color: #9ECBFF;">&#39;cal-box&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> (box:</span><span style="color: #F97583;">==</span><span> document.activeElement) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">      //</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">      if</span><span> (box.value:</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;"> &#39;&#39;</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        // Do nothing</span></span>
+<span class="giallo-l"><span>      }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>        document.</span><span style="color: #B392F0;">getElementById</span><span>(</span><span style="color: #9ECBFF;">&#39;&lt;-&#39;</span><span>).</span><span style="color: #B392F0;">click</span><span>();</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  }</span><span style="color: #6A737D;"> // keyCode 46 is Delete</span></span>
+<span class="giallo-l"><span>},</span><span style="color: #79B8FF;"> false</span><span>);</span></span></code></pre>
+<p>Here, the listener waits for a keypress and then does a quick set of
+evaluations. First, it checks if the keypress is a</p>
+<p><a rel="external" href="https://developer.mozilla.org/en-US/docs/Web/Events/keypress">Keypress event details</a></p>
+<p>Functions, functions, functions.</p>
+<p><em>Update 2022: Apparently I never finished this article and published it not
+realizing it was unfinished until about five years later. Yes, that keypress
+explanation trails off mid sentence.</em> 😅 <em>At this point I figure it's more fun
+to leave it here than it would be to take it down so enjoy a chuckle at my
+expense if you like.</em> 😂</p>
+
+</article>
+</main>
+    <footer>
+      
+      <p>Cuddly Weasel © 2016 Keith Wade <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+    </footer>
+  </body>
+</html>

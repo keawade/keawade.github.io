@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="catppuccin">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="Advent of Code: I Was Told There Would Be No Math" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="&#x2F;posts&#x2F;2015-12-28-advent-of-code&#x2F;" />
+<meta property="og:description" content="Advent of Code 2015 day 2 writeup." />
+<meta name="fediverse:creator" content="@keawade@hachyderm.io">
+
+   
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+
+    <link rel="stylesheet" href="/water-dark.css?h=ecd5bba45b1312dfdf9a" />
+    <link rel="stylesheet" href="/site.css?h=948cbadd99a4a845fa41" />
+    
+    <link rel="icon" href="/favicon.ico" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img src="/assets/keawade.jpeg" alt="Keith Wade avatar" class="keawade-avatar" width="500" height="500" />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        |<a href="/">Home</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/about">About</a>|
+      </nav>
+    </header>
+    <main>
+<h1>Advent of Code: I Was Told There Would Be No Math</h1>
+<p class="date">December 28, 2015</p>
+<article>
+<p>The elves have run out of wrapping paper and ribbon! For this puzzle we are
+given the dimensions of a bunch of presents as a list of strings and are asked
+to compute how much wrapping paper and ribbon should be ordered to wrap the
+remaining presents.</p>
+<span id="continue-reading"></span>
+<p>Get your own puzzle input and record your progress over at
+<a rel="external" href="http://adventofcode.com/">Advent of Code</a>!</p>
+<h2 id="problem-1">Problem 1</h2>
+<blockquote>
+<p>The elves are running low on wrapping paper, and so they need to submit an
+order for more. They have a list of the dimensions (length l, width w, and
+height h) of each present, and only want to order exactly as much as they
+need.</p>
+<p>Fortunately, every present is a box (a perfect
+<a rel="external" href="https://en.wikipedia.org/wiki/Cuboid#Rectangular_cuboid">right rectangular prism</a>),
+which makes calculating the required wrapping paper for each gift a little
+easier: find the surface area of the box, which is <code>2*l*w + 2*w*h + 2*h*l</code>.
+The elves also need a little extra paper for each present: the area of the
+smallest side.</p>
+<p>All numbers in the elves' list are in feet. How many total <strong>square feet of
+wrapping paper</strong> should they order?</p>
+</blockquote>
+<h2 id="methodology">Methodology</h2>
+<p>I handled the solutions for Node and Python slightly differently because of
+syntatic differences. Despite these slight changes, the general approach is
+still the same. I will describe my methodology in terms of the Node.js code.</p>
+<p>First, I read in the source from <code>source/day2source.txt</code> and <code>split()</code> the
+string on the new line character, <code>\n</code>. I assign this output to the variable
+<code>source</code>. This variable is an array with each element of that array containing
+the string from each line of the original file.</p>
+<p>Next, I create the variable <code>total</code> to store the running total of how much
+wrapping paper we need.</p>
+<p>Now that I have my <code>source</code> variable and <code>total</code> counter, I loop through the
+array elements of <code>source</code>. On each iteration I split the substring in the array
+element on the character <code>x</code>, find the three side sizes, assign them to
+temporary variables (<code>s1</code>, <code>s2</code>, <code>s3</code>), and then find the smallest of the six
+sides and store it in the temporary variable <code>smallest</code>.</p>
+<p>Finally, I add up the dimensions using the given formula and add <code>smallest</code> as
+asked. I then add this value to the current value of <code>total</code>. After iterating
+through all the array elements, I print out the final value of <code>total</code>.</p>
+<h2 id="solutions">Solutions</h2>
+<h3 id="node-js">Node.js</h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="javascript"><span class="giallo-l"><span style="color: #F97583;">var</span><span> fs</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> require</span><span>(</span><span style="color: #9ECBFF;">&quot;fs&quot;</span><span>);</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">var</span><span> source</span><span style="color: #F97583;"> =</span><span> fs.</span><span style="color: #B392F0;">readFileSync</span><span>(</span><span style="color: #9ECBFF;">&quot;../source/day2source.txt&quot;</span><span>).</span><span style="color: #B392F0;">toString</span><span>().</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">\n</span><span style="color: #9ECBFF;">&quot;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">var</span><span> total</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">for</span><span> (</span><span style="color: #F97583;">var</span><span> i</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>; i</span><span style="color: #F97583;"> &lt;</span><span> source.</span><span style="color: #79B8FF;">length</span><span style="color: #F97583;"> -</span><span style="color: #79B8FF;"> 1</span><span>; i</span><span style="color: #F97583;">++</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> tempDim</span><span style="color: #F97583;"> =</span><span> source[i].</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&quot;x&quot;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> s1</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">0</span><span>])</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">1</span><span>]);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> s2</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">2</span><span>])</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">1</span><span>]);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> s3</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">0</span><span>])</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">2</span><span>]);</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> smallest</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">  if</span><span> (s1</span><span style="color: #F97583;"> &gt;</span><span> s2) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> (s2</span><span style="color: #F97583;"> &gt;</span><span> s3) {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s3;</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s2;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> (s1</span><span style="color: #F97583;"> &gt;</span><span> s3) {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s3;</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s1;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  total</span><span style="color: #F97583;"> =</span><span> total</span><span style="color: #F97583;"> +</span><span> (</span><span style="color: #79B8FF;">2</span><span style="color: #F97583;"> *</span><span> s1</span><span style="color: #F97583;"> +</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;"> *</span><span> s2</span><span style="color: #F97583;"> +</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;"> *</span><span> s3</span><span style="color: #F97583;"> +</span><span> smallest);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>console.</span><span style="color: #B392F0;">log</span><span>(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">  &quot;The elves need to order &quot;</span><span style="color: #F97583;"> +</span><span> total</span><span style="color: #F97583;"> +</span><span style="color: #9ECBFF;"> &quot; square feet of wrapping paper.&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>);</span></span></code></pre><h3 id="python">Python</h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>filename</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &#39;../source/day2source.txt&#39;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">with</span><span style="color: #79B8FF;"> open</span><span>(filename)</span><span style="color: #F97583;"> as</span><span> f:</span></span>
+<span class="giallo-l"><span>    source</span><span style="color: #F97583;"> =</span><span> [line.rstrip(</span><span style="color: #9ECBFF;">&#39;</span><span style="color: #79B8FF;">\n</span><span style="color: #9ECBFF;">&#39;</span><span>)</span><span style="color: #F97583;"> for</span><span> line</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> open</span><span>(filename)]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>total</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">for</span><span> line</span><span style="color: #F97583;"> in</span><span> source:</span></span>
+<span class="giallo-l"><span>    temp</span><span style="color: #F97583;"> =</span><span> line.split(</span><span style="color: #9ECBFF;">&#39;x&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>    s1</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">0</span><span>])</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">1</span><span>])</span></span>
+<span class="giallo-l"><span>    s2</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">2</span><span>])</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">1</span><span>])</span></span>
+<span class="giallo-l"><span>    s3</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">0</span><span>])</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">2</span><span>])</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> s1</span><span style="color: #F97583;"> &gt;</span><span> s2:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if</span><span> s2</span><span style="color: #F97583;"> &gt;</span><span> s3:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s3</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        else</span><span>:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s2</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    else</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if</span><span> s1</span><span style="color: #F97583;"> &gt;</span><span> s3:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s3</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        else</span><span>:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s1</span></span>
+<span class="giallo-l"><span>    total</span><span style="color: #F97583;"> =</span><span> total</span><span style="color: #F97583;"> +</span><span> (</span><span style="color: #79B8FF;">2</span><span style="color: #F97583;">*</span><span>s1</span><span style="color: #F97583;"> +</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;">*</span><span> s2</span><span style="color: #F97583;"> +</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;">*</span><span>s3</span><span style="color: #F97583;"> +</span><span> smallest)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">print</span><span style="color: #9ECBFF;"> &quot;The elves need to order&quot;</span><span>, total,</span><span style="color: #9ECBFF;"> &quot;square feet of wrapping paper&quot;</span></span></code></pre><h2 id="problem-2">Problem 2</h2>
+<blockquote>
+<p>The elves are also running low on ribbon. Ribbon is all the same width, so
+they only have to worry about the length they need to order, which they would
+again like to be exact.</p>
+<p>The ribbon required to wrap a present is the shortest distance around its
+sides, or the smallest perimeter of any one face. Each present also requires a
+bow made out of ribbon as well; the feet of ribbon required for the perfect
+bow is equal to the cubic feet of volume of the present. Don't ask how they
+tie the bow, though; they'll never tell.</p>
+<p>How many total <strong>feet of ribbon</strong> should they order?</p>
+</blockquote>
+<h2 id="methodology-1">Methodology</h2>
+<p>This time I need to compare the widths of the packages instead of their face
+areas. I also need to find the two smallest widths rather than just the
+smallest. Finally, instead of finding surface area, I need to find a length of
+ribbon using the given formula.</p>
+<h2 id="solutions-1">Solutions</h2>
+<h3 id="node-js-1">Node.js</h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="javascript"><span class="giallo-l"><span style="color: #F97583;">var</span><span> fs</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> require</span><span>(</span><span style="color: #9ECBFF;">&quot;fs&quot;</span><span>);</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">var</span><span> source</span><span style="color: #F97583;"> =</span><span> fs.</span><span style="color: #B392F0;">readFileSync</span><span>(</span><span style="color: #9ECBFF;">&quot;../source/day2source.txt&quot;</span><span>).</span><span style="color: #B392F0;">toString</span><span>().</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">\n</span><span style="color: #9ECBFF;">&quot;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">var</span><span> total</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">for</span><span> (</span><span style="color: #F97583;">var</span><span> i</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>; i</span><span style="color: #F97583;"> &lt;</span><span> source.</span><span style="color: #79B8FF;">length</span><span style="color: #F97583;"> -</span><span style="color: #79B8FF;"> 1</span><span>; i</span><span style="color: #F97583;">++</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> tempDim</span><span style="color: #F97583;"> =</span><span> source[i].</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&quot;x&quot;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> s1</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">0</span><span>]);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> s2</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">1</span><span>]);</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> s3</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> Number</span><span>(tempDim[</span><span style="color: #79B8FF;">2</span><span>]);</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> smallest</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  var</span><span> nextSmallest</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">  if</span><span> (s1</span><span style="color: #F97583;"> &gt;</span><span> s2) {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> (s2</span><span style="color: #F97583;"> &gt;</span><span> s3) {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s3;</span></span>
+<span class="giallo-l"><span>      nextSmallest</span><span style="color: #F97583;"> =</span><span> s2;</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s2;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">      if</span><span> (s1</span><span style="color: #F97583;"> &gt;</span><span> s3) {</span></span>
+<span class="giallo-l"><span>        nextSmallest</span><span style="color: #F97583;"> =</span><span> s3;</span></span>
+<span class="giallo-l"><span>      }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>        nextSmallest</span><span style="color: #F97583;"> =</span><span> s1;</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> (s1</span><span style="color: #F97583;"> &gt;</span><span> s3) {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s3;</span></span>
+<span class="giallo-l"><span>      nextSmallest</span><span style="color: #F97583;"> =</span><span> s1;</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>      smallest</span><span style="color: #F97583;"> =</span><span> s1;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">      if</span><span> (s2</span><span style="color: #F97583;"> &gt;</span><span> s3) {</span></span>
+<span class="giallo-l"><span>        nextSmallest</span><span style="color: #F97583;"> =</span><span> s3;</span></span>
+<span class="giallo-l"><span>      }</span><span style="color: #F97583;"> else</span><span> {</span></span>
+<span class="giallo-l"><span>        nextSmallest</span><span style="color: #F97583;"> =</span><span> s2;</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  total</span><span style="color: #F97583;"> =</span><span> total</span><span style="color: #F97583;"> +</span><span> smallest</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;"> +</span><span> nextSmallest</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;"> +</span><span> s1</span><span style="color: #F97583;"> *</span><span> s2</span><span style="color: #F97583;"> *</span><span> s3;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>console.</span><span style="color: #B392F0;">log</span><span>(</span><span style="color: #9ECBFF;">&quot;The elves need to order &quot;</span><span style="color: #F97583;"> +</span><span> total</span><span style="color: #F97583;"> +</span><span style="color: #9ECBFF;"> &quot; feet of ribbon.&quot;</span><span>);</span></span></code></pre><h3 id="python-1">Python</h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>filename</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &#39;../source/day2source.txt&#39;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">with</span><span style="color: #79B8FF;"> open</span><span>(filename)</span><span style="color: #F97583;"> as</span><span> f:</span></span>
+<span class="giallo-l"><span>    source</span><span style="color: #F97583;"> =</span><span> [line.rstrip(</span><span style="color: #9ECBFF;">&#39;</span><span style="color: #79B8FF;">\n</span><span style="color: #9ECBFF;">&#39;</span><span>)</span><span style="color: #F97583;"> for</span><span> line</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> open</span><span>(filename)]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>total</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">for</span><span> line</span><span style="color: #F97583;"> in</span><span> source:</span></span>
+<span class="giallo-l"><span>    temp</span><span style="color: #F97583;"> =</span><span> line.split(</span><span style="color: #9ECBFF;">&#39;x&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>    s1</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">0</span><span>])</span></span>
+<span class="giallo-l"><span>    s2</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">1</span><span>])</span></span>
+<span class="giallo-l"><span>    s3</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> int</span><span>(temp[</span><span style="color: #79B8FF;">2</span><span>])</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> s1</span><span style="color: #F97583;"> &gt;</span><span> s2:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if</span><span> s2</span><span style="color: #F97583;"> &gt;</span><span> s3:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s3</span></span>
+<span class="giallo-l"><span>            nextSmallest</span><span style="color: #F97583;"> =</span><span> s2</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        else</span><span>:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s2</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            if</span><span> s1</span><span style="color: #F97583;"> &gt;</span><span> s3:</span></span>
+<span class="giallo-l"><span>                nextSmallest</span><span style="color: #F97583;"> =</span><span> s3</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            else</span><span>:</span></span>
+<span class="giallo-l"><span>                nextSmallest</span><span style="color: #F97583;"> =</span><span> s1</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    else</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if</span><span> s1</span><span style="color: #F97583;"> &gt;</span><span> s3:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s3</span></span>
+<span class="giallo-l"><span>            nextSmallest</span><span style="color: #F97583;"> =</span><span> s1</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        else</span><span>:</span></span>
+<span class="giallo-l"><span>            smallest</span><span style="color: #F97583;"> =</span><span> s1</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            if</span><span> s2</span><span style="color: #F97583;"> &gt;</span><span> s3:</span></span>
+<span class="giallo-l"><span>                nextSmallest</span><span style="color: #F97583;"> =</span><span> s3</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            else</span><span>:</span></span>
+<span class="giallo-l"><span>                nextSmallest</span><span style="color: #F97583;"> =</span><span> s2</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    total</span><span style="color: #F97583;"> =</span><span> total</span><span style="color: #F97583;"> +</span><span> smallest</span><span style="color: #F97583;">*</span><span style="color: #79B8FF;">2</span><span style="color: #F97583;"> +</span><span> nextSmallest</span><span style="color: #F97583;">*</span><span style="color: #79B8FF;">2</span><span style="color: #F97583;"> +</span><span> s1</span><span style="color: #F97583;">*</span><span>s2</span><span style="color: #F97583;">*</span><span>s3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">print</span><span style="color: #9ECBFF;"> &quot;The elves need to order&quot;</span><span>, total,</span><span style="color: #9ECBFF;"> &quot;square feet of wrapping paper&quot;</span></span></code></pre>
+</article>
+</main>
+    <footer>
+      
+      <p>Advent of Code: I Was Told There Would Be No Math © 2015 Keith Wade <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="catppuccin">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="PokéData Improved" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="&#x2F;posts&#x2F;2016-09-06-pokedata-improved&#x2F;" />
+<meta property="og:description" content="Building a more sane Pokémon app with React." />
+<meta name="fediverse:creator" content="@keawade@hachyderm.io">
+
+   
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+
+    <link rel="stylesheet" href="/water-dark.css?h=ecd5bba45b1312dfdf9a" />
+    <link rel="stylesheet" href="/site.css?h=948cbadd99a4a845fa41" />
+    
+    <link rel="icon" href="/favicon.ico" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img src="/assets/keawade.jpeg" alt="Keith Wade avatar" class="keawade-avatar" width="500" height="500" />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        |<a href="/">Home</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/about">About</a>|
+      </nav>
+    </header>
+    <main>
+<h1>PokéData Improved</h1>
+<p class="date">September 06, 2016</p>
+<article>
+<p>I took another look at the <a rel="external" href="https://keawade.github.io/pokedata-old">PokéData</a>
+app, this time with an eye towards what technologies would work best rather than
+trying to cram some odd things in for the development experience. What I've come
+up with is <a rel="external" href="https://keawade.github.io/pokedata">a new version of PokéData</a> built
+using <a rel="external" href="https://facebook.github.io/react/">React</a> without
+<a rel="external" href="http://redux.js.org/">Redux</a> or <a rel="external" href="https://pokeapi.co/">PokeAPI</a>.</p>
+<span id="continue-reading"></span>
+<p><a rel="external" href="https://keawade.github.io/pokedata/"><img src="/posts/2016-09-06-pokedata-improved/./pokedata-improved.png" alt="Screenshot of a simple PokéDex web application called PokéData." /></a></p>
+<p>Removing Redux was an easy choice for this app since it wasn't necessary in the
+slightest and just complicated the app for no reason. The
+<a rel="external" href="http://redux.js.org/docs/FAQ.html#when-should-i-use-redux">Redux FAQ answer to "When should I use Redux?"</a>,
+while slightly cryptic, is a good one.</p>
+<p>No longer using PokeAPI was mildly annoying as I had to build the data I was
+using from it into my app directly but dramatically improved performance. While
+PokeAPI has a ton of data, it isn't presented in a particulary useful structure
+and suffers from extremely slow access speeds. I can't complain too much since
+it is a free service, but it was responsible for the only noticeable latency
+resulting in load times of <em>five to ten seconds</em>.</p>
+<p>Overall, the app is much more responsive and the code is much cleaner.
+<a rel="external" href="https://keawade.github.io/pokedata">The app is available here.</a> As always, feel
+free to
+<a rel="external" href="https://github.com/keawade/pokedata/issues">report bugs or request features</a>.</p>
+
+</article>
+</main>
+    <footer>
+      
+      <p>PokéData Improved © 2016 Keith Wade <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+    </footer>
+  </body>
+</html>

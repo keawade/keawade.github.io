@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-webtui-theme="catppuccin">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    
+<meta property="og:title" content="PokéData Vue" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="&#x2F;posts&#x2F;2017-01-22-pokedata-vue&#x2F;" />
+<meta property="og:description" content="Learning Vue + Vuex with Pokémon." />
+<meta name="fediverse:creator" content="@keawade@hachyderm.io">
+
+   
+    <meta property="og:image" content="/assets/keawade.jpeg" />
+    <meta property="og:locale" content="en_US" />
+
+    <title>Keith Wade</title>
+
+    <link rel="stylesheet" href="/water-dark.css?h=ecd5bba45b1312dfdf9a" />
+    <link rel="stylesheet" href="/site.css?h=948cbadd99a4a845fa41" />
+    
+    <link rel="icon" href="/favicon.ico" />
+
+    <link href="https://hachyderm.io/@keawade" rel="me">
+  </head>
+
+  <body>
+    <header>
+      <a href="/">
+        <img src="/assets/keawade.jpeg" alt="Keith Wade avatar" class="keawade-avatar" width="500" height="500" />
+
+        <h2>Keith Wade</h2>
+      </a>
+      <nav>
+        |<a href="/">Home</a>|
+        <a href="/posts">Posts</a>|
+        <a href="/about">About</a>|
+      </nav>
+    </header>
+    <main>
+<h1>PokéData Vue</h1>
+<p class="date">January 22, 2017</p>
+<article>
+<p>The latest technology in my serial of
+<a rel="external" href="https://keawade.github.io/pokedata">Pokedex's</a> with different JavaScript
+frameworks is <a rel="external" href="https://vuejs.org/">Vue</a>! I've been working with Vue off and on
+for the last few months with
+<a rel="external" href="https://github.com/garden-stream/garden-vue">garden-vue</a> and
+<a rel="external" href="https://github.com/whiteboards/w-os">w-os</a>. Now I've finally gotten around to
+building my recurring PokeData with Vue as well.</p>
+<span id="continue-reading"></span>
+<p><a rel="external" href="http://keawade.github.io/pokedata-vue/"><img src="/posts/2017-01-22-pokedata-vue/./pokedata-vue.png" alt="Screenshot of a simple PokéDex web application called PokéData." /></a></p>
+<p>The main thing that struck me was how quickly I was able to build this app with
+Vue. Total dev time on this project was approximately 3 to 4 hours. Vue seems to
+me to be an excellent choice for small focused projects or rapid prototyping.</p>
+<p>Another aspect of Vue that I really liked was Vue's
+<a rel="external" href="https://vuex.vuejs.org/en/"><code>vuex</code></a> state management solution. Vuex was an
+absolute pleasure to work with. It is extremely simple to configure and use.</p>
+<p>To configure <code>vuex</code>, I just need to import the package, create my vuex store,
+and use that store in my Vue app. Check out my
+<a rel="external" href="https://github.com/keawade/pokedata-vue/blob/master/src/main.js#L8-L23"><code>main.js</code></a>
+file for my implementation. All I needed to do after that was to reference
+<code>$store</code> in a component like here in
+<a rel="external" href="https://github.com/keawade/pokedata-vue/blob/master/src/components/History.vue#L4"><code>History.vue</code></a>.</p>
+<p>I have really enjoyed my time working with Vue. If you're interested,
+<a rel="external" href="https://keawade.github.io/pokedata-vue">the app is available here</a>. As always,
+feel free to
+<a rel="external" href="https://github.com/keawade/pokedata-vue/issues">report bugs or request features</a>.</p>
+
+</article>
+</main>
+    <footer>
+      
+      <p>PokéData Vue © 2017 Keith Wade <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a></p>
+      
+ 
+      <p>This site was created by <a href="/">Keith Wade</a> using <a href="https://www.getzola.org/" target="_blank">Zola</a>.</p>
+    </footer>
+  </body>
+</html>
